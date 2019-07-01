@@ -15,28 +15,22 @@ This workshop is designed to be a crash-course. We will thus spend more time usi
 5. Other useful packages
 
 
+## Instructions:
+
 Before the workshop, please install the most recent versions of [R](https://cran.r-project.org) and [R Studio](https://www.rstudio.com/products/rstudio/download/#download) onto your computer. After doing so, [download the materials for this workshop](https://github.com/xp-song/Intro2R/archive/master.zip) from the Github repository [Intro2R](https://github.com/xp-song/Intro2R). 
+
+
 
 In the downloaded folder you will see a few important items. 
 
 * The RStudio Project file (ending with _.Rproj_). Opening it boots up RStudio. You might want to imagine this file as a kind of 'homing beacon'. The folder it is placed in is the 'working directory', and where all sorts of (hidden) files will be stored (e.g. _.Rhistory_ containing past code you ran in the last session, _.Rprofile_ containing your preferences/settings, etc.). The _.Rproj_ file also interfaces with version control systems (i.e. Git).
 
-* R Notebooks (ending with _.Rmd_) for each section of the workshop.
+* R Notebooks (ending with _.Rmd_) for each lesson.
 
 * The _'html'_ folder. It contains the nicely rendered HTML of each _.Rmd_ file.
 
 * The _'data'_ folder. It contains example datasets we will use in this workshop
 
-* The _'admin'_ folder. It contains examples/files mentioned in the R Notebooks.
+* The _'admin'_ folder. It contains files/examples that will be mentioned during the course.
 
 * The _'output'_ folder (empty). When generating outputs (i.e. figures, graphs), we will specify that our code exports them to this location.
-
-
-
-Resources to mention:
-- [R for Data Science](https://r4ds.had.co.nz)
-- [Introuction to R by Datacamp](https://www.datacamp.com/courses/free-introduction-to-r)
-- [Blogpost: R for cats](https://www.rforcats.net)
-
-Packages to mention:
-- Tidyverse, r-spatial, ggplot2, likert, rmarkdown, shiny

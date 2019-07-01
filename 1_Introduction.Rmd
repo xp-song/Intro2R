@@ -1,0 +1,13 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+Resources to mention:
+- [R for Data Science](https://r4ds.had.co.nz)
+- [Introuction to R by Datacamp](https://www.datacamp.com/courses/free-introduction-to-r)
+- [Blogpost: R for cats](https://www.rforcats.net)
+
+Packages to mention:
+- Tidyverse, r-spatial, ggplot2, likert, rmarkdown, shiny
