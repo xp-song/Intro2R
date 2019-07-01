@@ -31,7 +31,7 @@ In the downloaded folder you will see a few important items.
 
 * The _'slides'_ folder. It contains the presentation slides for the workshop.
 
-* The _'data'_ folder. It contains example datasets we will use in this workshop
+* The _'data'_ folder. It contains example datasets we will use in this workshop.
 
 * The _'admin'_ folder. It contains files/examples that will be mentioned during the course.
 
