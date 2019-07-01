@@ -29,6 +29,8 @@ In the downloaded folder you will see a few important items.
 
 * The _'html'_ folder. It contains the nicely rendered HTML of each _.Rmd_ file.
 
+* The _'slides'_ folder. It contains the presentation slides for the workshop.
+
 * The _'data'_ folder. It contains example datasets we will use in this workshop
 
 * The _'admin'_ folder. It contains files/examples that will be mentioned during the course.
