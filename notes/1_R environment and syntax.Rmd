@@ -1,6 +1,5 @@
 ---
 title: "R Environment and Syntax"
-output: html_notebook
 output:
   html_document:
     toc: true
@@ -9,6 +8,11 @@ output:
     number_sections: true
     theme: lumen
 ---
+
+
+
+
+
 
 #Some Notes
 This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. It allows you to generate reports (i.e. pdf, word, html, etc.) with code chunks to calculate/analyse data & churn our results directly within the report.
@@ -53,9 +57,6 @@ require(dplyr) #data manipulation
 require(tidyr) #data manipulation
 require(ggplot2) #data visualisation
 
-
-require(psych) #survey data analysis
-
 ```
 
 
@@ -66,7 +67,7 @@ require(psych) #survey data analysis
 2) Load it into R
 
 ```{r message = FALSE, warning = FALSE}
-svy.df <- read.csv("raw/responses_20190311.csv", stringsAsFactors = FALSE, check.names=FALSE) 
+#svy.df <- read.csv("raw/responses_20190311.csv", stringsAsFactors = FALSE, check.names=FALSE) 
 #import the data as 'svy.df'
 #the location of .Rproj file is where the working directory is (so, no need to type the entire file path)
 ```
@@ -97,3 +98,5 @@ survey::postStratify() #adjusts sampling weights so that the joint distribution 
 library(likert)
 
 ```
+
+

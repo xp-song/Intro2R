@@ -1,12 +1,12 @@
 ---
-title: "R Environment and Syntax"
-subtitle: ""
+title: "Intro2R"
+subtitle: "R Environment and Syntax"
 author: "XP Song"
 institute: ""
 date: "updated `r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: [default, metropolis, metropolis-fonts] #possible themes: names(xaringan:::list_css())
+    css: [default, metropolis, metropolis-fonts] #themes: names(xaringan:::list_css())
     lib_dir: libs
     nature:
       highlightStyle: github
@@ -14,9 +14,17 @@ output:
       countIncrementalSlides: false
 ---
 
-```{r installation, echo = FALSE, eval = FALSE}
-#https://bookdown.org/yihui/rmarkdown/xaringan.html
+```{r ??, eval = FALSE, include = FALSE}
+#Address working directory issues with Knitr:
+library(ezknitr)
+ezknit(file = "slides/source_files/1_R environment and syntax_slides.Rmd", out_dir = "slides")
+```
 
+
+```{r installation, echo = FALSE, eval = FALSE}
+
+#Slides
+#https://bookdown.org/yihui/rmarkdown/xaringan.html
 install.packages("xaringan")
 # install.packages("devtools")
 devtools::install_github("gadenbuie/xaringanthemer")
@@ -26,21 +34,106 @@ devtools::install_github("gadenbuie/xaringanthemer")
 options(htmltools.dir.version = FALSE)
 library(xaringan)
 library(xaringanthemer)
-
-write_xaringan_theme() #explore diff theme settings by pressing the 'tab' button
-#or just just create a Ninja Themed Presentation from the New R Markdown Document menu in RStudio
-
-mono_light(
-  base_color = "#1c5253",
-  header_font_google = google_font("Josefin Sans"),
-  text_font_google   = google_font("Montserrat", "300", "300i"),
-  code_font_google   = google_font("Droid Mono")
-)
 ```
+background-image: url(https://www.r-project.org/logo/Rlogo.svg)
+background-size: 100px
+background-position: 95% 5%
+class: left
+
+# What is R?
+
+- Programming language and software environment
+- Started in the 1990s mainly for statistical analysis
+- Command line interface
+- RStudio is commonly used as a graphical user interface
+- Both R and RStudio are open source software
+- Many resources and help available online from large community of developers/users
+- Huge (and growing) library of user-created _packages_ offer many functions beyond statistics (even to translate R to other languages!)
+
+
+???
+
+- Cmd line: unlike GUI-based software such as Excel, SPSS, etc.
+- Rstudio: Just like how Microsoft Word provides many more functions than a basic text editor, RStudio provides many functions for coding.
+- Huge library: make beautiful graphics, build websites, etc.
+
+---
+class: left
+
+# About this crash course
+
+## What it IS
+- Designed for those with minimal coding experience
+- Dive right into organising, visualising and analysing data
+- Give you a taste of the power of R and its potential applications
+- Help you kick-start your journey to becoming more data-savvy 🤓 
+
+--
+
+## What it is NOT
+- A substitute to learning the fundamentals of the language
+- A lesson in statistics
+
+---
+
+class: left
+
+# About this crash course
+
+```{r eval = TRUE, echo = FALSE, out.height=70}
+knitr::include_graphics("https://www.rstudio.com/wp-content/uploads/2018/10/RStudio-Logo-flat.svg")
+```
+  
+We will work entirely with RStudio, and run our scripts in R Notebooks (files ending with _.Rmd_)<sup>1</sup>, instead of basic R scripts (files ending with _.R_).
+
+## What are R Notebooks?
+- They are documents that allow us to intersperse regular text with chunks of code
+- They allow us to interact with our code and view outputs within a single document
+- They can be '_knit_' into different file-types (i.e. Word, Slides, PDF, HTML, etc.)
+
+
+.footnote[
+[1] All materials in this course were created from _.Rmd_ files. We will work within these source files in the the _/notes_ folder during the workshop (rendered notes are viewable in HTML). The course slides and their source files are located at _/slides_.
+]
+
+---
 
 class: inverse, center, middle
 
-# Get Started
+# Getting Started
+
+[Download the materials for this workshop](https://github.com/xp-song/Intro2R/archive/master.zip) from the Github repository __Intro2R__  
+https://github.com/xp-song/Intro2R  
+
+Open up the RStudio Project file **_Intro2R.Rproj_**  
+
+In the file browser (bottom-right panel), navigate to _/notes_ and open the R Notebook   
+**_1_R environment and syntax.Rmd_**
+
+
+---
+
+class: left
+
+# R Studio Client
+
+![plot](RStudio.png)
+
+```{r eval = TRUE, echo = FALSE, eval = FALSE, out.height=1000}
+knitr::include_graphics("RStudio.png")
+```
+
+
+- Try creating a new RStudio Project ()
+
+- Try creating a new R Notebook (_File > New File > R Notebook_)
+
+
+The folder it is placed in is the 'working directory', and where all sorts of (hidden) files will be stored (e.g. .Rhistory containing past code you ran in the last session, .Rprofile containing your preferences/settings, etc.). The .Rproj file also interfaces with version control systems (i.e. Git).
+
+??
+
+RProj file: 'homing beacon'
 
 ---
 
@@ -53,8 +146,6 @@ devtools::install_github("yihui/xaringan")
 ```
 
 --
-
-You are recommended to use the [RStudio IDE](https://www.rstudio.com/products/rstudio/), but you do not have to.
 
 - Create a new R Markdown document from the menu `File -> New File -> R Markdown -> From Template -> Ninja Presentation`;<sup>1</sup>
 
