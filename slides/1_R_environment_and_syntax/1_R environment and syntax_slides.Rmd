@@ -1,7 +1,7 @@
 ---
 title: "Intro2R"
 subtitle: "R Environment and Syntax"
-author: "XP Song"
+author: "xpsong"
 institute: ""
 date: "updated `r Sys.Date()`"
 output:
@@ -13,13 +13,6 @@ output:
       highlightLines: true
       countIncrementalSlides: false
 ---
-
-```{r ??, eval = FALSE, include = FALSE}
-#Address working directory issues with Knitr:
-library(ezknitr)
-ezknit(file = "slides/source_files/1_R environment and syntax_slides.Rmd", out_dir = "slides")
-```
-
 
 ```{r installation, echo = FALSE, eval = FALSE}
 
@@ -87,13 +80,13 @@ knitr::include_graphics("https://www.rstudio.com/wp-content/uploads/2018/10/RStu
 We will work entirely with RStudio, and run our scripts in R Notebooks (files ending with _.Rmd_)<sup>1</sup>, instead of basic R scripts (files ending with _.R_).
 
 ## What are R Notebooks?
-- They are documents that allow us to intersperse regular text with chunks of code
+- They are [R Markdown](http://rmarkdown.rstudio.com) documents that allow us to intersperse regular text with chunks of code
 - They allow us to interact with our code and view outputs within a single document
 - They can be '_knit_' into different file-types (i.e. Word, Slides, PDF, HTML, etc.)
 
 
 .footnote[
-[1] All materials in this course were created from _.Rmd_ files. We will work within these source files in the the _/notes_ folder during the workshop (rendered notes are viewable in HTML). The course slides and their source files are located at _/slides_.
+[1] All materials in this course were created from _.Rmd_ files. We will work within these source files in the _/notes_ folder during the workshop (rendered notes are viewable as HTML documents). The course slides and their source files are located at _/slides_.
 ]
 
 ---
@@ -102,13 +95,13 @@ class: inverse, center, middle
 
 # Getting Started
 
-[Download the materials for this workshop](https://github.com/xp-song/Intro2R/archive/master.zip) from the Github repository __Intro2R__  
+1. [Download the materials for this workshop](https://github.com/xp-song/Intro2R/archive/master.zip) from the Github repository __Intro2R__  
 https://github.com/xp-song/Intro2R  
 
-Open up the RStudio Project file **_Intro2R.Rproj_**  
+2. Open up the RStudio Project file **_Intro2R.Rproj_**  
 
-In the file browser (bottom-right panel), navigate to _/notes_ and open the R Notebook   
-**_1_R environment and syntax.Rmd_**
+3. In the file browser (bottom-right panel), navigate to _/notes_ and open the R Notebook   
+**_0_Getting started.Rmd_**
 
 
 ---
@@ -117,70 +110,70 @@ class: left
 
 # R Studio Client
 
-![plot](RStudio.png)
+```{r eval = TRUE, echo = FALSE, out.width=650, fig.align='center'}
+knitr::include_graphics("images/RStudio.png")
+```
+* __Console:__ Command line input/output. All you would see if you ran R without RStudio.  
+* __Script editor:__ View/edit files that contain code. Code can be sent to the console.
+* __Environment/History:__ Shows all objects in R's memory. The history tab keeps track of all past commands.
+* __Files/Plots/Packages/Help/Viewer__
 
-```{r eval = TRUE, echo = FALSE, eval = FALSE, out.height=1000}
-knitr::include_graphics("RStudio.png")
+---
+
+class: left
+
+# R Studio Client
+
+- Try creating a new R Notebook `File > New File > R Notebook`
+
+--
+
+- Try creating a new RStudio Project `File > New Project > New Directory > New Project`
+
+```{r eval = TRUE, echo = FALSE, out.width=300, fig.align='center'}
+knitr::include_graphics("images/new project.png")
 ```
 
-
-- Try creating a new RStudio Project ()
-
-- Try creating a new R Notebook (_File > New File > R Notebook_)
-
-
-The folder it is placed in is the 'working directory', and where all sorts of (hidden) files will be stored (e.g. .Rhistory containing past code you ran in the last session, .Rprofile containing your preferences/settings, etc.). The .Rproj file also interfaces with version control systems (i.e. Git).
-
-??
-
-RProj file: 'homing beacon'
-
 ---
 
-# Hello World
+class: left
 
-Install the **xaringan** package from [Github](https://github.com/yihui/xaringan):
+# R Studio Projects
 
-```{r eval=FALSE, tidy=FALSE}
-devtools::install_github("yihui/xaringan")
-```
+The folder containing the RStudio Project is the 'working directory', where R inputs/outputs/saves information (data, documents, history, etc.)
+  
+- Type `getwd()` in the console of our newly created project
+  
+  - This returns the _absolute_ path to our working directory `/Users/<computer_username>/Desktop/test`
 
 --
 
-- Create a new R Markdown document from the menu `File -> New File -> R Markdown -> From Template -> Ninja Presentation`;<sup>1</sup>
+## 🌟 Best Practice
 
---
+- Keep all project items within the folder containing the R Project file 
 
-- Click the `Knit` button to compile it;
+- Rather than using _absolute_ paths in our scripts, use **_relative_** paths
 
---
+  - E.g. In the Intro2R Project console, we can read ozone data with either `read.delim("/<path to Intro2R folder>/Intro2R/data/ozone_data.txt")` or `read.delim("data/ozone_data.txt")`
 
-- or use the [RStudio Addin](https://rstudio.github.io/rstudioaddins/)<sup>2</sup> "Infinite Moon Reader" to live preview the slides (every time you update and save the Rmd document, the slides will be automatically reloaded in RStudio Viewer.
+- This allows scripts to work when we move the project around, even across different computers
 
-.footnote[
-[1] 中文用户请看[这份教程](http://slides.yihui.name/xaringan/zh-CN.html)
 
-[2] See [#2](https://github.com/yihui/xaringan/issues/2) if you do not see the template or addin in RStudio.
-]
 
----
-background-image: url(`r xaringan:::karl`)
-background-position: 50% 50%
-class: center, bottom, inverse
+???
 
-# You only live once!
+- We don't need to set the initial path, since the RStudo Project file acts as a 'homing beacon'
+
+- Close/delete the test project
+
 
 ---
 
-# Hello Ninja
+class: left
 
-As a presentation ninja, you certainly should not be satisfied by the "Hello World" example. You need to understand more about two things:
+# 0_Getting started.Rmd
 
-1. The [remark.js](https://remarkjs.com) library;
-
-1. The **xaringan** package;
-
-Basically **xaringan** injected the chakra of R Markdown (minus Pandoc) into **remark.js**. The slides are rendered by remark.js in the web browser, and the Markdown source needed by remark.js is generated from R Markdown (**knitr**).
+- [HTML output]("https://github.com/xp-song/Intro2R/notes/0_Getting_started.html")
 
 ---
 

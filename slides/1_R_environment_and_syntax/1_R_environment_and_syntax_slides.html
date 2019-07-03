@@ -3,7 +3,7 @@
   <head>
     <title>Intro2R</title>
     <meta charset="utf-8" />
-    <meta name="author" content="XP Song" />
+    <meta name="author" content="xpsong" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
@@ -30,13 +30,10 @@ class: center, middle, inverse, title-slide
 
 # Intro2R
 ## R Environment and Syntax
-### XP Song
-### updated 2019-07-02
+### xpsong
+### updated 2019-07-03
 
 ---
-
-
-
 
 
 
@@ -92,13 +89,13 @@ class: left
 We will work entirely with RStudio, and run our scripts in R Notebooks (files ending with _.Rmd_)&lt;sup&gt;1&lt;/sup&gt;, instead of basic R scripts (files ending with _.R_).
 
 ## What are R Notebooks?
-- They are documents that allow us to intersperse regular text with chunks of code
+- They are [R Markdown](http://rmarkdown.rstudio.com) documents that allow us to intersperse regular text with chunks of code
 - They allow us to interact with our code and view outputs within a single document
 - They can be '_knit_' into different file-types (i.e. Word, Slides, PDF, HTML, etc.)
 
 
 .footnote[
-[1] All materials in this course were created from _.Rmd_ files. We will work within these source files in the the _/notes_ folder during the workshop (rendered notes are viewable in HTML). The course slides and their source files are located at _/slides_.
+[1] All materials in this course were created from _.Rmd_ files. We will work within these source files in the _/notes_ folder during the workshop (rendered notes are viewable as HTML documents). The course slides and their source files are located at _/slides_.
 ]
 
 ---
@@ -107,13 +104,13 @@ class: inverse, center, middle
 
 # Getting Started
 
-[Download the materials for this workshop](https://github.com/xp-song/Intro2R/archive/master.zip) from the Github repository __Intro2R__  
+1. [Download the materials for this workshop](https://github.com/xp-song/Intro2R/archive/master.zip) from the Github repository __Intro2R__  
 https://github.com/xp-song/Intro2R  
 
-Open up the RStudio Project file **_Intro2R.Rproj_**  
+2. Open up the RStudio Project file **_Intro2R.Rproj_**  
 
-In the file browser (bottom-right panel), navigate to _/notes_ and open the R Notebook   
-**_1_R environment and syntax.Rmd_**
+3. In the file browser (bottom-right panel), navigate to _/notes_ and open the R Notebook   
+**_0_Getting started.Rmd_**
 
 
 ---
@@ -122,69 +119,66 @@ class: left
 
 # R Studio Client
 
-![plot](RStudio.png)
-
-
-
-
-- Try creating a new RStudio Project ()
-
-- Try creating a new R Notebook (_File &gt; New File &gt; R Notebook_)
-
-
-The folder it is placed in is the 'working directory', and where all sorts of (hidden) files will be stored (e.g. .Rhistory containing past code you ran in the last session, .Rprofile containing your preferences/settings, etc.). The .Rproj file also interfaces with version control systems (i.e. Git).
-
-??
-
-RProj file: 'homing beacon'
+&lt;img src="images/RStudio.png" width="650" style="display: block; margin: auto;" /&gt;
+* __Console:__ Command line input/output. All you would see if you ran R without RStudio.  
+* __Script editor:__ View/edit files that contain code. Code can be sent to the console.
+* __Environment/History:__ Shows all objects in R's memory. The history tab keeps track of all past commands.
+* __Files/Plots/Packages/Help/Viewer__
 
 ---
 
-# Hello World
+class: left
 
-Install the **xaringan** package from [Github](https://github.com/yihui/xaringan):
+# R Studio Client
 
-
-```r
-devtools::install_github("yihui/xaringan")
-```
+- Try creating a new R Notebook `File &gt; New File &gt; R Notebook`
 
 --
 
-- Create a new R Markdown document from the menu `File -&gt; New File -&gt; R Markdown -&gt; From Template -&gt; Ninja Presentation`;&lt;sup&gt;1&lt;/sup&gt;
+- Try creating a new RStudio Project `File &gt; New Project &gt; New Directory &gt; New Project`
 
---
-
-- Click the `Knit` button to compile it;
-
---
-
-- or use the [RStudio Addin](https://rstudio.github.io/rstudioaddins/)&lt;sup&gt;2&lt;/sup&gt; "Infinite Moon Reader" to live preview the slides (every time you update and save the Rmd document, the slides will be automatically reloaded in RStudio Viewer.
-
-.footnote[
-[1] 中文用户请看[这份教程](http://slides.yihui.name/xaringan/zh-CN.html)
-
-[2] See [#2](https://github.com/yihui/xaringan/issues/2) if you do not see the template or addin in RStudio.
-]
-
----
-background-image: url(https://github.com/yihui/xaringan/releases/download/v0.0.2/karl-moustache.jpg)
-background-position: 50% 50%
-class: center, bottom, inverse
-
-# You only live once!
+&lt;img src="images/new project.png" width="300" style="display: block; margin: auto;" /&gt;
 
 ---
 
-# Hello Ninja
+class: left
 
-As a presentation ninja, you certainly should not be satisfied by the "Hello World" example. You need to understand more about two things:
+# R Studio Projects
 
-1. The [remark.js](https://remarkjs.com) library;
+The folder containing the RStudio Project is the 'working directory', where R inputs/outputs/saves information (data, documents, history, etc.)
+  
+- Type `getwd()` in the console of our newly created project
+  
+  - This returns the _absolute_ path to our working directory `/Users/&lt;computer_username&gt;/Desktop/test`
 
-1. The **xaringan** package;
+--
 
-Basically **xaringan** injected the chakra of R Markdown (minus Pandoc) into **remark.js**. The slides are rendered by remark.js in the web browser, and the Markdown source needed by remark.js is generated from R Markdown (**knitr**).
+## 🌟 Best Practice
+
+- Keep all project items within the folder containing the R Project file 
+
+- Rather than using _absolute_ paths in our scripts, use **_relative_** paths
+
+  - E.g. In the Intro2R Project console, we can read ozone data with either `read.delim("/&lt;path to Intro2R folder&gt;/Intro2R/data/ozone_data.txt")` or `read.delim("data/ozone_data.txt")`
+
+- This allows scripts to work when we move the project around, even across different computers
+
+
+
+???
+
+- We don't need to set the initial path, since the RStudo Project file acts as a 'homing beacon'
+
+- Close/delete the test project
+
+
+---
+
+class: left
+
+# 0_Getting started.Rmd
+
+- [HTML output]("https://github.com/xp-song/Intro2R/notes/0_Getting_started.html")
 
 ---
 
@@ -415,8 +409,8 @@ library(leaflet)
 leaflet() %&gt;% addTiles() %&gt;% setView(-93.65, 42.0285, zoom = 17)
 ```
 
-<div id="htmlwidget-96b3c3aa85da919c988a" style="width:100%;height:432px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-96b3c3aa85da919c988a">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]}],"setView":[[42.0285,-93.65],17,[]]},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-4bdcf13721534a474e7d" style="width:100%;height:432px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4bdcf13721534a474e7d">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]}],"setView":[[42.0285,-93.65],17,[]]},"evals":[],"jsHooks":[]}</script>
 
 ---
 
@@ -428,8 +422,8 @@ DT::datatable(
 )
 ```
 
-<div id="htmlwidget-36b2e24c82095c17919b" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-36b2e24c82095c17919b">{"x":{"filter":"none","fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10"],[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9],[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1],[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5],[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1],["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sepal.Length<\/th>\n      <th>Sepal.Width<\/th>\n      <th>Petal.Length<\/th>\n      <th>Petal.Width<\/th>\n      <th>Species<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":8,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[8,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-cde69cfea34cb17e744b" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-cde69cfea34cb17e744b">{"x":{"filter":"none","fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10"],[5.1,4.9,4.7,4.6,5,5.4,4.6,5,4.4,4.9],[3.5,3,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1],[1.4,1.4,1.3,1.5,1.4,1.7,1.4,1.5,1.4,1.5],[0.2,0.2,0.2,0.2,0.2,0.4,0.3,0.2,0.2,0.1],["setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa","setosa"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Sepal.Length<\/th>\n      <th>Sepal.Width<\/th>\n      <th>Petal.Length<\/th>\n      <th>Petal.Width<\/th>\n      <th>Species<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":8,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[8,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 
 ---
 

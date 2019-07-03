@@ -1,5 +1,6 @@
 ---
 title: "R Environment and Syntax"
+subtitle: "Intro2R: Lesson 1 of 4"
 output:
   html_document:
     toc: true
@@ -8,45 +9,6 @@ output:
     number_sections: true
     theme: lumen
 ---
-
-
-
-
-
-
-#Some Notes
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. It allows you to generate reports (i.e. pdf, word, html, etc.) with code chunks to calculate/analyse data & churn our results directly within the report.
-
-Execute a code chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. Press *Cmd+Enter* to run a single line of code.
-
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
-
-When you save the notebook, an HTML file containing the code and output will be saved alongside it . Clicking the *Preview* button does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed. On the other hand, *Knit* will run all chunks in the notebook and generate a new file.
-
-An example of a code chunk is below:
-```{r hello}
-#the chunk is titled 'hello'
-#if you don't want to display the chunk, add in 'echo = FALSE'
-#other options can be found at https://bookdown.org/yihui/rmarkdown/r-code.html
-#note that comments (following hashtags) are not run as code
-```
-
-------------------------
-
-#Housekeeping
-
-We need to first install the required packages on your computer (you only need to do this once)
-```{r install_packages, eval = FALSE, message = FALSE}
-#Run these individually line by line using Cmd+Enter
-#After running these, you can delete this entire code chunk
-
-install.packages("knitr") #to knit nice HMTL
-
-install.packages("tidyverse") #data manipulation
-install.packages("ggplot2")  #data visualisation
-
-install.packages("psych") #survey data analysis
-```
 
 ```{r load_packages, echo = FALSE, message = FALSE, warning = FALSE}
 #to load packages can either use the command library() or require()
@@ -60,7 +22,8 @@ require(ggplot2) #data visualisation
 ```
 
 
-#Data cleaning
+
+# Data cleaning
 
 1) Save your .xlsx file as a csv (comma delimited) in the /raw folder and give it a name (eg. responses_YYYYMMDD.csv)
 
@@ -73,15 +36,6 @@ require(ggplot2) #data visualisation
 ```
 
 
-
-
-Resources to mention:
-- [R for Data Science](https://r4ds.had.co.nz)
-- [Introuction to R by Datacamp](https://www.datacamp.com/courses/free-introduction-to-r)
-- [Blogpost: R for cats](https://www.rforcats.net)
-
-Packages to mention:
-- Tidyverse, r-spatial, ggplot2, likert, rmarkdown, shiny
 
 ```{r other tests, eval = FALSE}
 #other tests u may consider

@@ -1566,32 +1566,13 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">R Environment and Syntax</h1>
+<h3 class="subtitle">Intro2R: Lesson 2 of 4</h3>
 
 </div>
 
 
-<p>#Some Notes This is an <a href="http://rmarkdown.rstudio.com">R Markdown</a> Notebook. It allows you to generate reports (i.e. pdf, word, html, etc.) with code chunks to calculate/analyse data &amp; churn our results directly within the report.</p>
-<p>Execute a code chunk by clicking the <em>Run</em> button within the chunk or by placing your cursor inside it and pressing <em>Cmd+Shift+Enter</em>. Press <em>Cmd+Enter</em> to run a single line of code.</p>
-<p>Add a new chunk by clicking the <em>Insert Chunk</em> button on the toolbar or by pressing <em>Cmd+Option+I</em>.</p>
-<p>When you save the notebook, an HTML file containing the code and output will be saved alongside it . Clicking the <em>Preview</em> button does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed. On the other hand, <em>Knit</em> will run all chunks in the notebook and generate a new file.</p>
-<p>An example of a code chunk is below:</p>
-<pre class="r"><code>#the chunk is titled 'hello'
-#if you don't want to display the chunk, add in 'echo = FALSE'
-#other options can be found at https://bookdown.org/yihui/rmarkdown/r-code.html
-#note that comments (following hashtags) are not run as code</code></pre>
-<hr />
-<p>#Housekeeping</p>
-<p>We need to first install the required packages on your computer (you only need to do this once)</p>
-<pre class="r"><code>#Run these individually line by line using Cmd+Enter
-#After running these, you can delete this entire code chunk
-
-install.packages(&quot;knitr&quot;) #to knit nice HMTL
-
-install.packages(&quot;tidyverse&quot;) #data manipulation
-install.packages(&quot;ggplot2&quot;)  #data visualisation
-
-install.packages(&quot;psych&quot;) #survey data analysis</code></pre>
-<p>#Data cleaning</p>
+<div id="data-cleaning" class="section level1">
+<h1><span class="header-section-number">1</span> Data cleaning</h1>
 <ol style="list-style-type: decimal">
 <li><p>Save your .xlsx file as a csv (comma delimited) in the /raw folder and give it a name (eg. responses_YYYYMMDD.csv)</p></li>
 <li><p>Load it into R</p></li>
@@ -1599,8 +1580,6 @@ install.packages(&quot;psych&quot;) #survey data analysis</code></pre>
 <pre class="r"><code>#svy.df &lt;- read.csv(&quot;raw/responses_20190311.csv&quot;, stringsAsFactors = FALSE, check.names=FALSE) 
 #import the data as 'svy.df'
 #the location of .Rproj file is where the working directory is (so, no need to type the entire file path)</code></pre>
-<p>Resources to mention: - <a href="https://r4ds.had.co.nz">R for Data Science</a> - <a href="https://www.datacamp.com/courses/free-introduction-to-r">Introuction to R by Datacamp</a> - <a href="https://www.rforcats.net">Blogpost: R for cats</a></p>
-<p>Packages to mention: - Tidyverse, r-spatial, ggplot2, likert, rmarkdown, shiny</p>
 <pre class="r"><code>#other tests u may consider
 
 #require(stats)
@@ -1613,6 +1592,7 @@ svydesign() #specify survey design
 survey::postStratify() #adjusts sampling weights so that the joint distribution of a set of post-stratifying variables matches the known population joint distribution. 
 
 library(likert)</code></pre>
+</div>
 
 
 
