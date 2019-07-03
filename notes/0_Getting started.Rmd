@@ -9,7 +9,7 @@ output:
     toc_depth: 3
     toc_float: true
     number_sections: false
-    theme: darkly
+    theme: paper
 ---
 
 ---
@@ -19,9 +19,9 @@ output:
 ---
 
 # R Notebooks
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. It allows you to generate different types of output (i.e. reports, presentations, dashboards). The notebook begins with a 'YAML header' bordered by three hyphens. It determines the type of output that R will build from the _.Rmd_ file. In this case, it is an *html_document*.
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. It allows you to generate different types of output (i.e. reports, presentations, dashboards). The notebook begins with a 'YAML header' bordered by three hyphens (top & bottom). It determines the type of output that R will build from the _.Rmd_ file. In this case, it is an *html_document*.
 
-R Markdown closely follows the syntax of regular markdown (a language used for plain text formatting). Some basic formatting capabilities can be found [here](https://rmarkdown.rstudio.com/authoring_basics.html). A full cheatsheet is available [here](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf).
+R Markdown closely follows the syntax of regular markdown (a language used for plain text formatting). Some basic formatting capabilities can be found [here](https://rmarkdown.rstudio.com/authoring_basics.html). A full cheatsheet for R Markdown is available [here](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf).
 
 <br>
 
@@ -62,27 +62,43 @@ print("Hello, World!")
 
 # Install Packages
 
-We need to first install some essential packages on your computer (you only need to do this once):
+We need to first install some essential R packages on your computer (you only need to do this once):
 
 - [tidyverse](https://www.tidyverse.org/packages/): Contains multiple packages commonly used for data analyses (i.e. dplyr, ggplot2, etc.)
+
+- [rmarkdown](https://www.rdocumentation.org/packages/rmarkdown/versions/1.8): Next generation of R Markdown based on [pandoc](https://pandoc.org)
 
 - [knitr](https://www.rdocumentation.org/packages/knitr/versions/1.23): General purpose tool to knit reports from R Notebooks 
 
 
 ```{r install_packages, eval = FALSE, message = FALSE}
 #You can run these individually line-by-line using Cmd+Enter
-
-install.packages("tidyverse", "knitr", "rmarkdown")
-
+install.packages("tidyverse")
+install.packages("rmarkdown")
+install.packages("knitr")
 ```
 
 <br>
 
 ---
 
-# Useful Resources
+# Useful Resources  
 
-- [R for Data Science](https://r4ds.had.co.nz)
-- [Introuction to R by Datacamp](https://www.datacamp.com/courses/free-introduction-to-r)
-- [Blogpost: R for cats](https://www.rforcats.net)
+__Online tutorials:__  
+
+- [R for Data Science](https://r4ds.had.co.nz)  
+
+- [Quick R](https://www.statmethods.net)  
+
+- [R for cats](https://www.rforcats.net) (blog post)  
+
+- [swirl](https://swirlstats.com) (good for practice)  
+
+  
+__Online courses:__  
+
+- [Introuction to R](https://www.datacamp.com/courses/free-introduction-to-r) by Datacamp  
+
+- [R Programming](https://www.coursera.org/learn/r-programming) by Coursera  
+
 
