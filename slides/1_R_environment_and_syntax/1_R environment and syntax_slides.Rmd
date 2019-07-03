@@ -173,7 +173,7 @@ class: left
 
 # 0_Getting started.Rmd
 
-- [HTML output]("https://github.com/xp-song/Intro2R/notes/0_Getting_started.html")
+- [HTML output]("http://htmlpreview.github.io/?https://github.com/xp-song/Intro2R/blob/master/notes/0_Getting_started.html")
 
 ---
 
