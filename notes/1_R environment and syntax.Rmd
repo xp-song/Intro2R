@@ -42,7 +42,7 @@ x <- "hello"
 - Sequential collection of data of the _same_ type
 - Coercion occurs if different types are mixed
 - Asking and coercion can be done manually to change the vector (data) type
-```{r, eval = FALSE}
+```{r eval = FALSE}
 #numeric vectors
 x <- c(1,3,5,6) 
 x <- 1:5
@@ -64,7 +64,7 @@ x
 - Consist of different elements (i.e. variables/vectors) that can be of _different types_
 - Elements in a list are indexed with [[]], individual items are in []
 - Functions only be applied to vectors, not lists!
-```{r, eval= FALSE}
+```{r eval= FALSE}
 mylist <- list(num_vec, char_vec, 1.783, 5L, "hello") #add L suffix if you explicitly want integers
 mylist
 is.list(mylist) #asking
@@ -72,32 +72,71 @@ is.list(mylist) #asking
 
 ### Factors
 
-- Used to represent categorical data - An integer with labels (Much easier to understand data. e.g. 3,2,1 - High, Medium, Low; 1, 2 - Male, Female)
+- Used to represent data with limited, discrete categories (i.e. categorical, ordinal, or even binary)
+- Can be coded as character or numeric
+- Some examples:
+  - Tom, Dick, Harry
+  - Blue, Black, Brown (eye color)
+  - High, Medium, Low (3, 2, 1)
+  - Strongly disagree, disagree, neutral, agree, strongly agree (-2:2)
+  - Male, Female (1, 2)
 
 ```{r, eval = FALSE}
-e.g. x <- factor(c("yes", "yes", "no", "yes", "no"))
+x <- factor(c("SA", "D", "A", "A", "SA", "Neutral", "SD"))
+x
 
-Defining the ORDER of the levels+
-e.g. x <- factor(c("yes", "yes", "no", "yes", "no"), levels = c("yes", "no"))
-#Default baseline level by ALPHABETICAL ORDER. If not, have to SPECIFY (in order).
+#define order (default is alphabetical)
+x <- factor(c("SA", "D", "A", "A", "SA", "Neutral", "SD"), levels = c("SD", "D", "Neutral", "A", "SA"))
+x
 
-unclass(x): understanding how it is broken down into numbers & levels
+unclass(x) #show as numbers, with "levels" attribute showing actual text
 ```
 
-
 ### Matrices
+- Data in rectangular format (2D array with rows & columns)
+- Data must be of the _same_ type!
+- More memory efficient than dataframes
+```{r eval = FALSE}
+m <- matrix(1:12, nrow = 4)
+m #data goes in by columns in default mode
+
+dim(m) #dimensions: no. of rows & cols 
+dimnames(m)
+dimnames(m) <- list(c("Tom", "Dick", "Harry", "Me"), c("Blue", "White", "Red")) #add names to row/cols
+
+#size comparisons
+object.size(m) # 264 bytes
+d <- as.data.frame(m) #convert to dataframe
+object.size(d) # 1032 bytes
+```
+
 ### Dataframes
+- Data in rectangular format (2D array with rows & columns)
+- Columns can contain _different_ types of data variables (i.e. numeric, character, etc.)
+- Each column are vectors/lists of similar length
+```{r eval = FALSE}
+
+
+dim(df) #dimensions: no. of rows & cols 
+dimnames(df) #works?
+
+head(df) #view first few rows only
+names(df)
 
 is.na()
-names(datafilename): check the names in the dataset/table (e.g. names(CO2))
-head(): see only a few rows of data (for a dataset that is too large)
-dim(): dimension (how many rows & columns)
-
 
 
 data(): See all built-in datasets in R packages
 data(datafilename): see specific data (e.g. data(CO2))
 data(package="packagename"): check datasets in other packages
+#subsetting
+x[3,2]
+x[1:3, c(1,3)]
+x[3,]
+
+```
+
+
 
 
 ## Functions

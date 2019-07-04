@@ -383,5 +383,75 @@ class: left
 ]
 .right-column[
 **Factors**
-- 
+- Used to represent categorical, ordinal, or even binary data
+- Can be coded as character or numeric
+- Some examples:
+  - Tom, Dick, Harry
+  - Blue, Black, Brown (eye color)
+  - High, Medium, Low (3, 2, 1)
+  - SD, D, Neutral, A, SA (-2:2)
+  - Male, Female (1, 2)
+```{r eval = TRUE, echo = FALSE, out.width=1000, fig.align='center'}
+knitr::include_graphics("images/factors.png")
+```
 ]
+
+???
+
+- What is wrong with the output?
+
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### <span style="color:grey">Syntax</span>
+### Structures
+]
+.right-column[
+**Matrices**
+- Data in rectangular format (2D array with rows & columns)
+- Data must be of the _same_ type!
+- More memory efficient than dataframes
+```{r eval = TRUE, echo = FALSE, out.width=1000, fig.align='center'}
+knitr::include_graphics("images/matrices.png")
+```
+]
+
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### <span style="color:grey">Syntax</span>
+### Structures
+]
+.right-column[
+**Dataframes**
+- Data in rectangular format (2D array with rows & columns)
+- Columns can contain _different_ types of data variables (i.e. numeric, character, etc.)
+- Each column are vectors/lists of similar length
+]
+
+---
+
+class: center
+
+# Let's Revise!
+In the figure, name all the objects that could be the following data structures:  
+__List, Matrix, Vector__
+```{r eval = TRUE, echo = FALSE, out.width=400, fig.align='center', fig.cap="Image from https://hbctraining.github.io/Intro-to-R"}
+knitr::include_graphics("images/list_in_df.png")
+```
+
+???
+- List: Everything except matrix (note df can consist of lists)
+
+- Matrix: Everything expcept df
+
+- Vector: Everything
+

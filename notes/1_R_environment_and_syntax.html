@@ -1635,23 +1635,67 @@ is.list(mylist) #asking</code></pre>
 <div id="factors" class="section level3">
 <h3>Factors</h3>
 <ul>
-<li>Used to represent categorical data - An integer with labels (Much easier to understand data. e.g. 3,2,1 - High, Medium, Low; 1, 2 - Male, Female)</li>
+<li>Used to represent data with limited, discrete categories (i.e. categorical, ordinal, or even binary)</li>
+<li>Can be coded as character or numeric</li>
+<li>Some examples:
+<ul>
+<li>Tom, Dick, Harry</li>
+<li>Blue, Black, Brown (eye color)</li>
+<li>High, Medium, Low (3, 2, 1)</li>
+<li>Strongly disagree, disagree, neutral, agree, strongly agree (-2:2)</li>
+<li>Male, Female (1, 2)</li>
+</ul></li>
 </ul>
-<pre class="r"><code>e.g. x &lt;- factor(c(&quot;yes&quot;, &quot;yes&quot;, &quot;no&quot;, &quot;yes&quot;, &quot;no&quot;))
+<pre class="r"><code>x &lt;- factor(c(&quot;SA&quot;, &quot;D&quot;, &quot;A&quot;, &quot;A&quot;, &quot;SA&quot;, &quot;Neutral&quot;, &quot;SD&quot;))
+x
 
-Defining the ORDER of the levels+
-e.g. x &lt;- factor(c(&quot;yes&quot;, &quot;yes&quot;, &quot;no&quot;, &quot;yes&quot;, &quot;no&quot;), levels = c(&quot;yes&quot;, &quot;no&quot;))
-#Default baseline level by ALPHABETICAL ORDER. If not, have to SPECIFY (in order).
+#define order (default is alphabetical)
+x &lt;- factor(c(&quot;SA&quot;, &quot;D&quot;, &quot;A&quot;, &quot;A&quot;, &quot;SA&quot;, &quot;Neutral&quot;, &quot;SD&quot;), levels = c(&quot;SD&quot;, &quot;D&quot;, &quot;Neutral&quot;, &quot;A&quot;, &quot;SA&quot;))
+x
 
-unclass(x): understanding how it is broken down into numbers &amp; levels</code></pre>
+unclass(x) #show as numbers, with &quot;levels&quot; attribute showing actual text</code></pre>
 </div>
 <div id="matrices" class="section level3">
 <h3>Matrices</h3>
+<ul>
+<li>Data in rectangular format (2D array with rows &amp; columns)</li>
+<li>Data must be of the <em>same</em> type!</li>
+<li>More memory efficient than dataframes</li>
+</ul>
+<pre class="r"><code>m &lt;- matrix(1:12, nrow = 4)
+m #data goes in by columns in default mode
+
+dim(m) #dimensions: no. of rows &amp; cols 
+dimnames(m)
+dimnames(m) &lt;- list(c(&quot;Tom&quot;, &quot;Dick&quot;, &quot;Harry&quot;, &quot;Me&quot;), c(&quot;Blue&quot;, &quot;White&quot;, &quot;Red&quot;)) #add names to row/cols
+
+#size comparisons
+object.size(m) # 264 bytes
+d &lt;- as.data.frame(m) #convert to dataframe
+object.size(d) # 1032 bytes</code></pre>
 </div>
 <div id="dataframes" class="section level3">
 <h3>Dataframes</h3>
-<p>is.na() names(datafilename): check the names in the dataset/table (e.g. names(CO2)) head(): see only a few rows of data (for a dataset that is too large) dim(): dimension (how many rows &amp; columns)</p>
-<p>data(): See all built-in datasets in R packages data(datafilename): see specific data (e.g. data(CO2)) data(package=“packagename”): check datasets in other packages</p>
+<ul>
+<li>Data in rectangular format (2D array with rows &amp; columns)</li>
+<li>Columns can contain <em>different</em> types of data variables (i.e. numeric, character, etc.)</li>
+</ul>
+<pre class="r"><code>dim(df) #dimensions: no. of rows &amp; cols 
+dimnames(df) #works?
+
+head(df) #view first few rows only
+names(df)
+
+is.na()
+
+
+data(): See all built-in datasets in R packages
+data(datafilename): see specific data (e.g. data(CO2))
+data(package=&quot;packagename&quot;): check datasets in other packages
+#subsetting
+x[3,2]
+x[1:3, c(1,3)]
+x[3,]</code></pre>
 </div>
 </div>
 <div id="functions" class="section level2">
