@@ -1,25 +1,112 @@
 ---
 title: "R Environment and Syntax"
-subtitle: "Intro2R: Lesson 1 of 4"
+subtitle: "[Intro2R](https://github.com/xp-song/Intro2R): Lesson 1 of 4"
+author: "author: xpsong"
+date: "updated: `r Sys.Date()`"
 output:
   html_document:
     toc: true
     toc_depth: 3
     toc_float: true
-    number_sections: true
-    theme: lumen
+    number_sections: false
+    theme: paper
 ---
 
 ```{r load_packages, echo = FALSE, message = FALSE, warning = FALSE}
-#to load packages can either use the command library() or require()
-
-require(knitr) #to knit HMTL
-
-require(dplyr) #data manipulation
-require(tidyr) #data manipulation
-require(ggplot2) #data visualisation
-
+#commands are separated by ; or a new line
+library(dplyr); library(tidyr) #data manipulation
+library(ggplot2) #data visualisation 
+library(knitr) #to knit HMTL
 ```
+
+---
+
+# Objects in R
+
+## Variables
+- Used to store data
+- Naming should be consistent/clear
+  - Case sensitive, no numbers/symbols/whitespace
+  - E.g. treeHeight_m, species_count
+- **Data types:** Numeric, integer, character, logical (T/F) or complex
+```{r variables, eval = FALSE}
+#numeric data
+x <- 4
+x <- (4+5)/2
+
+#character data
+x <- "hello"
+```
+## Data Structures
+### Vectors 
+- Sequential collection of data of the _same_ type
+- Coercion occurs if different types are mixed
+- Asking and coercion can be done manually to change the vector (data) type
+```{r, eval = FALSE}
+#numeric vectors
+x <- c(1,3,5,6) 
+x <- 1:5
+x <- seq(1,5,1)
+x <- vector("numeric", length=10)
+num_vec <- c(TRUE, 2) #in R, TRUE=1, FALSE=0
+is.numeric(num_vec) 
+
+#character vectors
+x <- c("hello", "a", "b", "c")
+x <- c(1.7, "a")
+char_vec <- c("a", TRUE) #'TRUE' turned from logical to character
+is.character(char_vec) 
+
+x <- as.character(num_vec) #coercion from numeric to character
+x
+```
+### Lists
+- Consist of different elements (i.e. variables/vectors) that can be of _different types_
+- Elements in a list are indexed with [[]], individual items are in []
+- Functions only be applied to vectors, not lists!
+```{r, eval= FALSE}
+mylist <- list(num_vec, char_vec, 1.783, 5L, "hello") #add L suffix if you explicitly want integers
+mylist
+is.list(mylist) #asking
+```
+
+### Factors
+
+- Used to represent categorical data - An integer with labels (Much easier to understand data. e.g. 3,2,1 - High, Medium, Low; 1, 2 - Male, Female)
+
+```{r, eval = FALSE}
+e.g. x <- factor(c("yes", "yes", "no", "yes", "no"))
+
+Defining the ORDER of the levels+
+e.g. x <- factor(c("yes", "yes", "no", "yes", "no"), levels = c("yes", "no"))
+#Default baseline level by ALPHABETICAL ORDER. If not, have to SPECIFY (in order).
+
+unclass(x): understanding how it is broken down into numbers & levels
+```
+
+
+### Matrices
+### Dataframes
+
+is.na()
+names(datafilename): check the names in the dataset/table (e.g. names(CO2))
+head(): see only a few rows of data (for a dataset that is too large)
+dim(): dimension (how many rows & columns)
+
+
+
+data(): See all built-in datasets in R packages
+data(datafilename): see specific data (e.g. data(CO2))
+data(package="packagename"): check datasets in other packages
+
+
+## Functions
+
+- Try looking up functions: `?library`
+
+read.table
+read.csv() #Default Header=T
+
 
 
 

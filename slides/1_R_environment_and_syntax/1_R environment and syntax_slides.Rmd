@@ -29,6 +29,21 @@ options(htmltools.dir.version = FALSE)
 library(xaringan)
 library(xaringanthemer)
 ```
+
+class: inverse, center, middle
+
+# Outline  
+  
+
+1) [About this crash course](#4)
+ 
+2)  [Getting Started](#Getstarted)
+
+3)  [R Environment and Syntax](#Renviron)
+
+
+---
+
 background-image: url(https://www.r-project.org/logo/Rlogo.svg)
 background-size: 100px
 background-position: 95% 5%
@@ -95,6 +110,7 @@ We will work entirely with RStudio, and run our scripts in R Notebooks (*.Rmd* f
 ---
 
 class: inverse, center, middle
+name: Getstarted
 
 # Getting Started
 
@@ -175,6 +191,8 @@ The folder containing the RStudio Project is the 'working directory', where R in
 
 ???
 
+- setwd(): manually specify the working directory
+
 - RStudo Project file acts as a 'homing beacon', so we don't need to write out the initial path
 
 - Close/delete the test project
@@ -237,7 +255,7 @@ class: left
 - [rmarkdown](https://www.rdocumentation.org/packages/rmarkdown/versions/1.8): Next generation of R Markdown based on [pandoc](https://pandoc.org)  
 - [knitr](https://www.rdocumentation.org/packages/knitr/versions/1.23): General purpose tool to knit reports from R Notebooks  
 
-```{r eval = TRUE, echo = FALSE, out.width=580, fig.align='center', fig.cap="Image from medium.com"}
+```{r eval = TRUE, echo = FALSE, out.width=550, fig.align='center', fig.cap="Image from medium.com"}
 knitr::include_graphics("images/tidyverse.png")
 ```
 
@@ -271,4 +289,99 @@ Online courses
 - [R Programming](https://www.coursera.org/learn/r-programming) by Coursera
 
 
+---
 
+class: inverse, center, middle
+name: Renviron
+
+# R Environment and Syntax
+
+Open **1_R environment and syntax.Rmd**  in the _/notes_ folder
+
+Load packages with <span style="color:black">`library("<package_name>")`</span>
+
+
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### Syntax
+]
+.right-column[ 
+**Variables**
+- Used to store data
+- Data types: _Numeric, character, integer, logical (T/F) or complex_
+- Assign a variable `x <- 4` (arrow shortcut: `Option/Alt`+`-`)  
+- Words (characters) must be within quotation marks `"hello"` 
+] 
+--
+.right-column[ 
+**🌟Best Practice**
+- `x = 4` and ` x <- 4` produce similar results
+- However, code consistency is important
+- In R, we use `<-` as an assignment operator, and `=` for arguments within functions 
+- Spacing is also important for readability e.g. `myvar<-4` ☹️   
+- Naming should be consistent/clear (case sensitive, no numbers/symbols/whitespace). E.g. treeHeight_m, species_count
+]
+
+???
+
+- try assigning a variable, call it myvar
+- variable should appear in your environment
+
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### <span style="color:grey">Syntax</span>
+### Structures
+]
+.right-column[
+**Vectors**
+- Sequential collection of data of the _same_ type
+- Coercion occurs if different types are mixed
+- Asking and coercion can be done manually to change the vector (data) type
+```{r eval = TRUE, echo = FALSE, out.width=1000, fig.align='center'}
+knitr::include_graphics("images/vectors.png")
+```
+]
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### <span style="color:grey">Syntax</span>
+### Structures
+]
+.right-column[
+**Lists**
+- Consist of different elements (i.e. variables/vectors) that _can be of different types_ 
+- E.g. `mylist <- list(num_vec, char_vec, 1, "hello")`
+- Elements in a list are indexed with [[]], individual items are in []
+```{r eval = TRUE, echo = FALSE, out.width=1000, fig.align='center'}
+knitr::include_graphics("images/lists.png")
+```
+]
+
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### <span style="color:grey">Syntax</span>
+### Structures
+]
+.right-column[
+**Factors**
+- 
+]

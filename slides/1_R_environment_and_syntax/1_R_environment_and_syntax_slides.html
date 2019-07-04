@@ -23,6 +23,21 @@ class: center, middle, inverse, title-slide, title-slide
 
 
 
+
+class: inverse, center, middle
+
+# Outline  
+  
+
+1) [About this crash course](#4)
+ 
+2)  [Getting Started](#Getstarted)
+
+3)  [R Environment and Syntax](#Renviron)
+
+
+---
+
 background-image: url(https://www.r-project.org/logo/Rlogo.svg)
 background-size: 100px
 background-position: 95% 5%
@@ -87,6 +102,7 @@ We will work entirely with RStudio, and run our scripts in R Notebooks (*.Rmd* f
 ---
 
 class: inverse, center, middle
+name: Getstarted
 
 # Getting Started
 
@@ -163,6 +179,8 @@ The folder containing the RStudio Project is the 'working directory', where R in
 
 ???
 
+- setwd(): manually specify the working directory
+
 - RStudo Project file acts as a 'homing beacon', so we don't need to write out the initial path
 
 - Close/delete the test project
@@ -222,7 +240,7 @@ class: left
 - [knitr](https://www.rdocumentation.org/packages/knitr/versions/1.23): General purpose tool to knit reports from R Notebooks  
 
 &lt;div class="figure" style="text-align: center"&gt;
-&lt;img src="images/tidyverse.png" alt="Image from medium.com" width="580" /&gt;
+&lt;img src="images/tidyverse.png" alt="Image from medium.com" width="550" /&gt;
 &lt;p class="caption"&gt;Image from medium.com&lt;/p&gt;
 &lt;/div&gt;
 
@@ -254,6 +272,100 @@ Online tutorials
 Online courses
 - [Introuction to R](https://www.datacamp.com/courses/free-introduction-to-r) by Datacamp
 - [R Programming](https://www.coursera.org/learn/r-programming) by Coursera
+
+
+---
+
+class: inverse, center, middle
+name: Renviron
+
+# R Environment and Syntax
+
+Open **1_R environment and syntax.Rmd**  in the _/notes_ folder
+
+Load packages with &lt;span style="color:black"&gt;`library("&lt;package_name&gt;")`&lt;/span&gt;
+
+
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### Syntax
+]
+.right-column[ 
+**Variables**
+- Used to store data
+- Data types: _Numeric, character, integer, logical (T/F) or complex_
+- Assign a variable `x &lt;- 4` (arrow shortcut: `Option/Alt`+`-`)  
+- Words (characters) must be within quotation marks `"hello"` 
+] 
+--
+.right-column[ 
+**🌟Best Practice**
+- `x = 4` and ` x &lt;- 4` produce similar results
+- However, code consistency is important
+- In R, we use `&lt;-` as an assignment operator, and `=` for arguments within functions 
+- Spacing is also important for readability e.g. `myvar&lt;-4` ☹️   
+- Naming should be consistent/clear (case sensitive, no numbers/symbols/whitespace). E.g. treeHeight_m, species_count
+]
+
+???
+
+- try assigning a variable, call it myvar
+- variable should appear in your environment
+
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
+### Structures
+]
+.right-column[
+**Vectors**
+- Sequential collection of data of the _same_ type
+- Coercion occurs if different types are mixed
+- Asking and coercion can be done manually to change the vector (data) type
+&lt;img src="images/vectors.png" width="1000" style="display: block; margin: auto;" /&gt;
+]
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
+### Structures
+]
+.right-column[
+**Lists**
+- Consist of different elements (i.e. variables/vectors) that _can be of different types_ 
+- E.g. `mylist &lt;- list(num_vec, char_vec, 1, "hello")`
+- Elements in a list are indexed with [[]], individual items are in []
+&lt;img src="images/lists.png" width="1000" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
+### Structures
+]
+.right-column[
+**Factors**
+- 
+]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

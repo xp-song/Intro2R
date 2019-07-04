@@ -1,5 +1,8 @@
 ---
 title: "Data wrangling and visualisation"
+subtitle: "[Intro2R](https://github.com/xp-song/Intro2R): Lesson 4 of 4"
+author: "author: xpsong"
+date: "updated: `r Sys.Date()`"
 output:
   html_document:
     toc: true
