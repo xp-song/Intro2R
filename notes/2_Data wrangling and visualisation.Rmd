@@ -1,6 +1,6 @@
 ---
 title: "Data wrangling and visualisation"
-subtitle: "[Intro2R](https://github.com/xp-song/Intro2R): Lesson 2 of 4"
+subtitle: "[Intro2R](https://github.com/xp-song/Intro2R): Lesson 2 of 3"
 author: "author: xpsong"
 date: "updated: `r Sys.Date()`"
 output:
@@ -9,9 +9,129 @@ output:
     toc_depth: 3
     toc_float: true
     number_sections: true
-    theme: lumen
+    theme: paper
 ---
+```{r eval = FALSE}
+data() #built-in datasets in R
+data(package="ggplot2")
 
+#library(ggplot2)
+diamonds <- data(diamonds, package = "ggplot2")
+```
+
+```{r}
+#R automatically creates index column
+#ozone <- ozone[ , !names(ozone) %in% "X"] #you can remove this index column
+
+
+NAs in Dataframes:
+Option 1:
+na.omit(datafilename): remove ALL rows with NAs #But may remove valuable info!
+
+Option 2:
+- Check VARIABLES with high proportion of NA first using use apply(X, MARGIN, FUN, ...)+
+apply(apply(CO2,2,is.na),2,sum): indicates how many NAs in EACH column (a NESTED apply function)
+#For margin argument, "1" indicates rows while "2" indicates columns, while c(1,2) indicates both - this specifies the grouping.
+
+- Remove NAs individually
+nonNAvalues <- complete.cases(dataframename): create a logical vector
+dataframename[nonNAvalues,]: Subset & see only non-NA values
+is.na()
+
+
+#subsetting
+x[3,2]
+x[1:3, c(1,3)]
+x[3,]
+
+SUBSCRIPTS (SUBSETTING) AND INDICES
+Subsetting:
+[]: returns object of SAME CLASS as original
+[[]]: extract elements of list/dataframe, only used to extract single element, class of object will not necessarily be the same #similar to $
+
+
+Retrieving elements of a vector/matrix:
+vectorname[3]: retrieves the 3rd element in the vector
+vectorname[1:4]: retrieves 1-4 element
+
+matrixname[4,6]: retrieves ROW 4 COLUMN 6
+matrixname[,6]: retrieves all elements in column 6
+matrixname[4,]: retrieves all in row 4
+
+
+Logical subscripts: Subsets data, very useful for running model for one location/species/etc. (e.g. for the vector x <- c(1,2,4,8,20,1,3,7))
+y <- x[x<4] ##1,2,1,3 (the ELEMENTS)
+x<4 ##TRUE TRUE FALSE FALSE FALSE TRUE TRUE FALSE (positions where x<4)
+which(x<4) ##1,2,6,7 (the POSITION NUMBERS)
+
+Trim vectors using negative subscripts (e.g. for the vector x <- (1,2,4,8,20,1,3,7))
+A <- x[-1]: creates new vector A with FIRST element removed
+B <- x[-length(x)]: creates new vector B with LAST element removed
+
+Checking where the values of vector C appear in vector x+
+C <- c(1)
+match(x,C) #The ORDER matters! (different from match(C,x))
+## 1 NA NA NA NA 1 NA NA
+
+
+Subsetting in Dataframes & Matrices:
+e.g.
+CO2[1,]
+CO2[3:7,4]
+e.g. Sorting the data by certain variable (e.g. Sort CO2 table by uptake (ROWS in ascending order))+
+CO2[order(CO2$uptake),]
+e.g. Viewing only data for Mississippi+
+CO2[CO2$Type == "Mississippi",]
+e.g. Viewing only ROWS for which "uptake" is greater than the mean and "conc" is greater than 200+
+CO2[CO2$uptake>mean(CO2$uptake) & CO2$conc>200,]
+
+Making a named subset (e.g. take all rows of columns 4 & 5)
+subset.name <- CO2[,c(4,5)]
+
+Negative subscripts:
+CO2without3rows <- CO2[-c(1:3),]
+
+$
+  
+  
+OTHER DATA MANIPULATION IN DATAFRAMES
+
+unique(dataframeA): Remove DUPLICATE rows
+
+scale(x, center=TRUE, scale=TRUE): centers & scales the data (deducts the mean per column, divides by standard deviation)
+
+```
+
+
+# Data cleaning
+
+1) Save your .xlsx file as a csv (comma delimited) in the /raw folder and give it a name (eg. responses_YYYYMMDD.csv)
+
+2) Load it into R
+
+```{r message = FALSE, warning = FALSE}
+#svy.df <- read.csv("raw/responses_20190311.csv", stringsAsFactors = FALSE, check.names=FALSE) 
+#import the data as 'svy.df'
+#the location of .Rproj file is where the working directory is (so, no need to type the entire file path)
+```
+
+
+
+```{r other tests, eval = FALSE}
+#other tests u may consider
+
+#require(stats)
+t.test()
+
+
+#other useful packages::functions to consider for surveys
+library(survey)
+svydesign() #specify survey design
+survey::postStratify() #adjusts sampling weights so that the joint distribution of a set of post-stratifying variables matches the known population joint distribution. 
+
+library(likert)
+
+```
 
 
 

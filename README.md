@@ -10,8 +10,7 @@ This workshop is designed to be a crash-course. We will dive right into organisi
 
 1. R environment and syntax
 2. Data wrangling and visualisation
-3. Statistical analyses
-4. Further applications
+3. Analyses and applications
 
 
 ## Instructions:
@@ -30,7 +29,5 @@ In the downloaded folder you will see a few important items.
 * The _'slides'_ folder. It contains the presentation slides for the workshop.
 
 * The _'data'_ folder. It contains example datasets we will use in this workshop.
-
-* The _'admin'_ folder. It contains source files or examples used during the course.
 
 * The _'output'_ folder (empty). When generating outputs (i.e. figures, graphs), we will specify that our code exports them to this location.

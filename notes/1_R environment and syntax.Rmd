@@ -1,6 +1,6 @@
 ---
 title: "R Environment and Syntax"
-subtitle: "[Intro2R](https://github.com/xp-song/Intro2R): Lesson 1 of 4"
+subtitle: "[Intro2R](https://github.com/xp-song/Intro2R): Lesson 1 of 3"
 author: "author: xpsong"
 date: "updated: `r Sys.Date()`"
 output:
@@ -8,7 +8,7 @@ output:
     toc: true
     toc_depth: 3
     toc_float: true
-    number_sections: false
+    number_sections: true
     theme: paper
 ---
 
@@ -18,6 +18,35 @@ library(dplyr); library(tidyr) #data manipulation
 library(ggplot2) #data visualisation 
 library(knitr) #to knit HMTL
 ```
+
+---
+
+# Operators
+__Arithmetic__  
+
+- `+` `-` `*` `/`  
+- `^` or `**` Exponentiate  
+- `%%` Modulus (e.g. `5%%2` = 1)  
+- `%/%` Integer division (e.g. `23%/%5` = 4)  
+  
+__Logical__  
+
+- `<` `<=` `>` `>=`
+- `==` Exactly equal (e.g. `1e3 == 1*10^3`; `1e-3 == 1*10^-3`)
+- `!=` Not equal
+- `!x` Not x
+- `x|y` x OR y  
+- `x&y` x AND y  
+
+__Other__  
+
+- `1:10` creates a sequence:
+```{r echo = FALSE}
+1:10
+```
+
+
+<br>
 
 ---
 
@@ -37,6 +66,7 @@ x <- (4+5)/2
 #character data
 x <- "hello"
 ```
+
 ## Data Structures
 ### Vectors 
 - Sequential collection of data of the _same_ type
@@ -114,69 +144,268 @@ object.size(d) # 1032 bytes
 - Data in rectangular format (2D array with rows & columns)
 - Columns can contain _different_ types of data variables (i.e. numeric, character, etc.)
 - Each column are vectors/lists of similar length
+- Import tabular data as dataframes using `read.table()` family of functions (i.e. `read.csv()`, `read.delim()`)
 ```{r eval = FALSE}
+#use data.frame() to manually create df
 
+ozone <- read.csv("../data/ozone_data.csv") #default: headers in first row (header = T)
+is.data.frame(ozone) #check attribute
+head(ozone) #view first few rows only
 
-dim(df) #dimensions: no. of rows & cols 
-dimnames(df) #works?
+dim(ozone) #dimensions: no. of rows & cols 
+dimnames(ozone) #row & col names
+names(ozone) #col names, also can use 'colnames(ozone)'
+rownames(ozone)
 
-head(df) #view first few rows only
-names(df)
-
-is.na()
-
-
-data(): See all built-in datasets in R packages
-data(datafilename): see specific data (e.g. data(CO2))
-data(package="packagename"): check datasets in other packages
-#subsetting
-x[3,2]
-x[1:3, c(1,3)]
-x[3,]
-
+#extract columns with '$'
+ozone$rad
+ozone$temp
 ```
-
-
-
 
 ## Functions
+- Many in-built functions available in packages
+- Functions break our code into simpler parts/modules, which helps improve readability
+- You can create your own (user-defined) functions, and edit existing ones
+- Inputs to a function include R objects and arguments
+  - Look up details with `?functionname` (e.g. `?read.csv`)
 
-- Try looking up functions: `?library`
+### Useful functions in base R
+__Basic calculation__  
 
-read.table
-read.csv() #Default Header=T
+- `log(x)` Log base e of x (natural)  
+- `log10(x)` Log base 10 of x
+- `log(x,n)` Log base n of x  
+- `exp()` Exponential  
+- `sqrt()` Square root  
+- `sin()`; `cos()`; `tan()`  
+- `factorial()`
 
+__Create vectors__  
 
+- `seq(a,b,c)` A vector with elements a:b, with step magnitudes of c (e.g. Days in a year is  `seq(1,365,1)`)  
+- `rep(a,b)` A vector with a repeated b times  
+  
+__Rounding of numeric vectors__  
 
+- `round(x, digits=0)` 0 decimal places for x  
+- `signif(x, digits=2)` x rounded to 2 sig. fig.  
+- `floor(x)` Largest _integer_ greater than corresponding elements of x (round down)  
+- `ceiling(x)` Smallest _integer_ greater than corresponding elements of x (round up)  
+- `abs(x)` absolute value
+  
+__Summary statistics of vectors/tabular data__  
 
-# Data cleaning
+- `mean(x)`
+- `median(x)`
+- `var(x)` Variance
+- `max(x)` Max element
+- `min(x)` Min element
+- `range(x)` Min & max elements
+- `quantile(x)` Returns vector with the quantiles of x
+- `nrow()` Number of rows in tabular data
+- `ncol()` Number of columns in tabular data
+- `length(x)` Number of elements in x (same result as `ncol()` of tabular data)
 
-1) Save your .xlsx file as a csv (comma delimited) in the /raw folder and give it a name (eg. responses_YYYYMMDD.csv)
+__Calculation for vectors/matrices__
 
-2) Load it into R
+- `sum(x)` sums elements
+- `prod(x)` product of the elements
+- `colMeans(x)` 
+- `rowMeans(x)`
+- `colSums(x)`
+- `rowSums(x)`
 
-```{r message = FALSE, warning = FALSE}
-#svy.df <- read.csv("raw/responses_20190311.csv", stringsAsFactors = FALSE, check.names=FALSE) 
-#import the data as 'svy.df'
-#the location of .Rproj file is where the working directory is (so, no need to type the entire file path)
+__Manipulation of vectors/matrices__
+
+- `rank(x)` Vector of the ranks of the values in x (increasing order)
+- `sort(x)` Produce another vector with elements in increasing order
+- `sample(x, n, replace=T)` Sample a vector n times with replacement
+Adding rows/Creating matrices by joining vectors (e.g. adding the vectorA <- c(1,1,1))
+- `cbind(x, y)` Bind x & y as columns to form new matrix
+- `rbind(x, y)` Bind x & y as rows to form new matrix
+
+__Plotting functions__
+```{r}
+x <- seq(1,10)
+y <- x*10
+plot(x,y)
+```
+
+### User-defined functions
+- Writing functions are incredibly powerful
+- You define your own inputs and outputs
+- General structure: `functionname <- function(argumentlist){calculations}`
+- E.g. Calculate GPA from `grades.csv` using the following formula:
+
+$$
+\frac{ sum(Module\ grade\ point * Module\ credits)}{ sum(All\ module\ credits)}
+$$
+
+```{r}
+grades <- read.csv("../data/grades.csv")
+grades
+
+#calculate GPA manually
+sum(grades$grade_point * grades$credits) / sum(grades$credits) #element-wise multiplication of vectors
+
+#create function instead
+scorer <- function(gradepts, creds){ #inputs are vector objects
+  sum(gradepts*creds) / sum(creds)
+  }
+
+#use function
+scorer(grades$grade_point, grades$credits)
+```
+
+<br>
+
+__Loop functions__  
+
+- 'Loop' functions iterate over data to produce output
+- Repeats a task/calculation (repeats usually denoted as "i")  
+- **Subsetting in R:** Use square brackets. Combine with other operators. Examples:
+  - `x[5]` 5th element in vector x
+  - `x[i]` `i`th element in vector x (in a function, see below)
+  - `df[3,5]` Element in 3rd row & 5 col of dataframe df (sequence is always rows then cols)
+  - `df[c(3,5),]` Row 3/5 and all cols of dataframe df
+  - `df[3:5,]` Row 3,4 and 5 and all cols of dataframe df
+  - `df[-2,]` Everything except row 2 of dataframe df
+  - `df[-2,]` Everything except row 2 of dataframe df
+  - `df[which(df$gender=='F' & df$age > 65), ]` 
+
+```{r}
+grades <- read.csv("../data/grades.csv")
+
+grades$weightage <- 0 #add new col for weightage of each module
+
+#for loop
+for(i in 1:nrow(grades)){ #iterate 7 times across each row
+  grades$weightage[i] <- grades$credits[i] / sum(grades$credits)
+}
+
+grades
+
 ```
 
 
+```{r eval = FALSE}
 
-```{r other tests, eval = FALSE}
-#other tests u may consider
+Nested "for" loops ("for" loop within a "for" loop) e.g. for matrices, looping over columns & rows
+e.g. matrixA <- matrix(1:6, 2,3)
+for(i in seq_len(nrow(matrixA))){
+	for(j in seq_len(ncol(matrixA))){
+		print(matrixA)[i,j]}}
+#seq_len creates sequence of integers to put into matrix
 
-#require(stats)
-t.test()
 
 
-#other useful packages::functions to consider for surveys
-library(survey)
-svydesign() #specify survey design
-survey::postStratify() #adjusts sampling weights so that the joint distribution of a set of post-stratifying variables matches the known population joint distribution. 
+"while" loops:
+- Tests a condition if it is true, then executes the loop body, & so on...
+- Be careful, as "while" loops may dangerously lead to infinite loops (make sure that the condition that stops the loop WORKS)!
 
-library(likert)
+As soon as the value of the loop reaches a specified number, it stops+
+e.g. variableA <- 0
+while(variableA<10){
+	print(variableA)
+	variableA <- variableA+1}
 
+e.g. Calculating a factorial
+Option 1: factorial(4) ##24
+Option 2: Use "while" loop
+func.A <- function(x){
+	i <- 1
+	j <- x
+	while (j>1){
+		i <- i*j
+		j <- j-1}
+		return(i)}
+func.A(4) ##24
+
+
+LOOP FUNCTIONS (CONTINUED)
+lapply(listName,function...): Looping a list & applying a function on each element
+
+e.g. different vectors, such as a1 <- c("A","B"); a2 <- c(1,1,2,3,4,4); a3 <- matrix(1,ncol=3,nrow=3)
+ListA <- list(a1,a2,a3)
+lapply(ListA,length) 
+#function: length of each vector in list
+#lapply ALWAYS COERCES OBJECTS INTO A LIST, and ALWAYS RETURNS A LIST
+
+*the function "split" is an auxillary function that is useful, particularly with lapply
+
+
+sapply(): applies a function to a vector 
+- Same as lapply, but tries to simplify results (does not necessarily return a list)
+- Can return a VECTOR when result is a list where every element is length 1
+- Can return a matrix if result is a list where every element is of the SAME LENGTH (>1)
+- In all other scenarios, a list is returned
+
+e.g. to plot x^0.5 for x from 0-100+
+x=seq(0,100,0.01)
+plot(x,sapply(x,sqrt), type="l")
+
+e.g. to plot cos(x) for x from 0-100+
+plot(x,sapply(x,cos), type="l")
+
+
+
+apply(): applies a function to a matrix/array by rows or columns (e.g. apply(matrixname,1,sum))
+apply(matrixname, margin, function): applies a function to a matrix by columns or rows #For the margin, 1 indicates rows, 2 indicates columns, c(1,2) indicates rows & columns
+E.g. adding a "mean" column: matrixC <- cbind(matrixA, apply(matrixA,2,mean))
+
+
+tapply(): apply a function over subsets of a vector
+
+
+mapply(): multivariate version of lapply
 ```
 
+
+```{r eval = FALSE}
+CONTROL STRUCTURES
+Typical when writing functions and programs
+
+"if,else":
+- Testing a condition (conditionals)
+if(#condition){#do something} else {#do something else}
+if(#condition){#do something} else if(#condition){#do something different} else {#do something different}
+e.g. if(a==2){b=a+2}
+
+Simply testing a condition:
+if(#condition){}
+
+Writing the condition in the form of a vector+
+e.g. Substituting values of x>3 with 10 and x<3 with 0
+y <- ifelse(x>3, 10, 0)
+
+e.g. Substituting negative numbers with -1 and positive with 1 (e.g. x <- c(-1,3,4,-2))
+y <- ifelse(x<0,-1,1)
+
+
+
+"return": exit a function
+
+
+Read section on loop functions:
+"for": executing a loop a fixed number of times 
+"while": execute a loop WHILE a condition as true
+"repeat": execute an infinite loop
+"break": break execution of loop
+"next": skip an interation of a loop
+
+
+Example with MULTIPLE conditions in a test: 
+Random coin flip generates string of numbers, until it goes off the range between 3-10 (e.g. z <- 5)
+*Conditions are always evaluated from LEFT TO RIGHT!
+while(z>=3 && z<=10){
+	print(z)
+	coin <-rbinom(1,1,0.5)
+	
+	if(coin=1){
+		z <- z+1}
+		else{
+			z <- z-1}
+			}
+
+```
 

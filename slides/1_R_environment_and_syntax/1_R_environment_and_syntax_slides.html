@@ -4,9 +4,9 @@
     <title>Intro2R</title>
     <meta charset="utf-8" />
     <meta name="author" content="xpsong" />
-    <link href="libs/remark-css/default.css" rel="stylesheet" />
-    <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
-    <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link rel="stylesheet" href="custom-fonts.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
@@ -15,7 +15,7 @@ class: center, middle, inverse, title-slide, title-slide
 # Intro2R
 ## R Environment and Syntax
 ### xpsong
-### updated 2019-07-04
+### updated 2019-07-05
 
 ---
 
@@ -29,11 +29,13 @@ class: inverse, center, middle
 # Outline  
   
 
-1) [About this crash course](#4)
+1)  [About this crash course](#4)
  
 2)  [Getting Started](#Getstarted)
 
-3)  [R Environment and Syntax](#Renviron)
+3)  [Useful Resources](#resources)
+
+4)  [R Environment and Syntax](#Renviron)
 
 
 ---
@@ -159,11 +161,24 @@ class: left
 
 The folder containing the RStudio Project is the 'working directory', where R inputs/outputs/saves information (data, documents, history, etc.)
   
-- Type `getwd()` in the console of our new project
+- Type `getwd()` in the console of the new project (or Intro2R project)
   
-  - This returns the _absolute_ path to our working directory `/Users/&lt;computer_username&gt;/Desktop/test`
+  - This returns the path to our working directory  
+  e.g. `/Users/&lt;computer_username&gt;/Desktop/test`
 
---
+- Run `getwd()` within a _code chunk_ of an R Notebook in the Intro2R project
+
+  - When working in an R Notebook, the location of the `.Rmd` file is the working directory
+
+???
+
+- setwd(): manually specify the working directory
+
+---
+
+class: left
+
+# R Studio Projects
 
 ## 🌟 Best Practice
 
@@ -171,15 +186,14 @@ The folder containing the RStudio Project is the 'working directory', where R in
 
 - Rather than using _absolute_ paths in our scripts, use **_relative_** paths
 
-  - E.g. In the Intro2R Project console, we can read ozone data with either `read.delim("/&lt;path to Intro2R folder&gt;/Intro2R/data/ozone_data.txt")` or `read.delim("data/ozone_data.txt")`
+  - E.g. In the Intro2R Project _console_, we can read ozone data with either `read.delim("/&lt;path to Intro2R folder&gt;/Intro2R/data/ozone_data.txt")` or `read.delim("data/ozone_data.txt")`
+  
+  - Navigate to parent directory using `../` if `.Rmd` file is at different location from the `.Rproj` file  
+  `read.delim("../data/ozone_data.txt")`  
 
 - This allows scripts to work when we move the project around, even across different computers
 
-
-
 ???
-
-- setwd(): manually specify the working directory
 
 - RStudo Project file acts as a 'homing beacon', so we don't need to write out the initial path
 
@@ -260,19 +274,26 @@ class: inverse, center, middle
 ---
 
 class: left
+name: resources
 
 # Useful Resources
-
-Online tutorials
+__Online tutorials__
 - [R for Data Science](https://r4ds.had.co.nz)
 - [Quick R](https://www.statmethods.net)
 - [R for cats](https://www.rforcats.net) (blog post)
-- [swirl](https://swirlstats.com) (good for practice)
+- [swirl](https://swirlstats.com) (good for practice)  
 
-Online courses
+__Online courses__  
 - [Introuction to R](https://www.datacamp.com/courses/free-introduction-to-r) by Datacamp
 - [R Programming](https://www.coursera.org/learn/r-programming) by Coursera
 
+__Online Q&amp;A__  
+- [Stack Overflow](https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example?rq=1)
+- Remember to check your `sessionInfo()` when troubleshooting!  
+
+__Others__  
+- [How to use R/RStudio from an external drive](https://github.com/ClaudiaBrauer/A-very-short-introduction-to-R/blob/master/documents/Portable_versions_of_R_and_RStudio.pdf)  
+(i.e. if you don't have admin rights to install software)
 
 ---
 
@@ -285,6 +306,35 @@ Open **1_R environment and syntax.Rmd**  in the _/notes_ folder
 
 Load packages with &lt;span style="color:black"&gt;`library("&lt;package_name&gt;")`&lt;/span&gt;
 
+---
+
+class: left
+
+# Operators
+
+.left-column[ 
+### Syntax
+]
+.right-column[ 
+__Arithmetic__  
+- `+` `-` `*` `/`  
+- `^` or `**` Exponentiate  
+- `%%` Modulus (e.g. `5%%2` = 1)  
+- `%/%` Integer division (e.g. `23%/%5` = 4)  
+  
+__Logical__  
+- `&lt;` `&lt;=` `&gt;` `&gt;=`
+- `==` Exactly equal (e.g. `1e3 == 1*10^3`; `1e-3 == 1*10^-3`)  
+- `!=` Not equal
+- `!x` Not x
+- `x|y` x OR y  
+- `x&amp;y` x AND y  
+
+
+__Other__  
+- `1:10` creates a numeric sequence from 1 to 10
+
+] 
 
 ---
 
@@ -410,8 +460,11 @@ class: left
 .right-column[
 **Dataframes**
 - Data in rectangular format (2D array with rows &amp; columns)
-- Columns can contain _different_ types of data variables (i.e. numeric, character, etc.)
+- Columns can contain _different_ types of data variables
 - Each column are vectors/lists of similar length
+- Import tabular data as dataframes using `read.table()` family of functions (i.e. `read.csv()`, `read.delim()`)
+- Extract columns with `$`
+&lt;img src="images/dataframes.png" width="450" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -431,7 +484,98 @@ __List, Matrix, Vector__
 
 - Matrix: Everything expcept df
 
-- Vector: Everything
+- Vector: Everything (single-element vectors)
+
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
+### Functions
+]
+.right-column[
+- We have already been using many in-built functions
+- Functions break our code into simpler parts/modules, which helps improve readability
+- You can create your own (user-defined) functions, and edit existing ones
+- Inputs to a function include R objects and arguments
+  - Look up details with `?functionname`  
+]
+
+???
+
+- Some basic functions are in your notes. 
+- We wont' cover them but u can google/refer to them when necessary
+
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
+### Functions
+]
+.right-column[
+__User-defined Functions__  
+- Writing functions are incredibly powerful
+- You define your own inputs and outputs
+
+
+```r
+#Example function for a vector object
+averager &lt;- function(x){ 
+  sum(x)/length(x)
+  }
+
+myvector &lt;- c(2,4,3,2,5)
+averager(myvector)
+```
+
+```
+## [1] 3.2
+```
+]
+
+???
+
+- All calculations are within squiggly brackets
+- Can save output to a variable
+
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
+### Functions
+]
+.right-column[
+__User-defined Functions: Loops__  
+
+- 'Loop' functions iterate over data to produce output
+- Repeats a task/calculation (no. of repeats usually denoted as `i`)  
+]
+
+.right-column[
+**Subsetting in R (examples)**  
+- `x[5]` 5th element in vector x
+- `x[i]` `i`th element in vector x (in a function, see below)
+- `df[3,5]` Element in 3rd row &amp; 5 col of dataframe df (sequence is always rows then cols)
+- `df[c(3,5),]` Row 3/5 and all cols of dataframe df
+- `df[3:5,]` Row 3,4 and 5 and all cols of dataframe df
+- `df[-2,]` Everything except row 2 of dataframe df
+- `df[-2,]` Everything except row 2 of dataframe df
+- `df[which(df$gender=='F' &amp; df$age &gt; 65), ]` 
+]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
