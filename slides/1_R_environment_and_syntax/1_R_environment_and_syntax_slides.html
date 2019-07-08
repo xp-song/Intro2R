@@ -15,7 +15,7 @@ class: center, middle, inverse, title-slide, title-slide
 # Intro2R
 ## R Environment and Syntax
 ### xpsong
-### updated 2019-07-05
+### updated 2019-07-08
 
 ---
 
@@ -27,16 +27,24 @@ class: center, middle, inverse, title-slide, title-slide
 class: inverse, center, middle
 
 # Outline  
-  
 
-1)  [About this crash course](#4)
+__[About this crash course](#4)__  
  
-2)  [Getting Started](#Getstarted)
+__[Getting Started](#Getstarted)__  
 
-3)  [Useful Resources](#resources)
+__[R Environment and Syntax](#Renviron)__  
 
-4)  [R Environment and Syntax](#Renviron)
+Syntax: [Operators](#operators)
 
+Syntax: [Subsetting](#subsetting)
+
+Objects in R: [Variables](#variables)
+
+Objects in R: [Data structures](#struc)
+
+Objects in R: [Functions](#functions)
+
+__[Useful Resources](#resources)__  
 
 ---
 
@@ -264,37 +272,6 @@ class: left
   - language structure, data structures
 - We will not be using all of these packages in this workshop  
 
-
----
-
-class: inverse, center, middle
-
-# Useful Resources
-
----
-
-class: left
-name: resources
-
-# Useful Resources
-__Online tutorials__
-- [R for Data Science](https://r4ds.had.co.nz)
-- [Quick R](https://www.statmethods.net)
-- [R for cats](https://www.rforcats.net) (blog post)
-- [swirl](https://swirlstats.com) (good for practice)  
-
-__Online courses__  
-- [Introuction to R](https://www.datacamp.com/courses/free-introduction-to-r) by Datacamp
-- [R Programming](https://www.coursera.org/learn/r-programming) by Coursera
-
-__Online Q&amp;A__  
-- [Stack Overflow](https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example?rq=1)
-- Remember to check your `sessionInfo()` when troubleshooting!  
-
-__Others__  
-- [How to use R/RStudio from an external drive](https://github.com/ClaudiaBrauer/A-very-short-introduction-to-R/blob/master/documents/Portable_versions_of_R_and_RStudio.pdf)  
-(i.e. if you don't have admin rights to install software)
-
 ---
 
 class: inverse, center, middle
@@ -309,6 +286,7 @@ Load packages with &lt;span style="color:black"&gt;`library("&lt;package_name&gt
 ---
 
 class: left
+name: operators
 
 # Operators
 
@@ -339,6 +317,7 @@ __Other__
 ---
 
 class: left
+name: variables
 
 # Objects in R
 
@@ -370,6 +349,7 @@ class: left
 ---
 
 class: left
+name: struc
 
 # Objects in R
 
@@ -382,7 +362,8 @@ class: left
 - Sequential collection of data of the _same_ type
 - Coercion occurs if different types are mixed
 - Asking and coercion can be done manually to change the vector (data) type
-&lt;img src="images/vectors.png" width="1000" style="display: block; margin: auto;" /&gt;
+- Note that the `c()` function combines (concatenates) its arguments to form a vector
+&lt;img src="images/vectors.png" width="550" style="display: block; margin: auto;" /&gt;
 ]
 ---
 
@@ -463,9 +444,79 @@ class: left
 - Columns can contain _different_ types of data variables
 - Each column are vectors/lists of similar length
 - Import tabular data as dataframes using `read.table()` family of functions (i.e. `read.csv()`, `read.delim()`)
-- Extract columns with `$`
+- `$` Extracts elements by colnames  
 &lt;img src="images/dataframes.png" width="450" style="display: block; margin: auto;" /&gt;
 ]
+
+---
+
+class: left
+name: subsetting
+
+# Subsetting in R
+
+.left-column[ 
+### Syntax
+### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
+]
+.right-column[
+- Use square brackets `[ ]`
+- If dataset has 2 dimensions (i.e. tabular format), always specify row then column number
+- Examples:
+  - `x[5]` 5th element in vector `x`  
+  - `df[3,5]` Element in 3rd row &amp; 5th col of dataframe `df`
+  - `df[c(3,5),]` Row 3 &amp; 5, all cols of dataframe `df`
+  - `df[3:5,]` Row 3,4 &amp; 5, all cols of dataframe `df`
+  - `df[-2,]` Everything except row 2 of dataframe `df`  
+
+```
+##                    mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+## Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+## Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+## Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+## Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+```
+]
+
+???
+
+- At this point I want to introduce another operator: Subsetting
+
+---
+
+class: left
+
+# Subsetting in R
+
+.left-column[ 
+### Syntax
+### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
+]
+.right-column[
+**Quick test!⚡️**
+- `mtcars` dataset
+- What is the code to extract all data on cars that have a fuel efficiency of at least 20 mpg, and are more than 108 hp? 
+
+```
+##                 mpg cyl  disp  hp drat    wt  qsec vs am gear carb
+## Mazda RX4      21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4
+## Mazda RX4 Wag  21.0   6 160.0 110 3.90 2.875 17.02  0  1    4    4
+## Hornet 4 Drive 21.4   6 258.0 110 3.08 3.215 19.44  1  0    3    1
+## Lotus Europa   30.4   4  95.1 113 3.77 1.513 16.90  1  1    5    2
+## Volvo 142E     21.4   4 121.0 109 4.11 2.780 18.60  1  1    4    2
+```
+]
+
+--
+
+.right-column[
+- **Answer:** `mtcars[mtcars$mpg &gt;= 20 &amp; mtcars$hp &gt; 108, ]`
+]
+
+???
+- Refer to 'subsetting' section of notes for examples/hints
 
 ---
 
@@ -482,13 +533,14 @@ __List, Matrix, Vector__
 ???
 - List: Everything except matrix (note df can consist of lists)
 
-- Matrix: Everything expcept df
+- Matrix: Everything except df
 
 - Vector: Everything (single-element vectors)
 
 ---
 
 class: left
+name: functions
 
 # Objects in R
 
@@ -525,26 +577,88 @@ class: left
 __User-defined Functions__  
 - Writing functions are incredibly powerful
 - You define your own inputs and outputs
-
-
-```r
-#Example function for a vector object
-averager &lt;- function(x){ 
-  sum(x)/length(x)
-  }
-
-myvector &lt;- c(2,4,3,2,5)
-averager(myvector)
-```
-
-```
-## [1] 3.2
-```
+- General structure:  
+`functionname &lt;- function(argumentlist){calculations}`
 ]
 
 ???
 
 - All calculations are within squiggly brackets
+
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
+### Functions
+]
+.right-column[
+__User-defined Functions__  
+E.g. Load `grades.csv`  
+
+```
+##     subject grade grade_point credits
+## 1      Math     A         5.0       5
+## 2   English     B         3.5       5
+## 3 Economics     C         2.0       4
+## 4  Mandarin    B+         4.0       5
+## 5  Sleeping    A+         5.0       0
+## 6  Cantrmbr     F         0.0       5
+## 7   Intro2R    A+         5.0       1
+```
+Calculate the GPA using the formula:  
+$$
+\frac{ sum(Module\ grade\ point * Module\ credits)}{ sum(All\ module\ credits)}
+$$
+]
+--
+.right-column[
+`sum(grades$grade_point * grades$credits) / sum(grades$credits)`
+]
+
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
+### Functions
+]
+.right-column[
+__User-defined Functions__  
+E.g. Load `grades.csv`  
+
+```
+##     subject grade grade_point credits
+## 1      Math     A         5.0       5
+## 2   English     B         3.5       5
+## 3 Economics     C         2.0       4
+## 4  Mandarin    B+         4.0       5
+## 5  Sleeping    A+         5.0       0
+## 6  Cantrmbr     F         0.0       5
+## 7   Intro2R    A+         5.0       1
+```
+
+- Create a function named `scorer` instead:
+
+```r
+scorer &lt;- function(gradepts, creds){ #inputs are vector objects
+  sum(gradepts*creds) / sum(creds)
+  }
+
+myGPA &lt;- scorer(grades$grade_point, grades$credits) #use function
+```
+]
+
+???
+
 - Can save output to a variable
 
 ---
@@ -560,29 +674,307 @@ class: left
 ]
 .right-column[
 __User-defined Functions: Loops__  
-
 - 'Loop' functions iterate over data to produce output
 - Repeats a task/calculation (no. of repeats usually denoted as `i`)  
+- Various types of loops:
+  - `for` Execute a fixed number of times 
+  - `if` or `ifelse` Execute on specific conditions
+  - `while` Execute while a condition is true
+  - `repeat` Execute an infinite loop
+- Actions within a loop:
+  - `break` Break execution
+  - `next` Skip an iteration 
+  - `return` Exit a function
+- Loops can be nested! (i.e. loop within a loop)  
+- Perform subsetting to extract/write calculations within loops
+  - E.g. `x[i]` refers to the `i`th element in vector `x`
+]
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
+### Functions
 ]
 
 .right-column[
-**Subsetting in R (examples)**  
-- `x[5]` 5th element in vector x
-- `x[i]` `i`th element in vector x (in a function, see below)
-- `df[3,5]` Element in 3rd row &amp; 5 col of dataframe df (sequence is always rows then cols)
-- `df[c(3,5),]` Row 3/5 and all cols of dataframe df
-- `df[3:5,]` Row 3,4 and 5 and all cols of dataframe df
-- `df[-2,]` Everything except row 2 of dataframe df
-- `df[-2,]` Everything except row 2 of dataframe df
-- `df[which(df$gender=='F' &amp; df$age &gt; 65), ]` 
+__User-defined Functions: FOR Loops__  
+
+
+```r
+grades$weightage &lt;- 0 #add new col for weightage of each module
+
+for(i in 1:nrow(grades)){ #iterate across each row (7 times)
+  grades$weightage[i] &lt;- grades$credits[i] / sum(grades$credits) #write 
+  }
+
+grades
+```
+
+```
+##     subject grade grade_point credits weightage
+## 1      Math     A         5.0       5      0.20
+## 2   English     B         3.5       5      0.20
+## 3 Economics     C         2.0       4      0.16
+## 4  Mandarin    B+         4.0       5      0.20
+## 5  Sleeping    A+         5.0       0      0.00
+## 6  Cantrmbr     F         0.0       5      0.20
+## 7   Intro2R    A+         5.0       1      0.04
+```
 ]
+
+???
+
+- Note that you an also calculate directly without a loop (element-wise calculation of vectors)
+
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
+### Functions
+]
+
+.right-column[
+__User-defined Functions: IF Loops__  
+
+
+```r
+grades$pass &lt;- 0 
+
+for(i in 1:nrow(grades)){ #iterate across each row (7 times)
+  
+  if(grades$grade_point[i] &gt;= 2){ #loop within loop
+    grades$pass[i] &lt;- "yes"
+    } else {
+      grades$pass[i] &lt;- "no"
+    }
+}
+grades
+```
+
+```
+##     subject grade grade_point credits weightage pass
+## 1      Math     A         5.0       5      0.20  yes
+## 2   English     B         3.5       5      0.20  yes
+## 3 Economics     C         2.0       4      0.16  yes
+## 4  Mandarin    B+         4.0       5      0.20  yes
+## 5  Sleeping    A+         5.0       0      0.00  yes
+## 6  Cantrmbr     F         0.0       5      0.20   no
+## 7   Intro2R    A+         5.0       1      0.04  yes
+```
+]
+
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
+### Functions
+]
+
+.right-column[
+__User-defined Functions: Loop functions__  
+
+
+```r
+passchecker &lt;- function(gradepts){ #vector input, not dataframe!
+  
+  results &lt;- rep(0,length(gradepts)) #create empty results vector
+  
+  for(i in 1:length(gradepts)){ #iterate across length of 'gradepts'
+    
+    if(gradepts[i] &gt;= 2){ 
+      results[i] &lt;- "yes"
+      } else {
+        results[i] &lt;- "no"
+      }
+  } 
+  results #remember to specify output
+} 
+
+passchecker(grades$grade_point) #run function
+```
+
+```
+## [1] "yes" "yes" "yes" "yes" "yes" "no"  "yes"
+```
+]
+
+???
+
+- A function within a function
+
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
+### Functions
+]
+
+.right-column[
+__Loop functions in base R__  
+
+`lapply(x, FUN)`: Apply a function on each element of `x`, returns a _list_
+
+
+```r
+#create a list of different types of R objects
+a1 &lt;- c("A","B") #char vector
+a2 &lt;- c(1,1,2,3,4,4) #numeric vector
+a3 &lt;- matrix(1, ncol=3, nrow=3) #matrix
+mylist &lt;- list(a1, a2, a3)
+
+lapply(mylist, length) #apply length() function to list
+```
+
+```
+## [[1]]
+## [1] 2
+## 
+## [[2]]
+## [1] 6
+## 
+## [[3]]
+## [1] 9
+```
+]
+
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
+### Functions
+]
+
+.right-column[
+__Loop functions in base R__  
+
+`apply(x, MARGIN, FUN)`: Apply a function to tabular data by rows or columns (2D dataset)
+- `MARGIN` argument: `1` indicates rows, `2` indicates cols, `c(1,2)` indicates rows &amp; col
+- E.g. Add a "mean" column:  
+`cbind(matrixname, apply(matrixname, 2, mean))`  
+]
+
+---
+
+class: left
+
+# Objects in R
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
+### Functions
+]
+
+.right-column[
+
+__Quick test!⚡️__  
+  
+Calculate the mean for each numeric variable in dataset `economics` (`ggplot2` package)
+]
+--
+.right-column[
+
+```r
+data(economics, package="ggplot2")
+```
+]
+--
+.right-column[
+
+```r
+apply(economics[,-1], 2, mean) #apply mean() function across columns
+```
+
+```
+##          pce          pop      psavert      uempmed     unemploy 
+## 4.843510e+03 2.571894e+05 7.936585e+00 8.610105e+00 7.771557e+03
+```
+]
+
+???
+
+Remember to subset away the date variable!
+
+---
+
+class: inverse, center, middle
+
+# Questions?  
+  
+
+__[About this crash course](#4)__  
+ 
+__[Getting Started](#Getstarted)__  
+
+__[R Environment and Syntax](#Renviron)__  
+
+Syntax: [Operators](#operators)
+
+Syntax: [Subsetting](#subsetting)
+
+Objects in R: [Variables](#variables)
+
+Objects in R: [Data structures](#struc)
+
+Objects in R: [Functions](#functions)
+
+__[Useful Resources](#resources)__  
+
+---
+
+class: left
+name: resources
+
+# Useful Resources
+__Online tutorials__
+- [R for Data Science](https://r4ds.had.co.nz)
+- [Quick R](https://www.statmethods.net)
+- [R for cats](https://www.rforcats.net) (blog post)
+- [swirl](https://swirlstats.com) (good for practice)  
+
+__Online courses__  
+- [Introuction to R](https://www.datacamp.com/courses/free-introduction-to-r) by Datacamp
+- [R Programming](https://www.coursera.org/learn/r-programming) by Coursera
+
+__Online Q&amp;A__  
+- [Stack Overflow](https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example?rq=1)
+- Remember to check your `sessionInfo()` when troubleshooting!  
+
+__Others__  
+- [How to use R/RStudio from an external drive](https://github.com/ClaudiaBrauer/A-very-short-introduction-to-R/blob/master/documents/Portable_versions_of_R_and_RStudio.pdf)  
+(i.e. if you don't have admin rights to install software)
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
 "highlightStyle": "github",
 "highlightLines": true,
-"countIncrementalSlides": true
+"countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
