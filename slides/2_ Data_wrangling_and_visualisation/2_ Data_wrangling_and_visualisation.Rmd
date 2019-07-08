@@ -1,0 +1,40 @@
+---
+title: "Intro2R"
+subtitle: "Data Wrangling and Visualisation"
+author: "xpsong"
+institute: ""
+date: "updated `r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: [default, metropolis, "custom-fonts.css"] #themes: names(xaringan:::list_css()) ("xaringan-themer.css" if you specify within .Rmd)
+    lib_dir: libs
+    nature:
+      titleSlideClass: [center, middle, inverse, title-slide] #default
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+class: inverse, center, middle
+
+# Outline  
+
+__[About this crash course](#4)__  
+ 
+__[Getting Started](#Getstarted)__  
+
+__[R Environment and Syntax](#Renviron)__  
+
+Syntax: [Operators](#operators)
+
+Syntax: [Subsetting](#subsetting)
+
+Objects in R: [Variables](#variables)
+
+Objects in R: [Data structures](#struc)
+
+Objects in R: [Functions](#functions)
+
+__[Useful Resources](#resources)__  
+
+---
