@@ -1,0 +1,3067 @@
+---
+title: 'What We Do in the Kernels - A 2018 Kaggle Survey Story'
+date: '`r Sys.Date()`'
+output:
+  html_document:
+    number_sections: true
+    fig_caption: true
+    toc: true
+    fig_width: 7
+    fig_height: 4.5
+    theme: cosmo
+    highlight: tango
+    code_folding: hide
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo=TRUE, error=FALSE)
+knitr::opts_chunk$set(out.width="100%", fig.height = 4.5, split=FALSE, fig.align = 'default')
+```
+
+<center><img src="https://25n4mk17483f32xwk32sbxik-wpengine.netdna-ssl.com/wp-content/uploads/2014/10/TS-kaggle-elevate.jpg"></center>
+
+
+# Introduction
+
+**Welcome to a Story of Stories from the [2018 Kaggle Machine Learning and Data Science Survey](https://www.kaggle.com/kaggle/kaggle-survey-2018/home).** In this Kernel I will provide a broad and comprehensive narrated exploration and visualisation of the survey results that will be anchored around the detailed analysis of the topics of (i) country-wise demographics, (ii) self-assessment of data science skills, (iii) age groups, and (iv) the role of reproducibility in Data Science and Machine Learning.
+
+These four key aspects will be the consistent threads that run through this Kernel. They will be examined in the context of the various survey questions which will provide the rich background to understand this most recent profiles of a unique community. I will explore the survey in its entire breadth and touch on many properties that deserve further examination. Time and time again, the analysis will come back to the key threads and view them in the light of new findings.
+
+According to the [data description](https://www.kaggle.com/kaggle/kaggle-survey-2018/home) **the "survey received 23,859 usable respondents from 147 countries and territories".** This makes it a highly valuable and unique source for exploring the state of Data Science in 2018. In this Kernel, I will be using [tidy R](http://tidyverse.org/) and [ggplot2](http://ggplot2.tidyverse.org/) to derive and present insights.
+
+Without further ado, let's get started!
+
+
+# Executive Summary
+
+Here I summarise the main insights from the 2018 Kaggle Survey with almost 24k respondents from diverse backgrounds and data science experience.
+
+- **Country of Residence, Gender, Age:** The demographics show that the *US and India had by far the most respondents*, followed by China, Russia, Brazil, and Germany. Africa as well as parts of western Asia and Central America are underrepresented. The survey shows a *predominantly male* community with only about 17% female participation. The age distribution is skewed towards the younger cohorts in their 20s or early 30s. Among the top responding countries, *India has significantly younger participant than the US*.
+
+- **Education & Profession:** Most respondents have a *Bachelor's or Master's degree* from a list of academic fields that is dominated by *Computer Science*, followed by *Engineering* and *Maths & Statistics*. Many of those with a Doctoral degree have a Physics/Astronomy background. The *largest professional cohort are students*, followed by the industry roles of Data Scientist, Software Engineer, and Data Analyst.
+
+- **Experience:** Most respondents have been *in their current role for less than 3 years*, many less than 1 year. Similarly, most people have *coding experience of less than 5 years*, with 1-2 years being the most common answer, and *less than 2 years of ML experience*.
+
+- **Self-Assessment:** *About 50% of respondents consider themselves as Data Scientists.* This number is similar for female and male participants, but *varies significantly by age, country of residence, professional role, and experience.* The lowest confidence is found for the youngest respondents, those from Italy and Japan, and those with little to no experience in coding and machine learning. Participants from Russia & France, those with 5+ year experience, and those with the job title "Data Scientist" are most sure in their Data Scientist status.
+
+- **Languages & Tools:** *Python is the dominant programming language*, followed by R and SQL. It is also the *top recommended language for beginners*. Data/Business Analysts are most likely to use a diverse set of languages instead of relying on Python only. In general, most respondents use *2 or 3 languages on a regular basis* and work with development environments like Rstudio or Jupyter. The *most popular ML library by far is Scikit-Learn; visualisation tools are dominated by matplotlib*.
+
+- **Data types & Workflow:** *Numerical and Tabular data are most popular overall*, with Image and Text data being popular with sub-groups like Research Scientists and Software Engineers. Respondents who build and/or run ML services have most faith in their DS status, with those that don't employ any of the "unusal suspect" tools having much less self confidence. Analysing data and prototyping ML algorithms are the most frequent tasks. *Aggregator platforms are the most popular data sources.*
+
+- **Education/Information Sources:** *Coursera is hands-down the most popular online-learning platform.* There are no obvious age differences in platform usage, and no significant difference in how self-assessed Data Scientists spend their training time. Our respondents show *a resounding vote in favour of MOOCs and bootcamps* over traditional brick-and-mortar institutions; with clear trends depending on country and age. Kaggle Forum and Medium Blog posts are the most popular sources for new ML/DS information.
+
+- **Independent Projects vs Academic Achievements:** *A large majority considers independent projects at least as important.* A higher degree makes respondents value academic achievements more. Geographicl patterns emerge that show equal importance in China, Russia, and all of South America whereas India, Canada, and all of Africa see projects as much more important than academia.
+
+- **Reproducibility:** *This key aspect is almost universally considered to be “Very important”.* Research Scientists and Data Scientists are most conscious of its importance, whereas awareness among Students and Software Engineers still has room to improve. *Younger respondents are more likely to see reproducibility as less important.* The most frequent *reproducibility methods are to make sure that the code is well documented and human readable, and the main barriers for reproducibility are lack of time and incentives.* In addition, a vast majority considers the aspects of Fairness/Bias and Ability to explain ML/DS results/predictions as important.
+
+# Preparations {.tabset .tabset-fade .tabset-pills}
+
+## Load libraries
+
+We load a range of libraries for general data wrangling and general visualisation together with more specialised tools.
+
+```{r, message = FALSE, warning=FALSE}
+# general visualisation
+library('ggplot2') # visualisation
+library('scales') # visualisation
+library('grid') # visualisation
+library('gridExtra') # visualisation
+library('RColorBrewer') # visualisation
+library('corrplot') # visualisation
+
+# general data manipulation
+library('dplyr') # data manipulation
+library('readr') # input/output
+library('data.table') # data manipulation
+library('tibble') # data wrangling
+library('tidyr') # data wrangling
+library('stringr') # string manipulation
+library('forcats') # factor manipulation
+
+# specific visualisation
+library('alluvial') # visualisation
+library('ggrepel') # visualisation
+library('ggforce') # visualisation
+library('ggridges') # visualisation
+library('gganimate') # animations
+library('gridExtra') # visualisation
+library('GGally') # visualisation
+library('ggExtra') # visualisation
+library('highcharter') # visualisation
+library('countrycode') # visualisation
+library('geofacet') # visualisation
+
+# specific data manipulation
+library('lazyeval') # data wrangling
+library('broom') # data wrangling
+library('purrr') # string manipulation
+library('reshape2') # data wrangling
+library('rlang') # encoding
+
+# Maps / geospatial
+library('geosphere') # geospatial locations
+library('leaflet') # maps
+library('leaflet.extras') # maps
+library('maps') # maps
+
+# Text / NLP
+library('tidytext') # text analysis
+library('tm') # text analysis
+library('SnowballC') # text analysis
+library('topicmodels') # text analysis
+library('wordcloud') # test visualisation
+
+library('treemapify')
+```
+
+
+## Helper functions
+
+We make use of a brief helper function to compute binomial confidence intervals.
+
+```{r}
+# function to extract binomial confidence levels
+get_binCI <- function(x,n) as.list(setNames(binom.test(x,n)$conf.int, c("lwr", "upr")))
+```
+
+
+## Load data
+
+The [data](https://www.kaggle.com/kaggle/kaggle-survey-2018) contains profiles of individual Kaggle community members and comes in the shape of three different files:
+
+- **multiple choice responses** to questions with limited answer options. Example: "In which country do you currently reside?"
+
+- **free-form responses** to open questions. Example: "what is the primary tool you use to analyse data?". Note, that the "free form responses have been randomized column-wise such that the responses that appear on the same row did not necessarily come from the same survey-taker". As described in the [Survey Methodology](https://www.kaggle.com/kaggle/kaggle-survey-2018/home), this and the separation of free-form vs multiple choice responses is intended to protect the privacy of the respondents.
+
+- a *survey schema* for overview characterisation of responses.
+
+
+We use *data.table's* fread function to speed up reading in the data:
+
+```{r echo=FALSE}
+on_kaggle <- 1
+
+if (on_kaggle == 0){
+  path <- ""
+} else {
+  path <- "../input/"
+}
+```
+
+```{r warning=FALSE, results=FALSE}
+multi <- as.tibble(fread(str_c(path,'multipleChoiceResponses.csv'), skip = 1))
+free <- as.tibble(fread(str_c(path,'freeFormResponses.csv'), skip = 1))
+```
+
+Note that when loading the data I decide to skip the first lines of the multiple-choice (`multi`) and free-form (`free`) data sets. Those lines describe the questions as Q1, Q2, and so forth. The next lines contain the actual text questions, which will thus become the temporary column names for our data.
+
+
+## Initial Preparations
+
+For the multiple choice part we turn all replies from the default character format into factors. We will change the column names from their long descriptions to more reasonable values step-by-step for each topic that is being examined.
+
+```{r}
+multi <- multi %>%
+  mutate_if(is_character, as_factor)
+```
+
+
+# A teaser: interactive global Kaggle 2018
+
+Before we start, here is a little teaser **overview of the geographical distribution of 2018 Kaggle Survey respondents.** Low numbers are in yellow, high numbers in blue. Note, that according to the [Methodology Description](https://www.kaggle.com/kaggle/kaggle-survey-2018/home) "If a country or territory received less than 50 respondents, we grouped them into a group named “Other” for anonymity." Here we don't see these "Other" nor the respondents who did not disclose their location. This is an interactive map - mouse over to see the numbers:
+
+```{r fig.height=6, fig.cap ="Fig. 1"}
+foo <- multi %>%
+  mutate(country = `In which country do you currently reside?`) %>%
+  count(country) %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+  mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c"))
+
+highchart() %>%
+  hc_add_series_map(worldgeojson, foo, value = 'n', joinBy = 'iso3') %>%
+  hc_title(text = 'Kaggle Survey 2018 - Global Respondents') %>%
+  hc_colorAxis(minColor = "#ffdf3f", maxColor = "#5c46ff") %>%
+  hc_tooltip(useHTML = TRUE, headerFormat = "", pointFormat = "{point.country}: {point.n} users")
+```
+
+We clearly see the **dominance of the US and India.** Both countries have a comparable number of community members participating in this years survey. The US is just about ahead - for now. China appears to be in 3rd place, most of Europe is active, and most of Africa is still dearly missing. For once, this is a map *with* New Zealand ;-)
+
+We will soon dive into the numbers of this and all the other questions. Hopefully this plot piques your curiosity.
+
+Note, that this is the first time that I'm using the great [highcharter package](http://jkunst.com/highcharter) and I'm building with gratitude on visualisation by [Troy Walters](https://www.kaggle.com/captcalculator) in his fantastic [GStore Challenge Exploration Kernel](https://www.kaggle.com/captcalculator/a-very-extensive-gstore-exploratory-analysis#). Check out his work!
+
+
+# About the Survey - Questions and Meta Information  {.tabset .tabset-fade .tabset-pills}
+
+Before examining the answers, here is a quick overview of the survey questions together with the time it took the respondents to complete their answers. Note, that with each variable we study, we will rename the corresponding column to something more sensible. An alternative way is to do this right at the beginning to have everything in one place. Here we take a more exploratory approach.
+
+
+## *What is your Name? What is your Quest?* - Survey Questions
+
+To get a better feeling for the overall survey strategy let's familiarise ourselves with the questions that were asked. Here is a **wordcloud of the most common terms in all survey questions** (multiple choice plus free form).
+
+Single-word terms are extracted from the column names using the amazing [tidytext](https://www.tidytextmining.com/) package, which also helps us in removing the uninformative and common *stop words*. I will then reduce each word to its word-stem; e.g. "selecting" and "selected" become "select" to focus on common concepts rather than grammar. This is accomplished using the versatile [SnowballC](https://cran.r-project.org/web/packages/SnowballC/index.html) package and its `wordStem` tool:
+
+Again I will use a color-scheme from yellow to blue to encode frequency (alongside with the size of the words):
+
+```{r fig.cap ="Fig. 2"}
+foo <- colnames(multi) %>%
+  as.tibble()
+
+bar <- colnames(free) %>%
+  as.tibble()
+
+foobar <- foo %>%
+  bind_rows(bar)
+
+numb <- tibble(
+  word = as.character(seq(1,10))
+)
+
+t1 <- foobar %>%
+  unnest_tokens(word, value) %>%
+  anti_join(stop_words, by = "word") %>%
+  anti_join(numb, by = "word") %>%
+  select(word)
+
+t1 %>%
+  mutate(word = wordStem(word)) %>%
+  count(word) %>%
+  top_n(30, n) %>%
+  mutate(n = sqrt(n)) %>%
+  with(wordcloud(word, n, color = c("yellow4", "purple", "blue1")))
+```
+
+Here we see that **the focus is on "choices" and "applications"** that we "select" for our "school" education or work on "data" "products" or "machine" "learning". The important more detailed concepts are the "cloud", "methods" and "platforms", "models", "dabases" and "programming". Also notice the root of the word "reproducible". **Reproducible research is of great importance** and the survey explored our approach to it in some detail.
+
+Note, that there are almost 400 questions in the multiple choice part. Some of those are follow-up questions branching out from a previous, more general question. There are 35 free form questions.
+
+
+## It's about time
+
+One meta information about the survey is the time it took the respondent to finish it. Here is the corresponding distribution (in minutes) in the form of a histogram. Note the logarithmic x-axis.
+
+```{r fig.height=3.5, fig.cap ="Fig. 3"}
+multi <- multi %>%
+  rename(duration = `Duration (in seconds)`)
+
+multi %>%
+  mutate(duration = duration/60.) %>%
+  ggplot(aes(duration)) +
+  geom_histogram(bins = 50, fill = "red", color = "black") +
+  scale_x_log10(breaks = c(2, 5, 10, 20, 50, 100, 500, 1000)) +
+  geom_vline(xintercept = 15, linetype = 2) +
+  labs(x = "Duration [min]") +
+  ggtitle("Survey duration: Average 15-20 min with extreme values")
+```
+
+We find:
+
+- The distribution is multi-modal. **The largest peak is at about 15 min**, marked by the dashed line. Its **variation is between 5 and 50 min**, which is relatively realistic.
+
+- At the extremes, there are those who completed the survey in 2 min or less, and those who might have remembered the next day that the browser tab was still open. Or thought very deeply about the right answers. With their eyes closed.
+
+- Those long durations shouldn't be a big problem, but times of under 2 min suggest that the survey is incomplete or rather rushed. These cases could be examined in more detail as we dive deeper into the data.
+
+
+# Demographics: Gender, Age, Country
+
+I will examine the demographic data in context, looking at gender, age, and country side-by-side. Let's start with age and gender:
+
+```{r}
+vars <- c(gender = "What is your gender? - Selected Choice",
+          gen_txt = "What is your gender? - Prefer to self-describe - Text",
+          country = "In which country do you currently reside?",
+          age = "What is your age (# years)?")
+
+flvl <- c("18-21", "22-24","25-29","30-34","35-39","40-44","45-49","50-54","55-59","60-69","70-79","80+")
+
+multi <- multi %>%
+  rename(!!vars) %>%
+  mutate(age = fct_relevel(age, flvl))
+```
+
+```{r fig.cap ="Fig. 4", fig.height=5.5}
+foo <- multi %>%
+  group_by(gender) %>%
+  count()
+
+p1 <- foo %>%
+  mutate(percentage = str_c(as.character(round(n/sum(foo$n)*100,1)), "%")) %>%
+  ggplot(aes(gender, n, fill = gender)) +
+  geom_col() +
+  geom_label(aes(label = percentage), position = position_dodge(width = 1)) +
+  labs(x = "Gender", y = "Respondents") +
+  theme(legend.position = "none", axis.text.x  = element_text(angle=15, hjust=1, vjust=0.9)) +
+  ggtitle("Gender imbalance")
+
+foo <- multi %>%
+  group_by(age) %>%
+  count()
+
+p2 <- foo %>%
+  mutate(percentage = str_c(as.character(round(n/sum(foo$n)*100,1)), "%")) %>%
+  ggplot(aes(age, n, fill = age)) +
+  geom_col() +
+  #geom_label(aes(label = percentage), position = position_dodge(width = 1)) +
+  labs(x = "Age Group", y = "Respondents") +
+  theme(legend.position = "none", axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9)) +
+  ggtitle("Age Groups: Here be 20-somethings")
+
+p3 <- multi %>%
+  filter(gender %in% c("Male", "Female")) %>%
+  ggplot(aes(age, fill = gender)) +
+  geom_bar(position = "fill") +
+  labs(x = "", y = "Percentage") +
+  ggtitle("Age by Gender: Younger generation relatively better")
+
+grid.arrange(p1, p2, p3, layout_matrix = rbind(c(1,1,2,2,2),
+                                               c(1,1,2,2,2),
+                                               c(1,1,2,2,2),
+                                               c(3,3,3,3,3),
+                                               c(3,3,3,3,3)))
+```
+
+We find:
+
+- **There is a large gender imbalance with more than 80% male respondents compared to only about 17% female ones.** This is bad. Bad for our community, which has a large untapped potential, and bad for Data Science in general. Just as when stacking different models, diversity is a key to success. Since I'm an optimist at heart here is the good news: the imbalance is less severe, relatively speaking, among the younger cohorts.
+
+- Those **younger age groups, 20- and 30-somethings, make up the majority of respondents.** Regardless of gender, I am thrilled to see a notable number of respondents at ages of 50+ or 60+; either imparting their wisdom to future generations or maybe taking an interest in a new endeavour. You are never to old to make discoveries.
+
+- In a similar way, I believe you're rarely to young either to enjoy learning from data. The discrepancy between respondents in their early 20s vs late 20s is perhaps the largest untapped "market" here; second only to all those female potential Data Scientists we wish to work alongside.
+
+
+For the countries of *residence* (note that qualifier), here is an intentionally stretched plot to include every named country (and those "Other" with less than 50 respondents plus undisclosed locations):
+
+```{r fig.height=9.5, fig.cap ="Fig. 5"}
+multi %>%
+  group_by(country) %>%
+  count() %>%
+  #filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+  ungroup() %>%
+  #top_n(20, n) %>%
+  ggplot(aes(reorder(country, n, FUN = min), n, fill = country)) +
+  geom_col() +
+  labs(x = "", y = "Number of Respondents") +
+  theme(legend.position = "none") + #axis.text.x  = element_text(angle=30, hjust=1, vjust=0.9)) +
+  ggtitle("Country of Residence: US & India dominate") +
+  coord_flip()
+```
+
+We find:
+
+- **The difference between the US & India vs the rest of the world is staggering.** Note that "Other" is on the 4th place with more than 1500 entries; indicating to the many countries that are part of the Kaggle community.
+
+- Brazil is on rank 6, behind China and Russia and virtually tied with Germany, and Nigeria is the highest ranking African country somewhere around rank 20. In total, there are 56 countries with more than 50 recipients.
+
+
+Let's look at the age distribution for the top 5 countries together with the male vs female proportions. Here I'm using filled barplots to emphasise the relative changes. Compare the plots above for specific numbers:
+
+```{r fig_height=5.5, fig.cap ="Fig. 6"}
+foo <- multi %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+  group_by(country) %>%
+  count() %>%
+  ungroup() %>%
+  top_n(5, n)
+
+p1 <- multi %>%
+  semi_join(foo, by = "country") %>%
+  ggplot(aes(age, fill = country)) +
+  geom_bar(position = "fill") +
+  theme(legend.position = "bottom") +
+  labs(x = "Age Group", y = "Percentage") +
+  ggtitle("Age in top 5 countries: Young India vs Older US")
+
+p2 <- multi %>%
+  filter(gender %in% c("Male", "Female")) %>%
+  semi_join(foo, by = "country") %>%
+  ggplot(aes(country, fill = gender)) +
+  geom_bar(position = "fill") +
+  theme(legend.position = "right") +
+  labs(x = "Country of Residence", y = "Percentage") +
+  ggtitle("Male vs Female for top 5 countries: US does best")
+
+grid.arrange(p1, p2, layout_matrix = cbind(c(1,1,1,2,2)))
+```
+
+We find:
+
+- **India contributes on average much younger respondents than the United States.** China is also younger and Brazil somewhat older. The strong performance of India especially among the youngest cohort (18-21) is impressive and promises many strong future Data Scientists.
+
+- In term of male vs female statistics (isolated here to those two options for emphasis) we see that **the US has the relatively largest female percentage at about 25%.** Still a lot of room for improvement, though. Brazil has the fewest female respondents among the top 5.
+
+
+Among the small number of respondents who chose to self-describe their gender many answers were unfortunately attempts at trolling. Besides the predictable troll answers, here are at least a few creative ones:
+
+```{r}
+free <- free %>%
+  rename(gen = "What is your gender? - Prefer to self-describe - Text")
+
+free %>%
+  select(gen) %>%
+  filter(gen != "") %>%
+  slice(c(2, 11, 39))
+```
+
+I heard people talk about "Unicorn Data Scientists" but this is the first time I encountered one myself ... .
+
+Among the (possibly) serious answers the largest group was "non-binary". Still, the numbers are too small to draw any useful inference going forward. Especially since the multiple choice and free-form portions of the test can't be joined.
+
+Finally, someone used this question to raise a point:
+
+```{r}
+foo <- free %>% filter(gen != "")
+foo$gen[62]
+```
+
+I don't know what the latest word is on the concept of social [priming](https://en.wikipedia.org/wiki/Priming_(psychology)), but I agree that questions that could result in priming could easily be asked at the end of the survey. Not everyone might complete the survey and those
+
+
+# Education and Professional Status
+
+More demographic information is available in the answers to questions on education and current professional situation. These focus on the highest level of formal education, the undergraduate major, the current professional role/title, and the industry sector of the current employer. We start with the important foundation - education:
+
+```{r}
+vars <- c(edu = "What is the highest level of formal education that you have attained or plan to attain within the next 2 years?",
+         major = "Which best describes your undergraduate major? - Selected Choice",
+         role = "Select the title most similar to your current role (or most recent title if retired): - Selected Choice",
+         role_txt = "Select the title most similar to your current role (or most recent title if retired): - Other - Text",
+         industry = "In what industry is your current employer/contract (or your most recent employer if retired)? - Selected Choice",
+         industry_txt = "In what industry is your current employer/contract (or your most recent employer if retired)? - Other - Text")
+
+edu_lvl <- c("Doctoral degree","Professional degree", "Master’s degree", "Bachelor’s degree",
+             "Some college/uni",
+             "High school",
+             "No answer")
+
+multi <- multi %>%
+  rename(!!vars) %>%
+  mutate(edu = if_else(edu == "Some college/university study without earning a bachelor’s degree", "Some college/uni", as.character(edu))) %>%
+  mutate(edu = if_else(edu == "No formal education past high school", "High school", edu)) %>%
+  mutate(edu = if_else(edu == "I prefer not to answer", "No answer", edu)) %>%
+  mutate(edu = na_if(edu, "")) %>%
+  mutate(edu = fct_relevel(edu, edu_lvl)) %>%
+  mutate(major = na_if(major, "")) %>%
+  mutate(role = na_if(role, "")) %>%
+  mutate(industry = na_if(industry, ""))
+  
+```
+
+```{r fig.height=3, fig.cap ="Fig. 7"}
+multi %>%
+  filter(!is.na(edu)) %>%
+  count(edu) %>%
+  ggplot(aes(edu, n, fill = edu)) +
+  geom_col() +
+  theme(legend.position = "none", axis.text.x  = element_text(angle=25, hjust=1, vjust=0.9)) +
+  labs(x = "", y = "Number of Respondents") +
+  ggtitle("Highest Education Level: Mostly Master's & Bachelor's")
+
+
+```
+
+```{r fig.height=4, fig.cap ="Fig. 8"}
+multi %>%
+  filter(!is.na(major)) %>%
+  count(major) %>%
+  ggplot(aes(reorder(major, n, FUN = min), n, fill = major)) +
+  geom_col() +
+  coord_flip() +
+  theme(legend.position = "none") +
+  labs(x = "", y = "Number of Respondents") +
+  ggtitle("Undergrad Major")
+```
+
+We find:
+
+- **The prevalent current highest level of education are Master's and Bachelor's degrees.** Doctoral degrees are much more frequent than Professional degrees.
+
+- It comes as little surprise that our community is very attractive to **Computer Scientists who make up the largest fraction by undergraduate major.** Other, non-computer engineering is on 2nd place followed by maths/statistics, branches of economics, then physics and astronomy.
+
+- In terms of diversity we see that our **community is very STEM heavy (i.e. science, technology, engineering and mathematics).** Respondents with backgrounds from social sciences, humanities, and the arts exist; but those communities remain underserved. Given the growing potential and popularity of Kaggle Data Sets and Kernels there is more room to focus our projects on topics outside the STEM field and thereby hopefully attract new and diverse Kagglers.
+
+
+If we combine the two educational features we can examine the role of education for the top 6 fields. Note the different scales on the y-axes:
+
+```{r fig.cap ="Fig. 9"}
+foo <- multi %>%
+  filter(!is.na(major)) %>%
+  group_by(major) %>%
+  count() %>%
+  ungroup() %>%
+  top_n(6, n)
+
+multi %>%
+  filter(!is.na(edu) & edu != "No answer") %>%
+  semi_join(foo, by = "major") %>%
+  count(edu, major) %>%
+  ggplot(aes(edu, n, fill = edu)) +
+  geom_col() +
+  theme(legend.position = "none",
+        axis.text.x  = element_text(angle=35, hjust=1, vjust=0.9),
+        strip.text.x = element_text(size = 7)) +
+  guides(fill = guide_legend(ncol = 2)) +
+  labs(x = "", y = "Number of Respondents") +
+  facet_wrap(~ major, ncol = 2, scales = "free_y") +
+  ggtitle("Education in top 6 fields: note all the physics PhDs")
+```
+
+We find:
+
+- While most top fields show a similar profile of educational background the **largest fraction of respondents with "Physics or astronomy" education has a doctoral degree.** Master's degrees are significantly more frequent than Bachelor's in "Mathematics or statistics" but almost equally prevalent in "Computer Science".
+
+- To an extent these differences might reflect the different academic cultures in the respective fields. Another factor we have to take into account are the distributions of age and current educational/employment status. Many of the young Bachelor graduates in our survey might well be students who will continue to earn their Master's or PhD degree.
+
+
+Speaking of employment status: let's examine the professional angle. Here I choose a 2-dimensional heatmap to show the frequency of role/position vs the current employer's industry in one comprehensive visualisation. Note the logarithmic colour scale and that the high values are darker (blue) than the low values (yellow). This might be somewhat counter-intuitive but follows the style of our first teaser plot (Fig 1.): 
+
+```{r fig.cap ="Fig. 10"}
+multi %>%
+  filter(!is.na(role) & !is.na(industry)) %>%
+  count(role, industry) %>%
+  ggplot(aes(role, industry, fill = log10(n))) +
+  geom_tile() +
+  scale_fill_gradient(low = "#ffdf3f", high = "#5c46ff") +
+  theme(axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9)) +
+  labs(fill = "log #", x = "Professional Role", y = "Industry") +
+  ggtitle("Professional role vs industry: log-scale yellow to blue")
+```
+
+We find:
+
+- **The most frequent Professional Roles of our respondents are "Data Scientist / Analyst" and "Software Engineer".** "Data Journalists" are very rare. We also have a surprisingly small number of professional "Statisticians", many of which work in "Goverment" or "Academia".
+
+- From the industry perspective, the **most popular areas are "Computers/Technology", and "Government/Public Service".** In contrast, "Hospitality/Entertainment/Sports" and "Non-profit Service" are much less common. 
+
+- Most high-value combinations in our heatmap make intuitive sense: The role and industry of "Student" overlap, "Research Scientists" are predominantly found in "Academics/Education", many "Software Engineers" work in "Computers/Technology". Beyond that, we see that for instance "Product/Project Managers" are likely employed in "Computers/Technology", "Business Analysts" in "Accounting/Finance".
+
+
+We will close this section with a look at the educational profile in the top professional roles. Here we will use a facet-grid approach  display the numbers in comparison to each other, with fixed scales on the y-axes:
+
+```{r fig.cap ="Fig. 11"}
+foo <- multi %>%
+  filter(!is.na(major)) %>%
+  group_by(major) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  ungroup() %>%
+  top_n(4, n)
+
+bar <- multi %>%
+  filter(!is.na(role)) %>%
+  group_by(role) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  ungroup() %>%
+  top_n(4, n)
+
+foobar <- foo %>%
+  mutate(major = case_when(
+    major == "Computer science (software engineering, etc.)" ~ "Comp Science",
+    major == "Engineering (non-computer focused)" ~ "Engineering",
+    major == "Mathematics or statistics" ~ "Maths/Stats",
+    major == "A business discipline (accounting, economics, finance, etc.)" ~ "Business"
+  ))
+
+multi %>%
+  filter(!is.na(edu) & edu != "No answer") %>%
+  semi_join(foo, by = "major") %>%
+  semi_join(bar, by = "role") %>%
+  count(edu, major, role) %>%
+  mutate(major = as.factor(case_when(
+    major == "Computer science (software engineering, etc.)" ~ "Comp Science",
+    major == "Engineering (non-computer focused)" ~ "Engineering",
+    major == "Mathematics or statistics" ~ "Maths/Stats",
+    major == "A business discipline (accounting, economics, finance, etc.)" ~ "Business"
+  ))) %>%
+    mutate(role = fct_relevel(role, as.character(bar$role)),
+         major = fct_relevel(major, as.character(foobar$major))) %>%
+  ggplot(aes(edu, n, fill = edu)) +
+  geom_col() +
+  facet_grid(major ~ role) +
+  theme(legend.position = "bottom",
+        #axis.text.x  = element_text(angle=35, hjust=1, vjust=0.9),
+        axis.text.x = element_blank(),
+        strip.text.y = element_text(size = 7)) +
+  guides(fill = guide_legend(nrow = 1)) +
+  labs(fill = "", x = "", y = "Number of Respondents") +
+  ggtitle("Professional Roles and their Education")
+```
+
+We find:
+
+- **The largest cross-section in our survey are "Students" of "Computer Science".** Some of which have a "Doctoral degree"; perhaps in another field. "Students" in general are the largest fraction.
+
+- A notable fraction of "Data Scientist" have a "Doctoral degree". Similar for "Software Engineers", who are almost equally educated to "Bachelor's" or "Master's" level.  
+
+
+# Experience and Self Assessment - What's in a Name?
+
+Now we will turn our attention to the coding and ML experience of our survey participants, and the monetary compensation that comes with it. First, we will examine the individual answers before we put them in context. I'm using interactive tabs to include these fundamental plots for reference but not let them over-shadow the upcoming multi-dimensional visuals.
+
+To be able to better visualise the order ranges that were given as options for answering these questions (e.g. the salary ranges) I wrote a little convenience function that sorts the levels of character values with implicit order. As for all code in this Kernel simply click on the little `Code` box on the left-hand side to display it:
+
+```{r}
+sort_range <- function(df, x) {
+ x <- enquo(x)
+  df %>%
+    mutate(var = !! x) %>%
+    distinct(var) %>%
+    separate(var, into = c("foo", "bar"), remove = FALSE, fill = "right", extra = "merge") %>%
+    arrange(as.numeric(foo)) %>%
+    mutate(var = as.character(var)) %>%
+    .$var
+}
+```
+
+
+The other code then uses this function, among other tools, to conducts some data wrangling that makes the data easier to work with.
+
+```{r warning=FALSE}
+vars <- c(exp_role = "How many years of experience do you have in your current role?",
+         salary = "What is your current yearly compensation (approximate $USD)?",
+         ml_at_work = "Does your current employer incorporate machine learning methods into their business?",
+         percent_code = "Approximately what percent of your time at work or school is spent actively coding?",
+         exp_code = "How long have you been writing code to analyze data?",
+         exp_ml = "For how many years have you used machine learning methods (at work or in school)?",
+         ds = "Do you consider yourself to be a data scientist?")
+
+
+multi <- multi %>%
+  rename(!!vars) %>%
+  mutate(salary = if_else(salary == "I do not wish to disclose my approximate yearly compensation", "Undisclosed", as.character(salary))) %>%
+  mutate(exp_code = as.factor(case_when(
+    exp_code == "I have never written code but I want to learn" ~ "0 yr; want to learn",
+    exp_code == "I have never written code and I do not want to learn" ~ "0 yr; don't want to learn",
+    TRUE ~ as.character(exp_code)
+  ))) %>%
+  mutate(exp_ml = as.factor(case_when(
+    exp_ml == "I have never studied machine learning but plan to learn in the future" ~ "0 yr; want to learn",
+    exp_ml == "I have never studied machine learning and I do not plan to" ~ "0 yr; don't want to learn",
+    TRUE ~ as.character(exp_ml)
+  )))
+
+exp_role_lvl <- sort_range(multi, exp_role)
+salary_lvl <- sort_range(multi, salary)
+percent_lvl <- sort_range(multi, percent_code)
+exp_code_lvl <- sort_range(multi, exp_code)
+exp_ml_lvl <- sort_range(multi, exp_ml)
+
+ds_lvl <- c("Definitely not", "Probably not", "Maybe", "Probably yes", "Definitely yes", "")
+
+multi <- multi %>%
+  mutate(exp_role = fct_relevel(exp_role, exp_role_lvl)) %>%
+  mutate(salary = fct_relevel(salary, salary_lvl)) %>%
+  mutate(percent_code = fct_relevel(percent_code, percent_lvl)) %>%
+  mutate(exp_code = fct_relevel(exp_code, exp_code_lvl)) %>%
+  mutate(exp_ml = fct_relevel(exp_ml, exp_ml_lvl)) %>%
+  mutate(ds = fct_relevel(ds, ds_lvl)) %>%
+  mutate(exp_role = na_if(exp_role, "")) %>%
+  mutate(salary = na_if(salary, "")) %>%
+  mutate(percent_code = na_if(percent_code, "")) %>%
+  mutate(exp_code = fct_relevel(exp_code, "< 1 year", after = 2)) %>%
+  mutate(exp_code = na_if(exp_code, "")) %>%
+  mutate(exp_ml = fct_relevel(exp_ml, "< 1 year", after = 2)) %>%
+  mutate(exp_ml = na_if(exp_ml, "")) %>%
+  mutate(ds = na_if(ds, ""))
+```
+
+
+## Individual distributions {.tabset .tabset-fade .tabset-pills}
+
+### Work Experience
+
+```{r fig.cap ="Fig. 12", fig.height=3.5}
+multi %>%
+  filter(!is.na(exp_role)) %>%
+  ggplot(aes(exp_role, fill = exp_role)) +
+  geom_bar() +
+  theme(legend.position = "none") +
+  labs(x = "Year Ranges", y = "Respondents") +
+  ggtitle("Years of experience in current role")
+```
+
+
+### Yearly Salary
+
+```{r fig.cap ="Fig. 13", fig.height=3.5}
+multi %>%
+  filter(!is.na(salary) & salary != "Undisclosed") %>%
+  ggplot(aes(salary, fill = salary)) +
+  geom_bar() +
+  theme(legend.position = "none", axis.text.x  = element_text(angle=35, hjust=1, vjust=0.9)) +
+  labs(x = "US Dollars or Dollar Equivalents", y = "Respondents") +
+  ggtitle("Yearly salary in USD")
+```
+
+
+### ML in business?
+
+```{r fig.cap ="Fig. 14", fig.height=3.5}
+multi %>%
+  count(ml_at_work) %>%
+  mutate(ml_at_work = as.factor(case_when(
+    ml_at_work == "We are exploring ML methods (and may one day put a model into production)" ~ "Exploring ML use",
+    ml_at_work == "We recently started using ML methods (i.e., models in production for less than 2 years)" ~ "<2 yrs production",
+    ml_at_work == "We have well established ML methods (i.e., models in production for more than 2 years)" ~ ">2 yrs production",
+    ml_at_work == "We use ML methods for generating insights (but do not put working models into production)" ~ "ML only for insights",
+    ml_at_work == "No (we do not use ML methods)" ~ "No",
+    ml_at_work == "I do not know" ~ "Don't know"
+  ))) %>%
+  ggplot(aes(reorder(ml_at_work, n, FUN = min), n, fill = ml_at_work)) +
+  geom_col() +
+  labs(x = "", y = "Number of Respondents") +
+  coord_flip() +
+  theme(legend.position = "none") +
+  ggtitle("Does your employer use machine learning methods for business?")
+```
+
+
+### Time spent coding
+
+```{r fig.cap ="Fig. 15", fig.height=3.5}
+multi %>%
+  filter(!is.na(percent_code)) %>%
+  ggplot(aes(percent_code, fill = percent_code)) +
+  geom_bar() +
+  theme(legend.position = "none") +
+  labs(x = "", y = "Number of Recipients") +
+  coord_flip() +
+  ggtitle("What percent of your time is spent actively coding?")
+```
+
+
+### Coding experience?
+
+```{r fig.cap ="Fig. 16", fig.height=3.5}
+multi %>%
+  filter(!is.na(exp_code)) %>%
+  ggplot(aes(exp_code, fill = exp_code)) +
+  geom_bar() +
+  theme(legend.position = "none", axis.text.x  = element_text(angle=35, hjust=1, vjust=0.9)) +
+  labs(x = "", y = "Number of Recipients") +
+  ggtitle("How long have you been writing code to analyze data?")
+```
+
+### Machine Learning experience?
+
+```{r fig.cap ="Fig. 17", fig.height=3.5}
+multi %>%
+  filter(!is.na(exp_ml)) %>%
+  ggplot(aes(exp_ml, fill = exp_ml)) +
+  geom_bar() +
+  theme(legend.position = "none", axis.text.x  = element_text(angle=35, hjust=1, vjust=0.9)) +
+  labs(x = "", y = "Number of Recipients") +
+  ggtitle("For how many years have you used machine learning methods?")
+```
+
+
+### Findings
+
+- The largest fraction of respondents has been **in their current role for less than 1 year**. In fact the numbers decrease steadily if you take into account that from 5 years onward the width of the range increases from 1 year (i.e. 4-5 yr experience) to 5 years (i.e. 5-10 yr experience). Since the question only asks for the *current role* this could indicate many short-term positions for our respondents. Another factor will be their age and professional status (especially students).
+
+- The **salary distribution** paints a very similar picture with frequency **decreasing almost monotonically**. Again the width of the ranges keeps increasing as we gather the fewer high-earning respondents in larger groups. The lowest salary range will probably contain many students.
+
+- **Only in a minority of cases ML approaches are being used in business routinely for more than 2 years.** The majority of employers either don't use ML at all, use it only for generating insights (but do not put working models into production), or are currently exploring its use cases. This means that we have a large room for improvements and future developments in many instances.
+
+- The distribution of **time spent coding is somewhat symmetric around 50% with a notable skew in favour of the 1st quartile (0-25%") compared to the 4th one (75-100%).** There are about as many full-time coders as respondents who have not coded at all, yet.
+
+- **Most people have coding experience of less than 5 years, with 1-2 years being the most common answer.** This likely reflects the important function of Kaggle as a learning resource for many of our fellow Kagglers. People with more than 30 years coding experience are rare. To the respondents with zero coding experience who want to learn more: I encourage you to go for it! It almost doesn't matter how you start as long as you get started.
+
+- The amount of **Machine Learning experience** shows even higher frequencies towards recent adopters, **primarily with < 2 yr experience.** There are only a small number of people with more than 10 years experience in this relatively young field. Those who are just starting out and want to learn more have certainly come to the right place.
+
+
+## Do you consider yourself to be a Data Scientist? - Focus analysis
+
+We're examining this question separately to put an emphasis on how respondents put their work and experience in relation to **the rather vague term "Data Scientist"**.
+
+In a dialog, the answer to the question "Do you consider yourself to be a data scientist?" shouldn't be "Yes", or "No", or "Maybe" but rather "Could you define 'Data Scientist'?". The justification for asking this survey question lies in the fact that **there is no universally accepted definition**, as far as I'm aware. Does it refer to someone who works with data? Someone with a degree in Data Science? Someone who can code a Neural Network from scratch? We could restrict the definition to those with a job title of Data Scientist, but this seems too exclusive to me and often times those job titles will vary from employer to employer for jobs with similar scope.
+
+*Personally, I take the term to mean "Someone who regularly analyses data to derive insights from it".* "Regularly"" does not have to mean "frequently"; and "analyses" does not imply "works with professionally". That definition is not perfect either ("derive insights" is a bit vague, too) but I'm mentioning it upfront because it will be the lense through which I approach this question. Enough talk. Here are the results: 
+
+
+```{r fig.cap ="Fig. 18", fig.height=3.5}
+multi %>%
+  filter(!is.na(ds)) %>%
+  ggplot(aes(ds, fill = ds)) +
+  geom_bar() +
+  theme(legend.position = "none", axis.text.x  = element_text(angle=35, hjust=1, vjust=0.9)) +
+  labs(x = "", y = "Number of Respondents") +
+  ggtitle("Do you consider yourself to be a Data Scientist?")
+```
+
+We find that the majority of respondents think of themselves at least as possible Data Scientists ("Maybe" - "Definitely yes"). Still there are about 4,500 people who don't think they are Data Scientists or have serious doubts ("Definitely not" - "Probably not").
+
+
+Let's have a closer look at these results in the survey context. For this purpose, I will create a new feature (`is_ds`) which groups the responses in "yes" (= "Probably yes", "Definitely yes") and "no" (= "Definitely not" - "Probably not"). The "Maybes" will remain a 3rd category. I will ignore NAs.
+
+```{r}
+multi <- multi %>%
+  mutate(is_ds = as.factor(case_when(
+    ds %in% c("Probably yes", "Definitely yes") ~ "yes",
+    ds %in% c("Definitely not", "Probably not") ~ "no",
+    ds == "Maybe" ~ "maybe",
+    TRUE ~ NA_character_
+  )))
+```
+
+Now I will measure the percentage of "Yes" replies, in relation to Yes + No + Maybe replies, for different groups of demographic, employment, and experience; using the information derived so far in this Kernel. I will use 95% confidence error bars to visualise the associated uncertainties (based on Binomial statistics) to help decide whether significant differences are present.
+
+Here is the first overview with respect to gender, age, and the top countries of residence:
+
+```{r fig.cap ="Fig. 18"}
+foo <- multi %>%
+  filter(!is.na(is_ds)) %>%
+  group_by(is_ds) %>%
+  count()
+
+global_ds <- foo %>%
+  filter(is_ds == "yes") %>%
+  .$n / sum(foo$n) * 100
+
+p1 <- foo %>%
+  mutate(percentage = str_c(as.character(round(n/sum(foo$n)*100,1)), "%")) %>%
+  ggplot(aes(is_ds, n, fill = is_ds)) +
+  geom_col() +
+  geom_label(aes(label = percentage), position = position_dodge(width = 1)) +
+  labs(x = "DS Self Assessment", y = "Respondents") +
+  theme(legend.position = "none") +
+  ggtitle("DS global assessment")
+
+p2 <- multi %>%
+  filter(!is.na(is_ds) & gender %in% c("Male", "Female")) %>%
+  group_by(is_ds, gender) %>%
+  count() %>%
+  spread(is_ds, n, fill = 0) %>%
+  mutate(frac = yes/(yes+no+maybe)*100,
+         lwr = get_binCI(yes,(yes+no+maybe))[[1]]*100,
+         upr = get_binCI(yes,(yes+no+maybe))[[2]]*100
+         ) %>%
+  ggplot(aes(gender, frac)) +
+  geom_point(color = "orange", size = 4) +
+  geom_errorbar(aes(ymin = lwr, ymax = upr), color = "orange") +
+  geom_hline(yintercept = global_ds, linetype = 2) +
+  labs(x = "Gender", y = "Yes I'm a DS [%]") +
+  ggtitle("Genders equal; clear Age variation")
+
+p3 <- multi %>%
+  filter(!is.na(is_ds) & !is.na(age)) %>%
+  group_by(is_ds, age) %>%
+  count() %>%
+  spread(is_ds, n, fill = 0) %>%
+  mutate(frac = yes/(yes+no+maybe)*100,
+         lwr = get_binCI(yes,(yes+no+maybe))[[1]]*100,
+         upr = get_binCI(yes,(yes+no+maybe))[[2]]*100
+         ) %>%
+  ggplot(aes(age, frac)) +
+  geom_point(color = "blue", size = 4) +
+  geom_errorbar(aes(ymin = lwr, ymax = upr), color = "blue") +
+  geom_hline(yintercept = global_ds, linetype = 2) +
+  labs(x = "Age Group", y = "Yes I'm a DS [%]")
+
+grid.arrange(p1, p2, p3, layout_matrix = rbind(c(1,2),
+                                               c(3,3)))
+```
+
+
+```{r fig.cap ="Fig. 19", fig.height=3.5}
+foo <- multi %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+  group_by(country) %>%
+  count() %>%
+  ungroup() %>%
+  top_n(15, n)
+
+multi %>%
+  semi_join(foo, by = "country") %>%
+  mutate(country = as.factor(case_when(
+    country == "United Kingdom of Great Britain and Northern Ireland" ~ "UK",
+    country == "United States of America" ~ "US",
+    TRUE ~ as.character(country)
+  ))) %>%
+  filter(!is.na(is_ds)) %>%
+  group_by(is_ds, country) %>%
+  count() %>%
+  spread(is_ds, n, fill = 0) %>%
+  mutate(frac = yes/(yes+no+maybe)*100,
+         lwr = get_binCI(yes,(yes+no+maybe))[[1]]*100,
+         upr = get_binCI(yes,(yes+no+maybe))[[2]]*100
+         ) %>%
+  ggplot(aes(reorder(country, -frac, FUN = min), frac)) +
+  geom_point(color = "darkgreen", size = 4) +
+  geom_errorbar(aes(ymin = lwr, ymax = upr), color = "darkgreen") +
+  geom_hline(yintercept = global_ds, linetype = 2) +
+  labs(x = "", y = "Yes I'm a DS [%]") +
+  theme(legend.position = "none", axis.text.x  = element_text(angle=35, hjust=1, vjust=0.9)) +
+  ggtitle("Strong Variations in DS Self Assessment by Country - Top 15 Countries")
+```
+
+We find:
+
+- **Globally, about 52% of those who answered the question see themselves as Data Scientists.** This level will serve as reference point for the more detailed analysis.
+
+- There are **no differences between female and male respondents.** Age groups, on the other hand, show strong variations with the youngest participants being most doubtful about their DS status. The **mid 20-yr olds to mid 30-yr olds show the strongest belief** in being Data Scientist. After this, the self-assessment returns to lower levels towards the late 40s. These patterns might reflect cultural changes in how a data-centric job is perceived.
+
+- Further **significant variations are found when stratified by country.** Here we see the 15 countries with the most overall recipients. France and in particular Russia are very confident about their DS status, while Japan and Italy don't tend to see themselves this way. The top 3 US, India, and China are well consistent with the global level.
+
+
+Now we will put the individual-feature results in a multi-dimensional context. Here is a facet grid of the DS self-assessment over age group and facetted by professional role (columns) and country of residence (rows). Facet grids are great in providing immediate visual comparison between different sub-groups of a data set without overplotting them on top of one another.
+
+Due to the small numbers that result in this repeated slicing and dicing I will only use the top 4 countries and professional roles, as well as the age groups under 40:
+
+```{r fig.cap ="Fig. 20", fig.height=5}
+foo <- multi %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+  group_by(country) %>%
+  count() %>%
+  ungroup() %>%
+  top_n(4, n)
+
+bar <- multi %>%
+  filter(!is.na(role) & role != "Other") %>%
+  group_by(role) %>%
+  count() %>%
+  ungroup() %>%
+  top_n(4, n)
+
+multi %>%
+  semi_join(foo, by = "country") %>%
+  semi_join(bar, by = "role") %>%
+  mutate(country = as.factor(case_when(
+    country == "United Kingdom of Great Britain and Northern Ireland" ~ "UK",
+    country == "United States of America" ~ "US",
+    TRUE ~ as.character(country)
+  ))) %>%
+  filter(!is.na(is_ds) & age %in% c("18-21","22-24","25-29","30-34","35-39") &
+           gender %in% c("Male", "Female")) %>%
+  group_by(is_ds, country, age, role) %>%
+  count() %>%
+  spread(is_ds, n, fill = 0) %>%
+  mutate(frac = yes/(yes+no+maybe)*100,
+         lwr = get_binCI(yes,(yes+no+maybe))[[1]]*100,
+         upr = get_binCI(yes,(yes+no+maybe))[[2]]*100
+         ) %>%
+  ggplot(aes(age, frac)) +
+  geom_point(size = 4, color = "blue") +
+  geom_errorbar(aes(ymin = lwr, ymax = upr), color = "blue") +
+  geom_hline(yintercept = global_ds, linetype = 2) +
+  labs(x = "Age Group", y = "Yes I'm a DS [%]") +
+  theme(legend.position = "none", axis.text.x  = element_text(angle=35, hjust=1, vjust=0.9)) +
+  facet_grid(country ~ role) +
+  ggtitle("DS self-assessment by age over professional role and country")
+```
+
+We find:
+
+- **If your job title is "Data Scientist" then your belief in your status as a DS appears to be globally high.** Yet, the youngest DS still lack a little confidence compared to their older colleagues in India and the US.
+
+- **The other three professions show very little deviations from the global average**, except for older Software Engineers in the US and young US/Indian (plus perhaps Chinese) Students. It is notable that otherwise most Students see themselves as much as DS as Data Analysts and Software Engineers do. Russia's overall high confidence is also reflected here, in particular in the self-assessment by Data Analysts. Note the large uncertainties in most facets.
+
+
+Finally, what about the coding and ML experience? Surely spending a lot of time with code and machine learning models will boost one's confidence in DS abilities. Let's find out!
+
+We will try out a new type of plot: This is a count plot of the percentage of positive responses to "Do you consider yourself to be a Data Scientist?" (colour-coded) for each combination of *ML experience* and *Experience of writing code*. The size of the filled circles indicate how many respondents answered the question in total (i.e. `yes + no + maybe`). This gives us an idea about the signficance of the "yes" percentage, since smaller numbers would have larger statistical errors.
+
+To avoid dealing with very small numbers we exclude groups with less than 15 respondents. We will continue to use our colour-scale with blue = low and yellow = high. Note the logarithmic scaling of the circle sizes:
+
+```{r fig.cap ="Fig. 21"}
+multi %>%
+  filter(!is.na(exp_code) & !is.na(exp_ml) & !is.na(is_ds)) %>%
+  group_by(is_ds, exp_code, exp_ml) %>%
+  count() %>%
+  spread(is_ds, n, fill = 0) %>%
+  mutate(frac = yes/(yes+no+maybe)*100,
+         lwr = get_binCI(yes,(yes+no+maybe))[[1]]*100,
+         upr = get_binCI(yes,(yes+no+maybe))[[2]]*100,
+         sum = yes+no+maybe,
+         err = mean(c(frac-lwr, upr-frac))
+         ) %>%
+  filter(sum > 15) %>%
+  ggplot(aes(exp_code, exp_ml, size = sum, color = frac)) +
+  geom_point() +
+  scale_color_gradient(low = "#ffdf3f", high = "#5c46ff") +
+  scale_size(trans = "log10") +
+  theme(axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9)) +
+  labs(color = "I'm a DS [%]", size = "# replies",
+       x = "Experience in writing code", y = "ML experience") +
+  ggtitle("DS self-assessment for coding/ML experience")
+```
+
+We find:
+
+- **More experienced respondents clearly have a higher degree of belief in their Data Scientist status**, as evidenced by the colour gradient from the lower left to upper right corner of the plot. There is already a visible trend among the largest groups with < 1 year to 3 years experience in both categories.
+
+- In general, the shape of the observations in the parameter space makes sense in that more coding experience is paired with longer ML experience. However, there is a notable number of respondents with more ML than coding experience. I suppose this could indicate starting with a mathematical understanding of ML methods and then moving into applied coding.
+
+This concludes this focus analysis. There are certainly more angles to explore but I want to keep this Kernel general enough to cover many questions without becoming too long. For a deeper analysis of the question who considers themselves a DS I recommend to check out the Kernels by [vfdev5](https://www.kaggle.com/vfdev5/who-are-they-data-scientists) and [beluga](https://www.kaggle.com/gaborfodor/are-you-a-data-scientist-no-way-hell-yeah).
+
+
+# Intermission 1 - Maps, maps, maps {.tabset .tabset-fade .tabset-pills}
+
+To relax the pace a bit, here are interactive maps of the important insights on demographics, education, experience, and self-assessment. I will be using tabs again to order this information and make it easier to switch between different plots. Keep in mind the uncertainty associated with small numbers for countries with few respondents. I also apologise to any map connoisseur for using a [boring projection](https://xkcd.com/977/).
+
+Happy exploring! Let me know any noteworthy findings in the comments.
+
+
+## Gender: Female percentage
+
+```{r fig.height=6, fig.cap ="Fig. 22"}
+foo <- multi %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+  group_by(country, gender) %>%
+  count() %>%
+  spread(gender, n, fill = 0) %>%
+  mutate(sum = (Female+Male+`Prefer not to say`+`Prefer to self-describe`),
+         frac = Female/sum*100) %>%
+  mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c"))
+
+highchart() %>%
+  hc_add_series_map(worldgeojson, foo, value = 'frac', joinBy = 'iso3') %>%
+  hc_title(text = 'Percentage of female respondents') %>%
+  hc_colorAxis(minColor = "#3366ff", maxColor = "#ff0000") %>%
+  hc_tooltip(useHTML = TRUE, headerFormat = "",
+             pointFormat = "{point.country}: {point.frac:.0f}% female <br>All respondents: {point.sum}")
+```
+
+
+## Most frequent age group
+
+```{r fig.height=6, fig.cap ="Fig. 23"}
+foo <- multi %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+  group_by(country, age) %>%
+  count() %>%
+  ungroup() %>%
+  group_by(country) %>%
+  top_n(1, n)  %>%
+  ungroup() %>%
+  separate(age, into = c("age_min", "age_max"), remove = FALSE) %>%
+  mutate_if(is.character, as.integer) %>%
+  mutate(age2 = round((age_max-age_min)/2 + age_min)) %>%
+  mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c"))
+
+dclass <- foo %>%
+  select(from = age_min, to = age_max) %>%
+  distinct(from, to) %>%
+  arrange(from) %>%
+  mutate(color = c("#ffdf3f", "#ff6600", "#cc0099", "#5c46ff")) %>%
+  list_parse()
+
+highchart() %>%
+  hc_add_series_map(worldgeojson, foo, value = 'age2', joinBy = 'iso3') %>%
+  hc_title(text = 'Most frequent age group') %>%
+  hc_colorAxis(dataClasses = dclass) %>%
+  hc_tooltip(useHTML = TRUE, headerFormat = "",
+             pointFormat = "{point.country}: Age {point.age} ")
+```
+
+## Coding Experience
+
+```{r fig.height=6, fig.cap ="Fig. 24"}
+foo <- multi %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+  filter(!is.na(exp_code)) %>%
+  group_by(country, exp_code) %>%
+  count() %>%
+  ungroup() %>%
+  group_by(country) %>%
+  top_n(1, n)  %>%
+  ungroup() %>%
+  mutate(code2 = case_when(
+    exp_code == "< 1 year" ~ 0.5,
+    exp_code == "1-2 years" ~ 1.5,
+    exp_code == "3-5 years" ~ 4
+  )) %>%
+  mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c"))
+
+dclass <- foo %>%
+  distinct(exp_code) %>%
+  mutate(from = case_when(
+    exp_code == "< 1 year" ~ 0,
+    exp_code == "1-2 years" ~ 1,
+    exp_code == "3-5 years" ~ 3
+  ),
+  to = case_when(
+    exp_code == "< 1 year" ~ 1,
+    exp_code == "1-2 years" ~ 2,
+    exp_code == "3-5 years" ~ 5
+  )) %>%
+  arrange(from) %>%
+  mutate(color = c("#ffdf3f", "#ff6600", "#5c46ff")) %>%
+  list_parse()
+
+highchart() %>%
+  hc_add_series_map(worldgeojson, foo, value = 'code2', joinBy = 'iso3') %>%
+  hc_title(text = 'Years of coding experience') %>%
+  hc_colorAxis(dataClasses = dclass) %>%
+  hc_tooltip(useHTML = TRUE, headerFormat = "",
+             pointFormat = "{point.country}: Experience {point.exp_code} ")
+
+```
+
+## Most frequent yearly salary
+
+```{r fig.height=6, fig.cap ="Fig. 25"}
+foo <- multi %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+  filter(!is.na(salary) & salary != "Undisclosed") %>%
+  count(country, salary) %>%
+  group_by(country) %>%
+  top_n(1, n)  %>%
+  ungroup() %>%
+  separate(salary, into = c("from", "to"), sep="-", remove = FALSE) %>%
+  mutate(to = str_replace(to, ",", ".")) %>%
+  mutate(from = as.integer(from),
+         to = as.integer(as.numeric(to))) %>%
+  mutate(sal2 = round((to-from)/2 + from)) %>%
+  mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c"))
+
+dclass <- foo %>%
+  distinct(from, to) %>%
+  arrange(from) %>%
+  mutate(color = c("#fff7bc", "#fee391", "#fec44f", "#fe9929", "#ec7014", "#cc4c02",
+"#993404", "#662506", "#804000", "#4d2600")) %>%
+  list_parse()
+
+highchart() %>%
+  hc_add_series_map(worldgeojson, foo, value = 'sal2', joinBy = 'iso3') %>%
+  hc_title(text = 'Most frequent salary group [USD equivalent]') %>%
+  hc_colorAxis(dataClasses = dclass) %>%
+  hc_tooltip(useHTML = TRUE, headerFormat = "",
+             pointFormat = "{point.country}: Salary {point.salary} USD ")
+```
+
+
+## Self-assessment
+
+```{r fig.height=6, fig.cap ="Fig. 26"}
+foo <- multi %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+  filter(!is.na(is_ds)) %>%
+  group_by(is_ds, country) %>%
+  count() %>%
+  spread(is_ds, n, fill = 0) %>%
+  mutate(frac = yes/(yes+no+maybe)*100,
+         lwr = get_binCI(yes,(yes+no+maybe))[[1]]*100,
+         upr = get_binCI(yes,(yes+no+maybe))[[2]]*100
+         ) %>%
+  mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c"))
+
+highchart() %>%
+  hc_add_series_map(worldgeojson, foo, value = 'frac', joinBy = 'iso3') %>%
+  hc_title(text = 'Do you consider yourself to be a Data Scientist?') %>%
+  hc_colorAxis(minColor = "#ffff00", maxColor = "#ff00bf", min = 32, max = 72) %>%
+  hc_tooltip(useHTML = TRUE, headerFormat = "",
+             pointFormat = "{point.country}: {point.frac:.0f}% Yes")
+```
+
+
+
+## Reference map: Number of respondents
+
+```{r fig.height=6, fig.cap ="Fig. 27"}
+foo <- multi %>%
+  count(country) %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+  mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c"))
+
+highchart() %>%
+  hc_add_series_map(worldgeojson, foo, value = 'n', joinBy = 'iso3') %>%
+  hc_title(text = 'Kaggle Survey 2018 - Global Respondents') %>%
+  hc_colorAxis(minColor = "#ffdf3f", maxColor = "#5c46ff") %>%
+  hc_tooltip(useHTML = TRUE, headerFormat = "", pointFormat = "{point.country}: {point.n} users")
+```
+
+
+# Programming languages and tools
+
+Next, we will examine the choices of programming languages and software tools our respondents make in their everyday work or study. The following section title is quoted with apologies to Ludwig Wittgenstein:
+
+
+## The limits of my (programming) language are the limits of my world
+
+Beyond Wittgensteins philosophical insights there are very practical considerations for Data Scientists choosing the language(s) of their craft. A specific coding language comes with a philosophy not just for writing efficient code but also for approaching problems and solving them. Those will be secondary effects, however.
+
+Because in essence I believe that it is the creativity and resourcefulness of the individual DS/ML practioner that will guarantee success; not the choice of a programming language. The best ideas will prevail in any language. Where the language becomes useful, though, is in translating these ideas into action. And some languages will be better suited for certain challenges than others.
+
+Full disclaimer: I much prefer R's *tidyverse* framework because I find it easier to translate my thoughts into code. I also like Python's Pandas but for me it feels a bit more cumbersome. That's just personal preference, though. I don't think there is merit in arguments on whether R or Python are better.
+
+
+```{r}
+vars <- c(lang =  "What specific programming language do you use most often? - Selected Choice",
+          first_lang = "What programming language would you recommend an aspiring data scientist to learn first? - Selected Choice",
+          lang_py = "What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - Python",
+          lang_r = "What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - R",
+          lang_sql = "What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - SQL",
+          lang_jula = "What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - Julia",
+          lang_bash = "What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - Bash",
+          lang_java = "What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - Java",
+          lang_js = "What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - Javascript/Typescript",
+          lang_vs = "What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - Visual Basic/VBA",
+          lang_c = "What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - C/C++",
+          lang_matlab = "What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - MATLAB",
+          lang_scala = "What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - Scala",
+          lang_go = "What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - Go",
+          lang_sharp = "What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - C#/.NET",
+          lang_php = "What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - PHP",
+          lang_ruby = "What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - Ruby",
+          lang_sas = "What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - SAS/STATA",
+          lang_other = "What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - Other",
+          no_lang = "What programming languages do you use on a regular basis? (Select all that apply) - Selected Choice - None")
+
+multi <- multi %>%
+  rename(!!vars) %>%
+  mutate(lang = na_if(lang, ""),
+         first_lang = na_if(first_lang, ""),
+         no_lang = na_if(no_lang, "")) %>%
+  mutate_at(vars(starts_with("lang_")), as.integer) %>%
+  mutate_at(vars(starts_with("lang_")), log) %>%
+  mutate_at(vars(starts_with("lang_")), as.logical)
+```
+
+
+We will start with studying the questions "What specific programming language do you use most often?" and "What programming language would you recommend an aspiring data scientist to learn first?" in a combined visual. Here, two barplots will frame a heatmap that shows the number of respondents for each combination of the two categories.
+
+We are using the (log-scale) colour gradient from the heatmap also for the barplots for styling purposes. Note that the ordering of both axes diverges after the top 3 answers:
+
+```{r}
+lang_lvl <- multi %>%
+  filter(!is.na(lang)) %>%
+  mutate(lang = as.character(lang)) %>%
+  count(lang) %>%
+  arrange(desc(n)) %>%
+  .$lang
+
+first_lang_lvl <- multi %>%
+  filter(!is.na(first_lang)) %>%
+  mutate(first_lang = as.character(first_lang)) %>%
+  count(first_lang) %>%
+  arrange(n) %>%
+  .$first_lang
+```
+
+```{r  fig.height=6, fig.cap ="Fig. 28"}
+p1 <- multi %>%
+  filter(!is.na(lang)) %>%
+  mutate(lang = fct_relevel(lang, lang_lvl)) %>%
+  group_by(lang) %>%
+  count() %>%
+  ggplot(aes(lang, n, fill = log10(n))) +
+  geom_col() +
+  scale_fill_gradient(low = "#ffdf3f", high = "#5c46ff") +
+  scale_x_discrete(position = "top") +
+  labs(x = "Most used language", y = "Responses") +
+  theme(legend.position = "none", axis.text.x  = element_text(angle=35, hjust=0, vjust=0.9))
+
+p2 <- multi %>%
+  filter(!is.na(first_lang)) %>%
+  mutate(first_lang = fct_relevel(first_lang, first_lang_lvl)) %>%
+  group_by(first_lang) %>%
+  count() %>%
+  ggplot(aes(first_lang, n, fill = log10(n))) +
+  geom_col() +
+  scale_fill_gradient(low = "#ffdf3f", high = "#5c46ff") +
+  scale_x_discrete(position = "top") +
+  labs(x = "Recommended 1st DS language", y = "Responses") +
+  coord_flip() +
+  theme(legend.position = "none")
+
+p3 <- multi %>%
+  filter(!is.na(lang) & !is.na(first_lang)) %>%
+  group_by(lang, first_lang) %>%
+  count() %>%
+  ungroup() %>%
+  mutate(lang = fct_relevel(lang, lang_lvl),
+         first_lang = fct_relevel(first_lang, first_lang_lvl)) %>%
+  ggplot(aes(lang, first_lang, fill = log10(n))) +
+  geom_tile() +
+  scale_fill_gradient(low = "#ffdf3f", high = "#5c46ff") +
+  geom_text(aes(lang, first_lang, label = n), color = "black", size = 2.5) +
+  theme(legend.position = "none",
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        plot.margin=unit(c(0.18,0.2,0.57,1.05),"cm")) +
+  labs(x = "", y = "")
+
+p4 <- tibble(a = 1, b = 1) %>%
+  ggplot(aes(a,b)) +
+  geom_text(aes(a,b), size = 6,
+            label = "Primary language vs \n recommended 1st \nlanguage for DS: \nPython dominates") +
+  theme_void() +
+  labs(x = "", y = "")
+
+grid.arrange(p1, p2, p3, p4, layout_matrix = rbind(c(1,1,4),
+                                               c(1,1,4),
+                                               c(1,1,4),
+                                               c(3,3,2),
+                                               c(3,3,2),
+                                               c(3,3,2),
+                                               c(3,3,2)))
+```
+
+We find:
+
+- **Python clearly dominates the two categories with R in a distant second place both times.** In fact, R users are not far from recommending Python as the first DS language (828) then they are recommending R (1028). In fairness, R is the only language for which its users recommend it over Python. Even MATLAB users predominantly recommend Python, but choose MATLAB over R.
+
+- Other findings: SQL is the third-most popular response to both questions. SAS users recommend R over SAS. Julia is still very much in its infancy in the DS/ML community.
+
+- In my view, the dominance of Python as the language of Data Science is based on its versatility and rising popularity as a general purpose programming language. Great libraries like scikit-learn and pandas make Python shine in DS/ML applications. Seaborn and matplotlib have a rich repertoire of visual power. The tensorflow implementations don't hurt either ;-)
+
+
+The popularity of a programming language can be expected to vary between professions and their associated cultures.This assumption motivates us to break down the 5 overall most popular languages by the top 9 most frequent roles. Note the freely-scaled y-axes:
+
+```{r fig.cap ="Fig. 29"}
+foo <- multi %>%
+  filter(!is.na(lang)) %>%
+  count(lang) %>%
+  top_n(5,n)
+
+bar <- multi %>%
+  filter(!is.na(role) & role != "Other" & role != "Not employed") %>%
+  group_by(role) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  ungroup() %>%
+  top_n(9, n)
+
+multi %>%
+  semi_join(foo, by = "lang") %>%
+  semi_join(bar, by = "role") %>%
+  mutate(lang = fct_relevel(lang, lang_lvl[c(1:5)])) %>%
+  mutate(role = fct_relevel(role, as.character(bar$role))) %>%
+  ggplot(aes(lang, fill = lang)) +
+  geom_bar() +
+  theme(legend.position = "none", axis.text.x  = element_text(angle=45, hjust=1, vjust=0.9)) +
+  facet_wrap(~ role, scales = "free_y") +
+  labs(x = "", y = "Respondents") +
+  ggtitle("Top 5 languages for top 9 professions")
+```
+
+We find:
+
+- **Python is clearly most popular in all professions.** Software Engineers use Java and C, as do a number of Students. R and SQL have their highest relative popularity among Data Analysts and Business Analysts, and to a lesser degree Consultants. Data Engineers also use some SQL.
+
+- Other than Software Engineers, C/C++ are primarily used by a small number of Research Scientists and Students. Data Scientists use very little SQL and almost no Java or C/C++. 
+
+
+## A multi-lingual community
+
+In addition to the question for the "language used most often", the survey also asked "What programming languages do you use on a regular basis?" for the most popular languages. Here we will focus on the number of different languages that respondents use regularly, rather than the individual languages.
+
+```{r}
+multi <- multi %>%
+  mutate(no_lang = na_if(no_lang, "")) %>%
+  mutate(lcount = rowSums(select(., starts_with("lang_"))),
+         lcount = case_when(
+           lcount == 0 & no_lang == "None" ~ 0,
+           lcount == 0 & is.na(no_lang) ~ na_dbl,
+           lcount > 0 ~ lcount
+         ))
+```
+
+
+Here we will supplement the global bar chart with a small overview facetting for the most popular job roles and a ridgeline density plot for all the primary languages. Ridgeline plots, via the [ggridges](https://cran.r-project.org/web/packages/ggridges/) package, are a great way to quickly compare density curves for different subgroups:
+
+```{r message = FALSE, warning = FALSE, fig.cap ="Fig. 30"}
+p1 <- multi %>%
+  ggplot(aes(lcount)) +
+  geom_bar(fill = "#5c46ff") +
+  theme(legend.position = "none") +
+  labs(x = "", y = "Respondents") +
+  ggtitle("Regularly used languages")
+  
+p2 <- multi %>%
+  filter(!is.na(lang) & lang != "Other" & dplyr::between(lcount, 0, 8)) %>%
+  mutate(lang = fct_relevel(lang, lang_lvl)) %>%
+  ggplot(aes(lcount, lang, fill = lang)) +
+  geom_density_ridges(bandwidth = 0.4) +
+  #scale_x_log10() +
+  theme(legend.position = "none") +
+  labs(x = "# languages", y = "Primary language")
+
+bar <- multi %>%
+  filter(!is.na(role) & role != "Other") %>%
+  group_by(role) %>%
+  count() %>%
+  ungroup() %>%
+  top_n(4, n)
+
+p3 <- multi %>%
+  filter(!is.na(lcount)) %>%
+  semi_join(bar, by = "role") %>%
+  ggplot(aes(lcount, fill = role)) +
+  geom_bar() +
+  scale_x_continuous(limits = c(0,10), breaks = seq(0,10,2)) +
+  facet_wrap(~ role, scales = "free_y") +
+  theme(legend.position = "none") +
+  labs(x = "Number of languages")
+  
+grid.arrange(p1, p2, p3, layout_matrix = rbind(c(1,2),
+                                               c(1,2),
+                                               c(3,2),
+                                               c(3,2),
+                                               c(3,2)))
+```
+
+We find:
+
+- **Most respondents use 2 or 3 programming languages on a regular basis.** Anything from 1 to 5 languages is relatively common. The distribution extends up to 15 languages but those cases are thankfully rare.
+
+- There is not much difference between the four main professions of "Data Scientist", "Data Analyst", "Software Engineer", and "Student". In terms of primary programming language we see that main users of the less popular languages (in this survey), such as Julia, Ruby, or Scala, are somewhat more likely to work with a larger number of languages.
+
+
+## Tool time
+
+The ways in which we use the programming language(s) in our repertoire are shaped by the tools that we work with. The survey went into quite a bit of depth asking us questions about the primary data analysis tools we use, favourite data visualisation libraries, and our experience with ML, cloud, or database products.
+
+I will keep this section brief and only show a few overview plots for the sake of presenting a comprehensive overview story in this Kernel. I encourage anyone who is interested to expand this analysis to a deep dive. One could for instance study the total number of tools or frameworks (like for the languages above) or examine connections between frequently used pairs or multiplets of ML product plus database + cloud product + etc.
+
+```{r}
+vars <- c(
+  tool = "What is the primary tool that you use at work or school to analyze data? (include text response) - Selected Choice",
+  kaggle_kernel = "Which of the following hosted notebooks have you used at work or school in the last 5 years? (Select all that apply) - Selected Choice - Kaggle Kernels",
+  ml = "Of the choices that you selected in the previous question, which ML library have you used the most? - Selected Choice",
+  vis = "Of the choices that you selected in the previous question, which specific data visualization library or tool have you used the most? - Selected Choice")
+
+multi <- multi %>%
+  rename(!!vars) %>%
+  mutate(tool = na_if(tool, ""),
+         kaggle_kernel = na_if(kaggle_kernel, ""),
+         ml = na_if(ml, ""),
+         vis = na_if(vis, ""))
+```
+
+
+Here I will visualise the most popular choices for data analysis tools, ML libraries, and data visualisation libraries together with a slightly self-referential look at how many respondents have used Kaggle Kernels (hidden in one of the options to "Which of the following hosted notebooks have you used...?"):
+
+
+```{r fig.height=6.5, fig.cap ="Fig. 31"}
+p1 <- multi %>%
+  filter(!is.na(tool)) %>%
+  group_by(tool) %>%
+  count() %>%
+  ungroup() %>%
+  top_n(5, n) %>%
+  ggplot(aes(reorder(tool, n, FUN = min), n, fill = tool)) +
+  geom_col() +
+  labs(x = "", y = "Responses") +
+  scale_x_discrete(labels = function(x) lapply(str_wrap(x, width = 25), paste, collapse="\n")) +
+  coord_flip() +
+  theme(legend.position = "none", axis.text.y = element_text(size = 7)) +
+  ggtitle("Top 5 data analysis tools")
+
+p2 <- multi %>%
+  mutate(kaggle_kernel = if_else(is.na(kaggle_kernel), "No", "Yes")) %>%
+  count(kaggle_kernel) %>%
+  mutate(percentage = str_c(as.character(round(n/nrow(multi)*100,1)), "%")) %>%
+  ggplot(aes(kaggle_kernel, n, fill = kaggle_kernel)) +
+  geom_col() +
+  geom_label(aes(label = percentage), position = position_dodge(width = 1)) +
+  theme(legend.position = "none") +
+  labs(x = "", y = "Respondents") +
+  ggtitle("Have you used \nKaggle Kernels?")
+  
+p3 <- multi %>%
+  filter(!is.na(ml)) %>%
+  group_by(ml) %>%
+  count() %>%
+  ungroup() %>%
+  top_n(5, n) %>%
+  ggplot(aes(reorder(ml, -n, FUN = min), n, fill = ml)) +
+  geom_col() +
+  labs(x = "", y = "Responses") +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1, vjust = 0.9)) +
+  ggtitle("Top 5 ML libraries")
+
+p4 <- multi %>%
+  filter(!is.na(vis)) %>%
+  group_by(vis) %>%
+  count() %>%
+  ungroup() %>%
+  top_n(5, n) %>%
+  ggplot(aes(reorder(vis, -n, FUN = min), n, fill = vis)) +
+  geom_col() +
+  labs(x = "", y = "Responses") +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1, vjust = 0.9)) +
+  ggtitle("Top 5 visualisation libraries")
+
+grid.arrange(p1, p2, p3, p4, layout_matrix = rbind(c(1,1,1,1,1,2,2,2),c(3,3,3,3,4,4,4,4)))
+```
+
+We find:
+
+- **Most respondents use development environments like Rstudio or Jupyter for their work or study.** Spreadsheet tools such as Excel are in 2nd place, SPSS/SAS and cloud-based data tools are still a minority choice. In a statistically likely non-twist this Kernel was written in Rstudio.
+
+- **Only 25% of respondents have used Kaggle Kernels** in the last 5 years. Seeing that Kernels don't go back 5 years this should cover everyone ;-) . I would be curious to follow the evolution of this percentage over the comming years.
+
+- The **most popular ML library by far is Scikit-Learn**, with TensorFlow sharing the second place with Keras. In terms of visualisations **matplotlib is the tool of choice**. Seaborn is being used more than plotly. Given the prevalence of Python users over R users that we've seen previously, ggplot2 is in a very respectable 2nd place. Needless to say, almost all the visuals in this Kernel are powered by ggplot2.
+
+
+## Visuals about visuals
+
+Data visualisation is one of my main interests, and I believe that the right picture can say much more than just a thousand words. Let's use some visual tools to explore the use of visual tools. Here I will design a plot myself by turning ggplots `geom_tile` functionality into a multi-facetted "waffle plot":
+
+The idea is that there are 100 tiles per waffle which are colour-coded by target category. For instance: 40 blue tiles mean that the "blue" category amounts to 40% in this sub-group. This allows to compare large differences between sub-groups at a glance by comparing their areas (much more intuitively than for the infamous pie charts.)  Here the target categories are the overall top 5 data visualisation tools. The facets are the age group (below 40 years) and the professional role (overall top 5) of the respondents:
+
+
+```{r}
+# top vis
+foo <- multi %>%
+  filter(!is.na(vis)) %>%
+  count(vis) %>%
+  top_n(5,n)
+
+# top role
+bar <- multi %>%
+  filter(!is.na(role) & !(role %in% c("Other", "Not employed")) ) %>%
+  count(role) %>%
+  top_n(5,n)
+
+# select age, count age-role-vis combinations,
+# add age-role count, compute percentage of vis for age-role
+foobar <- multi %>%
+  semi_join(foo, by = "vis") %>%
+  semi_join(bar, by = "role") %>%
+  #filter(age %in% c("18-21", "22-24", "25-29")) %>%
+  filter(age %in% c("18-21", "22-24", "25-29", "30-34", "35-39")) %>%
+  group_by(age, role, vis) %>%
+  summarise(n = n()) %>%
+  add_tally(n) %>%
+  mutate(frac = round(n/nn*100.)) %>%
+  select(-n, -nn) %>%
+  arrange(frac, .by_group = TRUE) %>%
+  ungroup()
+
+
+# expand the age-role-vis categories according to their counts
+k <- foobar$frac[1]
+check <- k
+dummy_vars <- foobar %>% select(-frac) %>% slice(rep(1, each = k))
+for (i in seq(2,nrow(foobar))){
+  k <- foobar$frac[i]
+  if (k + check > 85){
+    if (k + check == 100){
+    } else {
+      k <- 100 - check
+    }
+    check <- 0
+  } else {
+    check <- check + k
+  }
+
+  dummy_vars <- dummy_vars %>%
+    bind_rows(foobar %>% select(-frac) %>% slice(rep(i, each = k)))
+}
+
+# the x-y grid of the same size as dummy_vars
+k <- foobar %>% distinct(age, role) %>% nrow()
+dummy_grid_zero <- tibble(y = 1:10, x = 1:10) %>% expand(y, x)
+dummy_grid <- dummy_grid_zero
+for (i in seq(k-1)){
+  dummy_grid <- dummy_grid %>% bind_rows(dummy_grid_zero)
+}
+
+wgrid <- dummy_vars %>%
+  bind_cols(dummy_grid)
+```
+
+
+```{r fig.height=6.5, fig.cap ="Fig. 32"}
+wgrid %>%
+  mutate(age = str_c("age ", as.character(age))) %>%
+  ggplot(aes(x = x, y = y, fill = vis)) + 
+  geom_tile(color = "black", size = 0.5) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0), trans = 'reverse') +
+  scale_fill_brewer(palette = "Set1") +
+  facet_grid(age ~ role) +
+  labs(fill = "") +
+  guides(fill = guide_legend(nrow = 1)) +
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        legend.position = "top") +
+  ggtitle("Data visualisation tools by professional role and age-group")
+```
+
+We find:
+
+- The dominance of **matplotlib is particularly strong among Software Engineers and young Students**. In contrast, there is almost no difference in the about 12% usage rate of seaborn throughout the facets.
+
+- In general, the usage of **ggplot2 increases as respondents get older.** This is particularly evident in the case of Data Analysts, where ggplot2 overtakes matplotlib as the most-used tool after age 30. For all Data Analysts ggplot2 is close to matplotlib in popularity. Overall, the ggplot2 vs matplotlib spread appears to mirror the R vs Python differences seen in Fig. 29 above.
+
+
+Here is another fun visualisation style for you to try out: *geofacets* via the [eponymous package](https://github.com/hafen/geofacet). This plot arranges its country facets not in a rectangular grid but by geographical coordinates, which makes for an aesthetically pleasing representation of geo-spatial relations and trends.
+
+In this example I will show the relative usage numbers of the three top data visualisation tools, namely matplotlib, ggplot2, and seaborn, for all [OECD countries](https://en.wikipedia.org/wiki/OECD) that are named in our dataset (which excludes a few). Note, that the x-axis scales for these facets are free, which means that those really are relative numbers scaled to the most popular library:
+
+```{r message=FALSE, fig.height=7.5, fig.cap ="Fig. 33"}
+foo <- multi %>%
+  filter(!is.na(vis)) %>%
+  count(vis) %>%
+  top_n(3,n)
+
+foo_grid <- oecd_grid1 %>%
+  filter(!(name %in% c("Latvia", "Estonia", "Slovakia",
+                       "Luxembourg", "Slovenia", "Iceland")))
+
+multi %>%
+  semi_join(foo, by = "vis") %>%
+  mutate(country = case_when(
+    country == "United Kingdom of Great Britain and Northern Ireland" ~ "United Kingdom",
+    country == "United States of America" ~ "United States",
+    TRUE ~ as.character(country))) %>%
+  inner_join(foo_grid, by = c("country" = "name")) %>%
+  ggplot(aes(vis, fill = vis)) +
+  geom_bar() +
+  labs(x = "", y = "") +
+  coord_flip() +
+  theme(legend.position = "none",
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        strip.text = element_text(size = 8)) +
+  facet_geo(~ code, grid = foo_grid, scales = "free_x") +
+  ggtitle("Matplotlib vs ggplot2 vs Seaborn in OECD countries")
+```
+
+We find:
+
+- **Matplotlib is most popular in central and southern Europe plus Japan.** It is always more popular than Seaborn, especially in Portugal and also Mexico.
+
+- **ggplot2 rules New Zealand and Australia**, which might be due to ggplot2-mastermind [Hadley Wickham's](http://hadley.nz/) influence in no small way. Also in Chile, Sweden, and Spain the library enjoys popularity.
+
+
+# Data types and workflow
+
+In this section we will investigate which types of data people are working with and how their workflow is typically structured.
+
+
+## Data is beautiful in many different ways
+
+We begin with the data types our respondents "currently interact with most often at work or school":
+
+```{r}
+vars <- c(datatype = "What is the type of data that you currently interact with most often at work or school? - Selected Choice")
+
+multi <- multi %>%
+  #rename(!!vars) %>%
+  rename(datatype = "What is the type of data that you currently interact with most often at work or school? - Selected Choice") %>%
+  mutate(datatype = na_if(datatype, ""))
+```
+
+
+```{r fig.height=3.5, fig.cap ="Fig. 34"}
+multi %>%
+  filter(!is.na(datatype)) %>%
+  count(datatype) %>%
+  ggplot(aes(reorder(datatype, -n, FUN = min), n, fill = datatype)) +
+  geom_col() +
+  theme(legend.position = "none", axis.text.x  = element_text(angle=35, hjust=1, vjust=0.9)) +
+  labs(x = "", y = "Respondents") +
+  ggtitle("Primary data type being worked with")
+```
+
+We find:
+
+- **Numerical and Tabular Data are the most common types**. It is noteworthy that Text Data is in third place; higher than Time Series or Image Data. Video and Audio Data are relatively rare and so is Genetic Data.
+
+- Also note that these numbers only add up to about 10k, which means that 58% of respondents did not answer this question.
+
+
+This is the global picture; now let's go deeper and explore how certain professions use these types of data and which languages are being prefered for different types. Here is a bar plot of the top 4 roles colour-coded by the top 3 programming languages and facetted by data type. Note the free x-axis scales:
+
+```{r fig.cap ="Fig. 35"}
+foo <- multi %>%
+  filter(!(role %in% c("Other", "Not employed")) & !is.na(role)) %>%
+  count(role) %>%
+  top_n(6, n)
+
+bar <- multi %>%
+  filter(!is.na(datatype)) %>%
+  count(datatype) %>%
+  top_n(6, n)
+
+multi %>%
+  semi_join(foo, by = "role") %>%
+  semi_join(bar, by = "datatype") %>%
+  filter(!is.na(datatype) & lang %in% c("Python", "R", "SQL") & datatype != "Other Data") %>%
+  count(datatype, lang, role) %>%
+  ggplot(aes(reorder(datatype, -n, FUN = min), n, fill = lang)) +
+  geom_col(position = "dodge") +
+  coord_flip() +
+  theme(legend.position = "right") +
+  labs(x = "", y = "Respondents", fill = "") +
+  ggtitle("Primary data type for top roles and languages") +
+  facet_wrap(~ role, nrow = 2, scales = "free_x")
+```
+
+We find:
+
+- **Data Scientists work with Tabular Data, while Data Analysts and Students most often deal with Numerical Data. Interestingly, the same is not true for Software Engineers and Research Scientists who rather work with Image Data.** Image Data is rarely the main object of Data Analyst work.
+
+- For most data types, Data Analysts make use of the top 3 languages in almost equal way. The exceptions are Text and Image Data where it's pretty much all Python. The same Python dominance is evident for the other professions in particular for Image Data. Consultants as a sample have a similar multi-language approach to most data types as Analysts have. 
+
+
+## Workflow patterns - individual distributions {.tabset .tabset-fade .tabset-pills}
+
+This was the type of data that is most relevant for our respondents. Now let's examine how people work with this data and which part of their workflows are most important. We start with the individual distributions of responses to questions about type of work activities and the work spent on them:
+
+```{r}
+vars_work <- c(work_gather = "During a typical data science project at work or school, approximately what proportion of your time is devoted to the following? (Answers must add up to 100%) - Gathering data",
+          work_clean = "During a typical data science project at work or school, approximately what proportion of your time is devoted to the following? (Answers must add up to 100%) - Cleaning data",
+          work_vis = "During a typical data science project at work or school, approximately what proportion of your time is devoted to the following? (Answers must add up to 100%) - Visualizing data",
+          work_model = "During a typical data science project at work or school, approximately what proportion of your time is devoted to the following? (Answers must add up to 100%) - Model building/model selection",
+          work_prod = "During a typical data science project at work or school, approximately what proportion of your time is devoted to the following? (Answers must add up to 100%) - Putting the model into production",
+          work_insights = "During a typical data science project at work or school, approximately what proportion of your time is devoted to the following? (Answers must add up to 100%) - Finding insights in the data and communicating with stakeholders",
+          work_other = "During a typical data science project at work or school, approximately what proportion of your time is devoted to the following? (Answers must add up to 100%) - Other")
+
+vars_acti <- c(acti_analyse_understand = "Select any activities that make up an important part of your role at work: (Select all that apply) - Selected Choice - Analyze and understand data to influence product or business decisions",
+               acti_build_ml = "Select any activities that make up an important part of your role at work: (Select all that apply) - Selected Choice - Build and/or run a machine learning service that operationally improves my product or workflows",
+               acti_infra = "Select any activities that make up an important part of your role at work: (Select all that apply) - Selected Choice - Build and/or run the data infrastructure that my business uses for storing, analyzing, and operationalizing data",
+               acti_prototype = "Select any activities that make up an important part of your role at work: (Select all that apply) - Selected Choice - Build prototypes to explore applying machine learning to new areas",
+               acti_ml_research = "Select any activities that make up an important part of your role at work: (Select all that apply) - Selected Choice - Do research that advances the state of the art of machine learning",
+               acti_none = "Select any activities that make up an important part of your role at work: (Select all that apply) - Selected Choice - None of these activities are an important part of my role at work",
+               acti_other = "Select any activities that make up an important part of your role at work: (Select all that apply) - Selected Choice - Other")
+
+
+foo <- multi %>%
+  rename(!!c(vars_acti, vars_work))
+```
+
+
+### Important activities
+
+```{r message=FALSE, warning=FALSE, fig.height=4, fig.cap ="Fig. 36"}
+multi %>%
+  select(starts_with("Select any activities that make up an important part of your role at work: (Select all that apply) - Selected Choice")) %>%
+  replace(.=="", NA) %>%
+  gather(key = "foo", value = "act") %>%
+  count(act) %>%
+  filter(!is.na(act) & act != "Other") %>%
+  ggplot(aes(reorder(act, n, FUN = min), n, fill = act)) +
+  geom_col() +
+  theme(legend.position = "none") +
+  coord_flip() +
+  labs(x = "", y = "Responses") +
+  scale_x_discrete(labels = function(x) lapply(str_wrap(x, width = 35), paste, collapse="\n")) +
+  ggtitle("Activities that make up an important part of your work")
+```
+
+
+### Time per activity
+
+```{r fig.height=4, fig.cap ="Fig. 37"}
+multi %>%
+  select(starts_with("During a typical data science project at work or school, approximately what proportion of your time is devoted to the following? (Answers must add up to 100%)")) %>%
+  replace(.=="", NA) %>%
+  gather(key = "foo", value = "prop") %>%
+  filter(!is.na(prop)) %>%
+  separate(foo, into = c("bar", "work"), sep = "-") %>%
+  ggplot(aes(prop, work, fill = work)) +
+  geom_density_ridges(bandwidth = 5) +
+  #facet_wrap(~ work, labeller = labeller(work = label_wrap_gen(40))) +
+  theme(legend.position = "none") +
+  labs(x = "Proportion of time", y = "") +
+  scale_x_continuous(breaks = c(seq(0,40,10),seq(40,100,20))) +
+  scale_y_discrete(labels = function(x) lapply(str_wrap(x, width = 35), paste, collapse="\n")) +
+  ggtitle("During work projects what proportion \nof your time is devoted to the following?")
+```
+
+
+### Findings
+
+- **Analysing data and prototyping ML algorithms are the most frequent tasks** in the work day of our respondents. The other three activities, including ML research, are similarly frequent.
+
+- There are only **small differences in the average time spent for each work task.** Typical proportions are between 5% and 20%, indicating roughly equal amounts of time spent on each of the seven kinds of task (including "Other").
+
+- **Cleaning data and Model building/selection** take up the most time. Putting the model into production as well as finding and communicating insights are among the quicker tasks.
+
+- "Other" is the only kind of task with a bimodal distribution. Feel free to follow up this analysis by having a closer look at the "Other" tasks in the free-form text responses.
+
+
+## Workflow patterns - context
+
+
+These workflow insights are best examined in the context of other information about our respondents. As a case in point, we will examine the salary distributions and the responses to the question whether people consider themselves as Data Scientist. Here we need to take into account that multiple activities might "make up an important part" of someone's work:
+
+```{r message=FALSE, warning=FALSE}
+foo <- multi %>%
+  select(starts_with("Select any activities that make up an important part of your role at work: (Select all that apply) - Selected Choice"), salary, is_ds) %>%
+  replace(.=="", NA) %>%
+  gather(starts_with("Select any activities that make up an important part of your role at work: (Select all that apply) - Selected Choice"), key = "foo", value = "prop") %>%
+  filter(!is.na(prop))
+```
+
+```{r fig.height=7.5, fig.cap ="Fig. 38"}
+p1 <- foo %>%
+  filter(!is.na(salary) & salary != "Undisclosed") %>% #  & prop != "Other" &
+           #prop != "None of these activities are an important part of my role at work") %>%
+  ggplot(aes(salary, fill = prop)) +
+  geom_bar() +
+  facet_wrap(~ prop, scales = "free_y", ncol = 1, labeller = labeller(prop = label_wrap_gen(60))) +
+  theme(legend.position = "none", axis.text.x  = element_text(angle=35, hjust=1, vjust=0.9)) +
+  labs(x = "US Dollars or Dollar Equivalents", y = "Respondents") +
+  guides(fill = guide_legend(ncol = 1)) +
+  ggtitle("Yearly salary in USD for important activities")
+
+p2 <- foo %>%
+  filter(!is.na(is_ds)) %>% # & prop != "Other" &
+           #prop != "None of these activities are an important part of my role at work") %>%
+  group_by(is_ds, prop) %>%
+  count() %>%
+  spread(is_ds, n, fill = 0) %>%
+  mutate(frac = yes/(yes+no+maybe)*100,
+         lwr = get_binCI(yes,(yes+no+maybe))[[1]]*100,
+         upr = get_binCI(yes,(yes+no+maybe))[[2]]*100,
+         sum = yes+no+maybe,
+         err = mean(c(frac-lwr, upr-frac))
+         ) %>%
+  ggplot(aes(reorder(prop, desc(prop)), frac, color = prop)) +
+  geom_point(size = 2) +
+  geom_errorbar(aes(ymin = lwr, ymax = upr, color = prop)) +
+  geom_hline(yintercept = global_ds, linetype = 2) +
+  labs(x = "", y = "Yes I'm a DS") +
+  coord_flip() +
+  theme(legend.position = "none",
+        axis.text.y = element_blank(),
+        plot.margin=unit(c(0.2,0.0,0.8,0.0),"cm")) +
+  ggtitle("Self assessment")
+
+grid.arrange(p1, p2, layout_matrix = rbind(c(1,1,2)))
+```
+
+We find:
+
+- The salary distributions of respondents with specific important activities are very similar. Researchers have somewhat lower salaries, which could be due to Students being in that group. Those five groups also share a relatively high confidence in their status as a Data Scientist with respondents who build or run ML services being most confident.
+
+- Those without specific ML/DS tasks, on the other hand, are significantly less confident and have lower salaries overall. 
+
+
+## Fantastic data and where to find them
+
+An important prerequisite for analysing data is of course to obtain the raw or pre-processed data in the first place. Here are our respondents' favourite sources for public data (with multiple selections possible) and a comparison of their usage in the top 2 countries India and US. Note that if you want to create this kind of plot layout you need to make sure that the factor levels have the same order for both graphs:
+
+
+```{r warning=FALSE}
+foo <- multi %>%
+  select(starts_with("Where do you find public datasets? (Select all that apply) - Selected Choice"), country) %>%
+  replace(.=="", NA) %>%
+  gather(starts_with("Where do you find public datasets? (Select all that apply) - Selected Choice"), key = "foo", value = "source") %>%
+  filter(!is.na(source))
+```
+
+```{r warning=FALSE, fig.cap ="Fig. 39"}
+bar <- multi %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+  group_by(country) %>%
+  count() %>%
+  ungroup() %>%
+  top_n(2, n)
+
+source_lvl <- multi %>%
+  select(starts_with("Where do you find public datasets? (Select all that apply) - Selected Choice")) %>%
+  replace(.=="", NA) %>%
+  gather(key = "foo", value = "source") %>%
+  count(source) %>%
+  arrange(n) %>%
+  .$source
+
+
+p1 <- multi %>%
+  select(starts_with("Where do you find public datasets? (Select all that apply) - Selected Choice")) %>%
+  replace(.=="", NA) %>%
+  gather(key = "foo", value = "source") %>%
+  mutate(source = fct_relevel(source, source_lvl)) %>%
+  count(source) %>%
+  filter(!is.na(source) & source != "Other") %>%
+  ggplot(aes(source, n, fill = n)) +
+  geom_col() +
+  theme(legend.position = "none") +
+  coord_flip() +
+  labs(x = "", y = "Responses") +
+  scale_x_discrete(labels = function(x) lapply(str_wrap(x, width = 25), paste, collapse="\n"),
+                   position = "top")  +
+  ggtitle("Public data sources",
+          subtitle = "Absolute numbers (left) and relative proportions \nfor the top 2 countries (right)")
+
+p2 <- foo %>%
+  semi_join(bar, by = "country") %>%
+  filter(!is.na(source) & source != "Other") %>%
+  group_by(country, source) %>%
+  count() %>%
+  ungroup() %>%
+  mutate(source = fct_relevel(source, source_lvl)) %>%
+  ggplot(aes(source, n, fill = country)) +
+  geom_col(position = "fill") +
+  theme(legend.position = "top",
+        axis.text.y = element_blank(),
+        plot.margin=unit(c(0.3,0.0,0.0,0.0),"cm")) +
+  coord_flip() +
+  scale_fill_discrete(guide = guide_legend(reverse = TRUE)) +
+  labs(x = "", y = "Percentage", fill = "") +
+  scale_x_discrete(labels = function(x) lapply(str_wrap(x, width = 35), paste, collapse="\n"))
+
+grid.arrange(p1, p2, layout_matrix = rbind(c(1,1,1,2,2)))
+```
+
+We find:
+
+- **Aggregator platforms are the most popular data sources.** This result is likely to be biased in favour of Kaggle Datasets when surveying the Kaggle community. Google Search and GitHub are other important sources. Google Dataset Search does currently have relatively small numbers but seeing that the service was only [launched at the beginning of September 2018](https://www.blog.google/products/search/making-it-easier-discover-datasets/) its market share is already impressive. Public data from privat companies as well as non-profit research websites are used the least often when working with public data.
+
+- In particular India, compared to the US, uses the new Google Data Set search together with Google Search, aggregators, and GitHub. The websites of governments, research groups, and non-profits are less popular in India. It is noteworthy that the relative percentage of respondents that don't work with public data is much higher in the US than in India.
+
+
+# Sources for DS/ML education and information
+
+Now that we know which tools and data types our respondents are using in their day-to-day work or study, let's spend some time to investigate what got them where they are today and how they keep themselves up to date with the rapidly advancing ML and DS landscape.
+
+This brief section will deal with the approaches to ML/DS training and the most popular media sources in the field.
+
+
+## Where we study for the Kernels
+
+The survey wanted to know "What percentage of your current machine learning/data science training falls under each category?". It also asked "On which online platforms have you begun or completed data science courses?" and which platform we spent the most time on.
+
+When looking at the resulting numbers, keep in mind that the "On which online platforms" question allowed for multiple answers. In terms of ML/DS training we only consider percentages > 0, since zero dominates almost every distribution (except for self-taught) and we want to focus on the difference between the small and large percentages.
+
+
+```{r}
+multi <- multi %>%
+  rename(platform = "On which online platform have you spent the most amount of time? - Selected Choice") %>%
+  mutate(platform = na_if(platform, ""))
+```
+
+ 
+```{r warning=FALSE, fig.cap ="Fig. 40"}
+platform_lvl <- multi %>%
+  filter(!is.na(platform)) %>%
+  mutate(platform = as.character(platform)) %>%
+  count(platform) %>%
+  arrange(n) %>%
+  .$platform
+
+foo <- multi %>%
+  group_by(platform) %>%
+  summarise(most_often = n()) %>%
+  mutate(platform = as.character(platform))
+
+bar <- multi %>%
+  select(starts_with("On which online platforms have you begun or completed data science courses? (Select all that apply) - Selected Choice")) %>%
+  replace(.=="", NA) %>%
+  gather(key = "foo", value = "platform") %>%
+  mutate(platform = as.character(platform)) %>%
+  group_by(platform) %>%
+  summarise(occasionally = n())
+
+p1 <- foo %>%
+  filter(!is.na(platform)) %>%
+  left_join(bar, by = "platform") %>%
+  mutate(platform = fct_relevel(platform, platform_lvl)) %>%
+  gather(most_often, occasionally, key = "type", value = "n") %>%
+  ggplot(aes(platform, n, fill = type)) +
+  geom_col(position = "dodge") +
+  theme(legend.position = "top") +
+  coord_flip() +
+  labs(x = "", y = "Responses", fill = "Usage")  +
+  ggtitle("Online learning platforms")
+
+p2 <- multi %>%
+  select(starts_with("What percentage of your current machine learning/data science training falls under each category? (Answers must add up to 100%)")) %>%
+  select(-contains("Other")) %>%
+  replace(.=="", NA) %>%
+  gather(key = "foo", value = "prop") %>%
+  filter(!is.na(prop)) %>%
+  separate(foo, into = c("bar", "training"), sep = "-") %>%
+  mutate(training = case_when(
+    training == " Self" ~ "Self-taught",
+    training == " Online courses (Coursera, Udemy, edX, etc.)" ~ "Online courses",
+    TRUE ~ training
+  )) %>%
+  filter(prop > 0) %>%
+  ggplot(aes(prop, fill = training)) +
+  geom_histogram(bins = 20) +
+  facet_wrap(~ training, ncol = 1, scales = "free_y") +
+  theme(legend.position = "none") +
+  labs(x = "Percentage") +
+  ggtitle("ML/DS training (> 0)")
+
+grid.arrange(p1, p2, layout_matrix = rbind(c(1,1,1,2,2)))
+```
+
+We find:
+
+- **Coursera is the most popular online-learning platform**, followed by DataCamp, Udemy, Udacity, edX, and Kaggle's own Learn platform with almost equal usage numbers. Note, that the blue bars include multiple choices (i.e. platforms you have used to some extent) while the red bars indicate the most often used platforms. In that latter metric, Data Camp is still ahead of Kaggle Learn.
+
+- In terms of **ML/DS learning experience self-taught work, University, and Online Courses are most likely to extend to larger percentages.** Kaggle competitions make up the smallest percentage of training spent on average. Note, that this plot does not show zero percentages which would otherwise dominate most of the facets.
+
+
+Let's study these two features a little more in the wider context of the survey. Here are the ML/DS training percentages for those respondents who consider themselves as Data Scientists vs those who don't. We're using boxplots here to emphasise the key parameters of the distributions.
+
+In addition, we return to our trusty heatmaps to show the popularity of Online Learning Platforms per age group. To extract sufficient statistics we restrict this analysis to age groups below 50 and to the overall more popular platforms (compare Fig. 40 above). The heat map colour corresponds to the relative percentage per platform (i.e. the tile text number divided by the sum of all numbers in the same column):
+
+```{r warning=FALSE}
+foo <- multi %>%
+  select(starts_with("What percentage of your current machine learning/data science training falls under each category? (Answers must add up to 100%)"), is_ds) %>%
+  select(-contains("Other")) %>%
+  replace(.=="", NA) %>%
+  gather(starts_with("What percentage of your current machine learning/data science training falls under each category? (Answers must add up to 100%)"), key = "foo", value = "prop") %>%
+  filter(!is.na(prop)) %>%
+  separate(foo, into = c("bar", "training"), sep = "-") %>%
+  mutate(training = case_when(
+    training == " Self" ~ "Self-taught",
+    training == " Online courses (Coursera, Udemy, edX, etc.)" ~ "Online courses",
+    TRUE ~ training
+  ))
+```
+
+
+```{r warning=FALSE, fig.height=5.5, fig.cap ="Fig. 41"}
+p1 <- foo %>%
+  filter(is_ds %in% c("yes", "no") & prop > 0) %>%
+  ggplot(aes(training, prop, color = is_ds)) +
+  geom_boxplot() +
+  labs(x = "", y = "Percentage", col = "I'm a DS") +
+  ggtitle("Training percentage per category for DS self-assessment")
+
+p2 <- multi %>%
+  filter(!is.na(platform) & platform != "Other" &
+           age %in% c("45-49", "30-34", "35-39", "22-24", "25-29", "18-21", "40-44")) %>%
+  group_by(platform, age) %>%
+  count() %>%
+  ungroup() %>%
+  mutate(platform = fct_rev(fct_relevel(platform, platform_lvl))) %>%
+  group_by(platform) %>%
+  add_tally(n) %>%
+  mutate(perc = n/nn) %>%
+  filter(nn > 100) %>%
+  ggplot(aes(platform, age, fill = perc)) +
+  geom_tile() +
+  scale_fill_gradient(low = "#ffdf3f", high = "#5c46ff") +
+  geom_text(aes(platform, age, label = n)) +
+  theme(axis.text.x = element_text(angle=25, hjust=1, vjust=0.9)) +
+  scale_x_discrete(labels = function(x) lapply(str_wrap(x, width = 15), paste, collapse="\n")) + 
+  labs(x = "", y = "Age Group", fill = "% platform") +
+  ggtitle("Online learning platform by age group")
+
+grid.arrange(p1, p2, layout_matrix = cbind(c(1,1,2,2,2)))
+```
+
+We find:
+
+- There is **no significant difference in how self-assessed Data Scientists spent their training time.** If anything, those who doubt their DS credentials are slightly more likely to spent more time on Online Courses; but the effect is relatively small. This suggests that where you practice has little impact on whether you should consider yourself a DS. The Online Courses effect might be due to DS beginners who yet have to build up their confidence (see Fig. 21).
+
+- The age distribution for each Online Platform largely mirrors the overall age numbers. **There are no obvious age differences in platform usage.** This is likely because all of the platforms are still quite young. Small effects include: (i) DataCamp is notably underrepresented in the youngest age group; (ii) the edX distribution is relatively flat; (iii) DataQuest seems popular for age 25-29 but those are small numbers overall.
+
+
+## How we study for the Kernels
+
+Next we will examine how modern means of education are viewed in the community. The specific questions were how the quality of online learning platform / massive open online courses (MOOCs) and in-person bootcamps compare to the traditional education by brick-and-mortar institutions (which I suppose means colleges and universities for these advanced topics). Here are the numbers in relation to each other using another heatmap combination with barplots in the margins:
+
+```{r}
+vars <- c(moocs = "How do you perceive the quality of online learning platforms and in-person bootcamps as compared to the quality of the education provided by traditional brick and mortar institutions? - Online learning platforms and MOOCs:",
+          bootcamps = "How do you perceive the quality of online learning platforms and in-person bootcamps as compared to the quality of the education provided by traditional brick and mortar institutions? - In-person bootcamps:")
+
+moocs_lvl <- c("No opinion; I do not know", "Much worse", "Slightly worse",
+               "Neither better nor worse", "Slightly better", "Much better")
+boot_lvl <- moocs_lvl
+
+
+multi <- multi %>%
+  rename(!!vars) %>%
+  mutate(moocs = fct_relevel(moocs, moocs_lvl),
+         bootcamps = fct_relevel(bootcamps, boot_lvl),
+         moocs = na_if(moocs, ""),
+         bootcamps = na_if(bootcamps, ""))
+```
+
+
+
+```{r  fig.cap ="Fig. 42"}
+p1 <- multi %>%
+  filter(!is.na(moocs)) %>%
+  group_by(moocs) %>%
+  count() %>%
+  ggplot(aes(moocs, n, fill = log10(n))) +
+  geom_col() +
+  scale_fill_gradient(low = "#ffdf3f", high = "#5c46ff") +
+  scale_x_discrete(labels = function(x) lapply(str_wrap(x, width = 15), paste, collapse="\n"),
+                   position = "top") +
+  labs(x = "MOOCS better than brick/mortar?", y = "Responses") +
+  theme(legend.position = "none", axis.text.x  = element_text(angle=35, hjust=0, vjust=0.9))
+
+p2 <- multi %>%
+  filter(!is.na(bootcamps)) %>%
+  group_by(bootcamps) %>%
+  count() %>%
+  ggplot(aes(bootcamps, n, fill = log10(n))) +
+  geom_col() +
+  scale_fill_gradient(low = "#ffdf3f", high = "#5c46ff") +
+  scale_x_discrete(labels = function(x) lapply(str_wrap(x, width = 15), paste, collapse="\n"),
+                   position = "top") +
+  labs(x = "Bootcamps better \nthan brick/mortar?", y = "Responses") +
+  coord_flip() +
+  theme(legend.position = "none")
+
+p3 <- multi %>%
+  filter(!is.na(moocs) & !is.na(bootcamps)) %>%
+  group_by(moocs, bootcamps) %>%
+  count() %>%
+  ungroup() %>%
+  ggplot(aes(moocs, bootcamps, fill = log10(n))) +
+  geom_tile() +
+  scale_fill_gradient(low = "#ffdf3f", high = "#5c46ff") +
+  geom_text(aes(moocs, bootcamps, label = n), color = "black", size = 2.5) +
+  theme(legend.position = "none",
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        plot.margin=unit(c(0.18,0.2,0.57,1.05),"cm")) +
+  labs(x = "", y = "")
+
+p4 <- tibble(a = 1, b = 1) %>%
+  ggplot(aes(a,b)) +
+  geom_text(aes(a,b), size = 5,
+            label = "MOOCS & Bootcamps \nclearly perceived better \nto similar extent and \nwith notable correlation") +
+  theme_void() +
+  labs(x = "", y = "")
+
+grid.arrange(p1, p2, p3, p4, layout_matrix = rbind(c(1,1,4),
+                                               c(1,1,4),
+                                               c(1,1,4),
+                                               c(3,3,2),
+                                               c(3,3,2),
+                                               c(3,3,2),
+                                               c(3,3,2)))
+```
+
+
+
+We find:
+
+- **A resounding vote in favour of MOOCs and bootcamps.** Only a minority of respondents consider traditional brick/mortar institutions to be better. This is somewhat surprising to me, giving how many excellent universities there are. In a future version of this survey perhaps it could be explored where the strengths of online education are seen. Keep in mind though, that this is a survey by Kaggle who are very focussed on online learning and DS/ML practice.
+
+- Both questions actually drew a very similar pattern of responses other than many people not having an opinion on bootcamps. This similarity might be due to the comparable scope of the questions, but could also indicate that respondents had problems distinguishing these two questions. There is a notable correlation that people who see MOOCS as better also perceive bootcamps as better.
+
+
+We will look at the geographical diversity further below, but let's check out the age distribution before we move on. We only look at the MOOCS due to the larger number of responses with an opinion:
+
+```{r fig.cap ="Fig. 43"}
+multi %>%
+  filter(!is.na(moocs) & moocs != "No opinion; I do not know") %>%
+  ggplot(aes(moocs, fill = moocs)) +
+  geom_bar() +
+  theme(legend.position = "none", axis.text.x  = element_text(angle=35, hjust=1, vjust=0.9)) +
+  scale_x_discrete(labels = function(x) lapply(str_wrap(x, width = 15), paste, collapse="\n")) +
+  facet_wrap(~ age, scales = "free_y", ncol = 3) +
+  labs(x = "", y = "Responses") + 
+  ggtitle("MOOCS vs brick/mortar by age group: clear shift in trends")
+```
+
+We find:
+
+- As could have been expected there is **a clear shift in learning method preference** from younger to older respondents. The youngest age group is strongly in favour of MOOCs. Yet the older the respondents become the more the weight shifts to "slightly better" or "Neither better nor worse". The numbers for the over 70-yr olds are too small to be usable.
+
+- Interestingly, the relative percentages of those responding with "much worse" don't change much by age. And the "slightly worse" responses fluctuate pretty randomly instead of showing a clear trend.
+
+
+
+## Newsflash
+
+Another source of ML and DS knowledge are the numerous media sources that in 2018 report on data science topics. This survey question again allows for multiple picks of favourite media. Here's a quick overview without going into much depth:
+
+```{r warning=FALSE, fig.height=4, fig.cap ="Fig. 44"}
+multi %>%
+  select(starts_with("Who/what are your favorite media sources that report on data science topics? (Select all that apply) - Selected Choice")) %>%
+  replace(.=="", NA) %>%
+  gather(key = "foo", value = "act") %>%
+  count(act) %>%
+  filter(!is.na(act) & act != "Other") %>%
+  ggplot(aes(reorder(act, n, FUN = min), n, fill = act)) +
+  geom_col() +
+  theme(legend.position = "none") +
+  coord_flip() +
+  labs(x = "", y = "Responses")  +
+  ggtitle("Favourite media sources (multiple choices possible)")
+```
+
+We find:
+
+- Kaggle forums are the most popular sources, which is perhaps not too surprising in a Kaggle survey. Beyond that, we find [Medium Blog Posts](https://medium.com/topic/data-science) in a top position. This is possibly due to the popular [Towards Data Science](https://towardsdatascience.com/) publication which frequently features Kaggle content and Kaggler's contributions.
+
+- A relatively high number of about 3000 respondents have no favourite media source or don't know any. There's a viable market right there. A similar number of votes is shared between Twitter, reddit's r/machinelearning, the KDNuggets blog, and even ArXiv and other pre-print servers providing cutting-edge ML/DS papers directly from the authors. The pre-prints are in fact more popular than the actual Journal Papers, most likely because of the faster availability of the former. Among the other options were the usual suspects such as Siraj Raval's entertaining Youtube channel, FiveThirtyEight, and various Podcasts.
+
+
+Alright, let's maybe stay a little bit longer with this topic because I'm starting to wonder how the News preferences change with Age. Here I will divide the respondents in two groups: below 30 and above 30 years old. For this particular question there are a roughly similar number of responses from both groups (The "below 30" group has approximately 20% more responses overall)
+
+We choose a mirrored barplot to compare the two populations, by employing the little trick of directing the one group (below 30) towards negative numbers instead of positive ones. In addition, we normalise the responses per News category by the overall number of responses per below/above 30 age group to produce the following inverted "Christmas Tree" (the scales are of course symmetric):
+
+```{r warning=FALSE, fig.height=4, fig.cap ="Fig. 45"}
+news_lvl <- multi %>%
+  select(starts_with("Who/what are your favorite media sources that report on data science topics? (Select all that apply) - Selected Choice")) %>%
+  replace(.=="", NA) %>%
+  gather(key = "foo", value = "news") %>%
+  filter(!is.na(news)) %>%
+  count(news) %>%
+  arrange(n) %>%
+  .$news
+
+foo <- multi %>%
+  select(starts_with("Who/what are your favorite media sources that report on data science topics? (Select all that apply) - Selected Choice"), age) %>%
+  replace(.=="", NA) %>%
+  gather(starts_with("Who/what are your favorite media sources that report on data science topics? (Select all that apply) - Selected Choice"), key = "foo", value = "news") %>%
+  filter(!is.na(news)) %>%
+  count(age, news) %>%
+  mutate(news = fct_relevel(as.factor(news), news_lvl),
+         age30 = as.factor(if_else(age %in% c("18-21", "22-24", "25-29"), "below 30", "above 30"))) %>%
+  select(-age) %>%
+  group_by(news, age30) %>%
+  summarise(npar = sum(n)) %>%
+  mutate(npar = if_else(age30 == "below 30", -npar, npar))
+
+bar <- foo %>%
+  group_by(age30) %>%
+  summarise(all = abs(sum(npar)))
+
+foo %>%
+  left_join(bar, by = "age30") %>%
+  mutate(npar = npar/all) %>%
+  ggplot(aes(news, npar, fill = age30)) +
+  geom_col(position = "identity") +
+  #geom_col(alpha = 0.5, position = "identity") +
+  labs(x = "Responses", y = "", fill = "Age Group") +
+  coord_flip(ylim = c(-0.15, 0.15)) +
+  scale_y_continuous(breaks = c(seq(-0.15, 0.15, 0.05))) +
+  theme(axis.text.x = element_blank()) +
+  ggtitle("Relative Media popularity for \nbelow/above 30 years of age")
+```
+
+We find:
+
+- There are certainly some generational differences in who reads what: More popular among the younger respondents: Medium, reddit, and in particular Siraj Raval's youtube channel.
+
+- The older respondents prefer: FiveThirtyEight, KDNuggets Blog, and the O'Reilly Data Newsletter. It's also notable that most of the overall less popular media sources are used more by the respondents over 30.
+
+
+# Intermission 2 - Multiple Maps Maketh Much Merriment {.tabset .tabset-fade .tabset-pills}
+
+I think we've earned ourselves another maps break. Let's take a step back from the detailed analysis and look at the big (geographical) picture.
+
+This time, to mix things up, we will use the ggplot2's geospatial plotting capabilities via `geom_polygon`, together with the `maps` library and the convenience function `map_data`. Those maps will not be interactive, and for the sake of readability we won't overplot the names of the countries. The main take away points are added as plot subtitles.
+
+```{r}
+world <- map_data("world")
+```
+
+
+## Highest Education level
+
+```{r warning=FALSE, fig.cap ="Fig. 46"}
+foo <- multi %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+   mutate(country = as.character(case_when(
+    country == "United Kingdom of Great Britain and Northern Ireland" ~ "UK",
+    country == "United States of America" ~ "USA",
+    country == "Viet Nam" ~ "Vietnam",
+    TRUE ~ as.character(country)
+  ))) %>%
+  group_by(edu, country) %>%
+  filter(!is.na(major)) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  group_by(country) %>%
+  slice(c(1))
+
+world %>%
+  filter(region != "Antarctica") %>%
+  left_join(foo, by = c("region" = "country")) %>%
+  ggplot() + 
+  geom_polygon(aes(x = long, y = lat, fill = edu, group = group), color = "white") +
+  coord_fixed(1.3) +
+  labs(fill = "") +
+  theme(legend.position = "top") +
+  theme_void() +
+  theme(legend.position = "top") +
+  ggtitle("Most common Education level",
+          subtitle = "Master's dominates; Bachelor's in India, Australia, Brazil")
+```
+
+
+## Undergrad Major
+
+```{r warning=FALSE, fig.cap ="Fig. 47"}
+foo <- multi %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+   mutate(country = as.character(case_when(
+    country == "United Kingdom of Great Britain and Northern Ireland" ~ "UK",
+    country == "United States of America" ~ "USA",
+    country == "Viet Nam" ~ "Vietnam",
+    TRUE ~ as.character(country)
+  ))) %>%
+  group_by(major, country) %>%
+  filter(!is.na(major)) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  group_by(country) %>%
+  slice(c(1))
+
+world %>%
+  filter(region != "Antarctica") %>%
+  left_join(foo, by = c("region" = "country")) %>%
+  ggplot() + 
+  geom_polygon(aes(x = long, y = lat, fill = major, group = group), color = "white") +
+  coord_fixed(1.3) +
+  labs(fill = "") +
+  theme(legend.position = "top") +
+  theme_void() +
+  theme(legend.position = "top") +
+  ggtitle("Most common Undergrad Major",
+          subtitle = "CS degrees all the way; Maths and Stats in South Africa and New Zealand")
+```
+
+## Primary language
+
+```{r warning=FALSE, fig.cap ="Fig. 48"}
+foo <- multi %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+   mutate(country = as.character(case_when(
+    country == "United Kingdom of Great Britain and Northern Ireland" ~ "UK",
+    country == "United States of America" ~ "USA",
+    country == "Viet Nam" ~ "Vietnam",
+    TRUE ~ as.character(country)
+  ))) %>%
+  group_by(lang, country) %>%
+  filter(!is.na(lang)) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  group_by(country) %>%
+  slice(c(1))
+
+world %>%
+  filter(region != "Antarctica") %>%
+  left_join(foo, by = c("region" = "country")) %>%
+  ggplot() + 
+  geom_polygon(aes(x = long, y = lat, fill = lang, group = group), color = "white") +
+  coord_fixed(1.3) +
+  labs(fill = "") +
+  theme(legend.position = "top") +
+  theme_void() +
+  theme(legend.position = "top") +
+  ggtitle("Primary Programming Language",
+          subtitle = "Python has conquered the world; New Zealand is the only R stronghold")
+```
+
+
+## 2nd popular language
+
+```{r warning=FALSE, fig.cap ="Fig. 49"}
+foo <- multi %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+   mutate(country = as.character(case_when(
+    country == "United Kingdom of Great Britain and Northern Ireland" ~ "UK",
+    country == "United States of America" ~ "USA",
+    country == "Viet Nam" ~ "Vietnam",
+    TRUE ~ as.character(country)
+  ))) %>%
+  group_by(lang, country) %>%
+  filter(!is.na(lang)) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  group_by(country) %>%
+  slice(c(2))
+
+world %>%
+  filter(region != "Antarctica") %>%
+  left_join(foo, by = c("region" = "country")) %>%
+  ggplot() + 
+  geom_polygon(aes(x = long, y = lat, fill = lang, group = group), color = "white") +
+  coord_fixed(1.3) +
+  labs(fill = "") +
+  theme(legend.position = "top") +
+  theme_void() +
+  theme(legend.position = "top") +
+  ggtitle("Secondary Programming Language",
+          subtitle = "R is a strong second preference; C/C++ in China and Russia")
+```
+
+
+## Type of Data being worked with
+
+```{r warning=FALSE, fig.cap ="Fig. 50"}
+foo <- multi %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+   mutate(country = as.character(case_when(
+    country == "United Kingdom of Great Britain and Northern Ireland" ~ "UK",
+    country == "United States of America" ~ "USA",
+    country == "Viet Nam" ~ "Vietnam",
+    TRUE ~ as.character(country)
+  ))) %>%
+  group_by(datatype, country) %>%
+  filter(!is.na(datatype)) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  group_by(country) %>%
+  slice(c(1))
+
+world %>%
+  filter(region != "Antarctica") %>%
+  left_join(foo, by = c("region" = "country")) %>%
+  ggplot() + 
+  geom_polygon(aes(x = long, y = lat, fill = datatype, group = group), color = "white") +
+  coord_fixed(1.3) +
+  labs(fill = "") +
+  theme(legend.position = "top") +
+  theme_void() +
+  theme(legend.position = "top") +
+  ggtitle("Primary Datatype being worked with",
+          subtitle = "Predominantly Numerical Data; China likes Image Data; Tabular Data in Africa")
+```
+
+
+## Primary Online Platform
+
+```{r warning=FALSE, fig.cap ="Fig. 51"}
+foo <- multi %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+   mutate(country = as.character(case_when(
+    country == "United Kingdom of Great Britain and Northern Ireland" ~ "UK",
+    country == "United States of America" ~ "USA",
+    country == "Viet Nam" ~ "Vietnam",
+    TRUE ~ as.character(country)
+  ))) %>%
+  group_by(platform, country) %>%
+  filter(!is.na(platform)) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  group_by(country) %>%
+  slice(c(1))
+
+world %>%
+  filter(region != "Antarctica") %>%
+  left_join(foo, by = c("region" = "country")) %>%
+  ggplot() + 
+  geom_polygon(aes(x = long, y = lat, fill = platform, group = group), color = "white") +
+  coord_fixed(1.3) +
+  labs(fill = "") +
+  theme(legend.position = "top") +
+  theme_void() +
+  theme(legend.position = "top") +
+  ggtitle("Online Platform by Country",
+          subtitle = "Coursera rules the world")
+```
+
+
+## MOOCS vs brick/mortar
+
+```{r warning=FALSE, fig.cap ="Fig. 52"}
+foo <- multi %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+   mutate(country = as.character(case_when(
+    country == "United Kingdom of Great Britain and Northern Ireland" ~ "UK",
+    country == "United States of America" ~ "USA",
+    country == "Viet Nam" ~ "Vietnam",
+    TRUE ~ as.character(country)
+  ))) %>%
+  group_by(moocs, country) %>%
+  filter(!is.na(moocs)) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  group_by(country) %>%
+  slice(c(1))
+
+world %>%
+  filter(region != "Antarctica") %>%
+  left_join(foo, by = c("region" = "country")) %>%
+  ggplot() + 
+  geom_polygon(aes(x = long, y = lat, fill = moocs, group = group), color = "white") +
+  coord_fixed(1.3) +
+  labs(fill = "") +
+  theme(legend.position = "top") +
+  theme_void() +
+  theme(legend.position = "top") +
+  ggtitle("Quality of MOOCS vs brick/mortar education",
+          subtitle = "Never worse; much prefered in India and Africa; equal in several European and native English countries")
+```
+
+
+## In-person bootcamps vs brick/mortar
+
+```{r warning=FALSE, fig.cap ="Fig. 53"}
+foo <- multi %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+   mutate(country = as.character(case_when(
+    country == "United Kingdom of Great Britain and Northern Ireland" ~ "UK",
+    country == "United States of America" ~ "USA",
+    country == "Viet Nam" ~ "Vietnam",
+    TRUE ~ as.character(country)
+  ))) %>%
+  group_by(bootcamps, country) %>%
+  filter(!is.na(bootcamps)) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  group_by(country) %>%
+  slice(c(1))
+
+world %>%
+  filter(region != "Antarctica") %>%
+  left_join(foo, by = c("region" = "country")) %>%
+  ggplot() + 
+  geom_polygon(aes(x = long, y = lat, fill = bootcamps, group = group), color = "white") +
+  coord_fixed(1.3) +
+  labs(fill = "") +
+  theme(legend.position = "top") +
+  theme_void() +
+  theme(legend.position = "top") +
+  ggtitle("Quality of Bootcamps vs brick/mortar education",
+          subtitle = "Prefered in India, China, Indonesia; most countries have predominantly no opinion")
+```
+
+
+## Favourite Media Sources
+
+```{r warning=FALSE, fig.cap ="Fig. 54"}
+foo <- multi %>%
+  select(starts_with("Who/what are your favorite media sources that report on data science topics? (Select all that apply) - Selected Choice"), country) %>%
+  replace(.=="", NA) %>%
+  gather(starts_with("Who/what are your favorite media sources that report on data science topics? (Select all that apply) - Selected Choice"), key = "foo", value = "news") %>%
+  filter(!is.na(news)) %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+   mutate(country = as.character(case_when(
+    country == "United Kingdom of Great Britain and Northern Ireland" ~ "UK",
+    country == "United States of America" ~ "USA",
+    country == "Viet Nam" ~ "Vietnam",
+    TRUE ~ as.character(country)
+  ))) %>%
+  count(country, news) %>%
+  arrange(desc(n)) %>%
+  group_by(country) %>%
+  slice(c(1))
+
+world %>%
+  filter(region != "Antarctica") %>%
+  left_join(foo, by = c("region" = "country")) %>%
+  #filter(!is.na(news)) %>%
+  ggplot() + 
+  geom_polygon(aes(x = long, y = lat, fill = news, group = group), color = "white") +
+  #geom_text(data=state_center, aes(long, lat, label = name), size=4, color = "grey30") +
+  coord_fixed(1.3) +
+  #scale_fill_continuous(low='lightblue', high='darkblue', guide='colorbar') +
+  labs(fill = "") +
+  theme(legend.position = "top") +
+  theme_void() +
+  theme(legend.position = "top") +
+  ggtitle("Favourite Media Source by Country",
+          subtitle = "Medium in English-speaking countries; Kaggle Forums in India and South America")
+```
+
+
+# What makes a Data Scientist? - Focus Analysis
+
+From overview maps to in-depth analysis: we will keep switching things up with another focus analysis on the question "Which better demonstrates expertise in data science: academic achievements or independent projects?". This question is easily underestimated in the context of this large survey, but it holds one of the keys to understanding how Data Science achievements are perceived and evaluated in the community.
+
+This point in the analysis is the ideal point to draw on previous results to provide a rich context to this question. Let's go!
+
+We start with an overview visualisation of the different categories for this multiple-choice feature and how they related to the self-assessed Data Scientist status:
+
+```{r}
+expert_lvl <- c("No opinion; I do not know",
+               "Independent projects are much less important than academic achievements",
+               "Independent projects are slightly less important than academic achievements",
+               "Independent projects are equally important as academic achievements",
+               "Independent projects are slightly more important than academic achievements",
+               "Independent projects are much more important than academic achievements")
+
+multi <- multi %>%
+  rename(expertise = "Which better demonstrates expertise in data science: academic achievements or independent projects? - Your views:") %>%
+  mutate(expertise = fct_relevel(expertise, expert_lvl))  %>%
+  mutate(expertise = na_if(expertise, ""))
+
+```
+
+```{r fig.height = 5.5, fig.cap ="Fig. 55"}
+foo <- multi %>%
+  filter(!is.na(expertise)) %>%
+  group_by(expertise) %>%
+  count()
+
+p1 <- foo %>%
+  mutate(percentage = str_c(as.character(round(n/sum(foo$n)*100,1)), "%")) %>%
+  ggplot(aes(expertise, n, fill = expertise)) +
+  geom_col() +
+  geom_label(aes(label = percentage), position = position_dodge(width = 1)) +
+  theme(legend.position = "none",
+        #axis.text.x  = element_blank(),
+        axis.text.x = element_text(angle=45, hjust=0, vjust=0)) +
+  scale_x_discrete(labels = function(x) lapply(str_wrap(x, width = 25), paste, collapse="\n"),
+                   position = "top") +
+  labs(x = "", y = "Responses") +
+  ggtitle("Independent projects more important than academic achievements")
+
+p2 <- multi %>%
+  filter(!is.na(expertise)) %>%
+  ggplot(aes(expertise, fill = is_ds)) +
+  geom_bar(position = "fill") +
+#  geom_label(aes(label = percentage), position = position_dodge(width = 1)) +
+  theme(legend.position = "bottom",
+        #axis.text.x  = element_text(angle=35, hjust=1, vjust=0.9),
+        axis.text.x = element_blank()) +
+  #scale_x_discrete(labels = function(x) lapply(str_wrap(x, width = 25), paste, collapse="\n")) +
+  labs(x = "", y = "Percentage", fill = "Do you consider yourself a Data Scientist?")
+
+grid.arrange(p1, p2, layout_matrix = cbind(c(1,1,1,2,2)))
+```
+
+We find:
+
+- **A large majority considers independent projects at least as important as academic achievements.** Less than 10% of respondents with opinion think otherwise. It is noteworthy that only about 6% of respondents have no opinion about this question.
+
+- Those without opinion are less likely to consider themselves as Data Scientists. Otherwise **there is little change in proportions among the different classes of judging expertise.**
+
+
+Another way to look at those answers is through the lense of Education level and current Professional Role. For the sake of brevitiy I'm only showing a few distinct classes here:
+
+```{r fig.cap ="Fig. 56"}
+expert_lvl2 <- c("much less important",
+               "slightly less important",
+               "equally important",
+               "slightly more important",
+               "much more important")
+
+p1 <- multi %>%
+  filter(!is.na(expertise) & edu %in% c("Doctoral degree", "Bachelor’s degree", "Master’s degree") &
+           expertise != "No opinion; I do not know") %>%
+  mutate(expertise = str_replace(expertise, "Independent projects are ", ""),
+         expertise = str_replace(expertise, "academic achievements", ""),
+         expertise = str_replace(expertise, "as", ""),
+         expertise = str_trim(str_replace(expertise, "than", ""))) %>%
+  mutate(expertise = as.factor(expertise)) %>%
+  mutate(expertise = fct_relevel(expertise, expert_lvl2)) %>%
+  ggplot(aes(expertise, fill = expertise)) +
+  geom_bar() +
+  coord_flip() +
+  facet_wrap(~ edu, ncol = 1, scales = "free_x") +
+  theme(legend.position = "none") +
+  scale_x_discrete(labels = function(x) lapply(str_wrap(x, width = 40), paste, collapse="\n")) +
+  labs(x = "", y = "Responses") +
+  ggtitle("Projects vs Academic", subtitle = "Education levels")
+
+p2 <- multi %>%
+  filter(!is.na(expertise) & role %in% c("Student", "Data Scientist", "Research Scientist") &
+           expertise != "No opinion; I do not know") %>%
+  mutate(expertise = str_replace(expertise, "Independent projects are ", ""),
+         expertise = str_replace(expertise, "academic achievements", ""),
+         expertise = str_replace(expertise, "as", ""),
+         expertise = str_trim(str_replace(expertise, "than", ""))) %>%
+  mutate(expertise = as.factor(expertise)) %>%
+  mutate(expertise = fct_relevel(expertise, expert_lvl2)) %>%
+  ggplot(aes(expertise, fill = expertise)) +
+  geom_bar() +
+  coord_flip() +
+  facet_wrap(~ role, ncol = 1, scales = "free_x") +
+  theme(legend.position = "none",
+        axis.text.y = element_blank()) +
+  scale_x_discrete(labels = function(x) lapply(str_wrap(x, width = 40), paste, collapse="\n")) +
+  labs(x = "", y = "Responses") +
+  ggtitle("", subtitle = "Pofessional roles")
+
+grid.arrange(p1, p2, layout_matrix = rbind(c(1,1,1,2,2)))
+```
+
+We find:
+
+- **A higher degree makes respondents value academic achievements more.** This shouldn't come as much of a surprise, since pursuing a PhD showss a certain trust in the validity of academic work. Contrast this with our Bachelor's resüondents. Master's degree respondents show overall strong and similar belief in independent projects.
+
+- Also in terms of **proessional roles** the answerss are chiefly in favour of projects; even for Research Scientists where "equally important" is a popular reply. It is certainly noteworthy how few replies fell little "much/slightly" less important cateory.
+
+
+We end this focus chapter with a geo-spatial analysis. Our familiar world map will show the mosts frequent response for each participating country:
+
+```{r warning=FALSE, fig.cap ="Fig. 57"}
+foo <- multi %>%
+  select(expertise, country) %>%
+  filter(!is.na(expertise)) %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+   mutate(country = as.character(case_when(
+    country == "United Kingdom of Great Britain and Northern Ireland" ~ "UK",
+    country == "United States of America" ~ "USA",
+    country == "Viet Nam" ~ "Vietnam",
+    TRUE ~ as.character(country)
+  ))) %>%
+  count(country, expertise) %>%
+  arrange(desc(n)) %>%
+  group_by(country) %>%
+  slice(c(1))
+
+world %>%
+  filter(region != "Antarctica") %>%
+  left_join(foo, by = c("region" = "country")) %>%
+  #filter(!is.na(news)) %>%
+  mutate(expertise = str_replace(expertise, "Independent projects are ", "")) %>%
+  ggplot() + 
+  geom_polygon(aes(x = long, y = lat, fill = expertise, group = group), color = "white") +
+  #geom_text(data=state_center, aes(long, lat, label = name), size=4, color = "grey30") +
+  coord_fixed(1.3) +
+  #scale_fill_continuous(low='lightblue', high='darkblue', guide='colorbar') +
+  labs(fill = "") +
+  theme_void() +
+  theme(legend.position = "top") +
+  guides(fill = guide_legend(ncol = 2)) +
+  ggtitle("Data Science Expertise perception by Country: Independent projects are ... ",
+          subtitle = "")
+```
+
+We find:
+
+- As expected, independent projects are universally at least as important as academic achievements; often more important.
+
+- The **interesting global patterns** that emerge are that we find **equal importance in China, Russia, and all of South America whereas India, Canada, and all of Africa see projects as much more important than academia.** Australia, the US, and much of Europe vote for "slightly more important". 
+
+
+# Reproducibility
+
+Reproducible research has been an important focus of many scientific communities not least since it was indicated that [most published research findings are false](https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0020124) back in 2005. The possibility to reproduce someone else's work is *the* key factor in making scientific methods and results more transparent and accountable. This also includes allowing access to null results which can give context to other seemingly successful studies and sometimes reveal those as [bad science](https://www.ted.com/talks/ben_goldacre_battling_bad_science).
+
+Kaggle, of course, is providing an important platform for reproducible data science in the form of *Kernels* like the one you are reading right now. Kernel code lives in the cloud and is run from scratch in a clean environment everytime you hit the `Commit` button. Importantly, Kernels can also be forked and modified at will. As a community this allows us to build on each other's work and to provide beginners with well-reasoned starting templates. This learning potential - the possibility to scrutinise the thinking process of each author - is another crucial aspect of reproducible research of any kind.
+
+This final chapter will provide a focus analysis on the perception of the importance of Reproducibility. In addition, I will briefly summarise our respondents views on the topics of *Fairness and bias in ML* and *Being able to explain ML model outputs and/or predictions*. These aspects certainly deserve a more detailed examination, which is beyond the scope of this Kernel, and I encourage you to study them if the following overview piques your interest.
+
+
+## Overview of Reproducibility, Fairness, & Ability to Explain {.tabset .tabset-fade .tabset-pills}
+
+```{r}
+vars <- c(fair = "How do you perceive the importance of the following topics? - Fairness and bias in ML algorithms:",
+          explain = "How do you perceive the importance of the following topics? - Being able to explain ML model outputs and/or predictions",
+          repro = "How do you perceive the importance of the following topics? - Reproducibility in data science")
+
+fair_lvl <- c("No opinion; I do not know", "Not at all important",
+              "Slightly important", "Very important")
+
+multi <- multi %>%
+  rename(!!vars) %>%
+  mutate(fair = fct_relevel(fair, fair_lvl),
+         explain = fct_relevel(explain, fair_lvl),
+         repro = fct_relevel(repro, fair_lvl)) %>%
+  mutate(fair = na_if(fair, ""),
+         explain = na_if(explain, ""),
+         repro = na_if(repro, ""))
+```
+
+```{r fig.height = 2, fig.cap ="Fig. 58"}
+p1 <- multi %>%
+  filter(!is.na(fair)) %>%
+  ggplot(aes(fair, fill = fct_rev(fair))) +
+  geom_bar() +
+  coord_flip() +
+  theme(legend.position = "none") +
+  scale_x_discrete(labels = function(x) lapply(str_wrap(x, width = 15), paste, collapse="\n")) +
+  labs(x = "", y = "Respondents") +
+  ggtitle("Fairness & Bias")
+
+p2 <- multi %>%
+  filter(!is.na(explain)) %>%
+  ggplot(aes(explain, fill = fct_rev(explain))) +
+  geom_bar() +
+  coord_flip() +
+  theme(legend.position = "none",
+        axis.text.y = element_blank()) +
+  labs(x = "", y = "Respondents") +
+  ggtitle("Ability to explain")
+
+p3 <- multi %>%
+  filter(!is.na(repro)) %>%
+  ggplot(aes(repro, fill = fct_rev(repro))) +
+  geom_bar() +
+  coord_flip() +
+  theme(legend.position = "none",
+        axis.text.y = element_blank()) +
+  labs(x = "", y = "Respondents") +
+  ggtitle("Reproducibility")
+
+grid.arrange(p1, p2, p3, layout_matrix = rbind(c(1,1,1,2,2,3,3)))
+```
+
+We find:
+
+- The results look strikingly similar with **a vast majority considering important the aspects of Fairness/Bias, Reproducibility, and being able to explain ML/DS results/predictions.** The single most popular option is "Very Important" in each case.
+
+- The relatively largest number of respondents with "No opinion" are found for the *Fairness/Bias* question, which also has the lowest percentage of "Very important" votes.
+
+
+The maps below show that **Reproducibility and the Ability to explain ML outputs/predictions are almost universally considered to be "Very important"**. Fairness & Bias are perceived of somewhat lower importance in Russia, Indonesia, and a few other countries.
+
+
+### Reproducibility
+
+```{r warning=FALSE, fig.cap ="Fig. 59"}
+foo <- multi %>%
+  select(repro, country) %>%
+  filter(!is.na(repro)) %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+   mutate(country = as.character(case_when(
+    country == "United Kingdom of Great Britain and Northern Ireland" ~ "UK",
+    country == "United States of America" ~ "USA",
+    country == "Viet Nam" ~ "Vietnam",
+    TRUE ~ as.character(country)
+  ))) %>%
+  count(country, repro) %>%
+  arrange(desc(n)) %>%
+  group_by(country) %>%
+  slice(c(1))
+
+world %>%
+  filter(region != "Antarctica") %>%
+  left_join(foo, by = c("region" = "country")) %>%
+  mutate(repro = fct_rev(repro)) %>%
+  ggplot() + 
+  geom_polygon(aes(x = long, y = lat, fill = repro, group = group), color = "white") +
+  #geom_text(data=state_center, aes(long, lat, label = name), size=4, color = "grey30") +
+  coord_fixed(1.3) +
+  #scale_fill_continuous(low='lightblue', high='darkblue', guide='colorbar') +
+  labs(fill = "") +
+  theme_void() +
+  theme(legend.position = "top") +
+  #guides(fill = guide_legend(ncol = 3)) +
+  ggtitle("Perceived Importance of Reproducibility",
+          subtitle = "")
+```
+
+
+### Fairness/Bias
+
+```{r warning=FALSE, fig.cap ="Fig. 60"}
+foo <- multi %>%
+  select(fair, country) %>%
+  filter(!is.na(fair)) %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+   mutate(country = as.character(case_when(
+    country == "United Kingdom of Great Britain and Northern Ireland" ~ "UK",
+    country == "United States of America" ~ "USA",
+    country == "Viet Nam" ~ "Vietnam",
+    TRUE ~ as.character(country)
+  ))) %>%
+  count(country, fair) %>%
+  arrange(desc(n)) %>%
+  group_by(country) %>%
+  slice(c(1))
+
+world %>%
+  filter(region != "Antarctica") %>%
+  left_join(foo, by = c("region" = "country")) %>%
+  mutate(fair = fct_rev(fair)) %>%
+  ggplot() + 
+  geom_polygon(aes(x = long, y = lat, fill = fair, group = group), color = "white") +
+  #geom_text(data=state_center, aes(long, lat, label = name), size=4, color = "grey30") +
+  coord_fixed(1.3) +
+  #scale_fill_continuous(low='lightblue', high='darkblue', guide='colorbar') +
+  labs(fill = "") +
+  theme_void() +
+  theme(legend.position = "top") +
+  #guides(fill = guide_legend(ncol = 3)) +
+  ggtitle("Perceived Importance of Fairness & Bias",
+          subtitle = "")
+```
+
+
+### Ability to Explain ML
+
+```{r warning=FALSE, fig.cap ="Fig. 61"}
+foo <- multi %>%
+  select(explain, country) %>%
+  filter(!is.na(explain)) %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+   mutate(country = as.character(case_when(
+    country == "United Kingdom of Great Britain and Northern Ireland" ~ "UK",
+    country == "United States of America" ~ "USA",
+    country == "Viet Nam" ~ "Vietnam",
+    TRUE ~ as.character(country)
+  ))) %>%
+  count(country, explain) %>%
+  arrange(desc(n)) %>%
+  group_by(country) %>%
+  slice(c(1))
+
+world %>%
+  filter(region != "Antarctica") %>%
+  left_join(foo, by = c("region" = "country")) %>%
+  ggplot() + 
+  geom_polygon(aes(x = long, y = lat, fill = explain, group = group), color = "white") +
+  #geom_text(data=state_center, aes(long, lat, label = name), size=4, color = "grey30") +
+  coord_fixed(1.3) +
+  #scale_fill_continuous(low='lightblue', high='darkblue', guide='colorbar') +
+  labs(fill = "") +
+  theme_void() +
+  theme(legend.position = "top") +
+  #guides(fill = guide_legend(ncol = 3)) +
+  ggtitle("Perceived Importance of Ability to Explain ML",
+          subtitle = "")
+```
+
+
+
+## Reproducibility in Data Science - focus analysis
+
+For the following detailed examination of the impact of reproducibility I will focus on the fraction of respondents who perceive this topic as "Very important". I choose this approach based on the overview plot which shows only a small percentage of "Not at all" votes but allows those without a strong conviction about reproducibility to pick the "Slightly important" option instead. This analysis only includes people who answered the reproducibility question.
+
+
+```{r}
+multi <- multi %>%
+  mutate(repro_very = repro == "Very important")
+```
+
+```{r fig.height=4, fig.cap ="Fig. 62"}
+foo <- multi %>%
+  filter(!is.na(role) & role != "Other" & role != "Not employed") %>%
+  group_by(role) %>%
+  count() %>%
+  ungroup() %>%
+  top_n(9, n)
+
+role_repro_lvl <- multi %>%
+  semi_join(foo, by = "role") %>%
+  filter(!is.na(repro) & is_ds == "yes") %>%
+  count(role, repro_very) %>%
+  spread(repro_very, n, fill = 0) %>%
+  mutate(frac = `TRUE`/(`TRUE` + `FALSE`),
+         role = as.character(role)) %>%
+  arrange(frac) %>%
+  .$role %>%
+  unlist()
+
+multi %>%
+  semi_join(foo, by = "role") %>%
+  filter(!is.na(repro) & !is.na(is_ds) & is_ds != "maybe") %>%
+  mutate(role = fct_relevel(role, role_repro_lvl)) %>%
+  group_by(repro_very, is_ds, role) %>%
+  count() %>%
+  spread(repro_very, n, fill = 0) %>%
+  mutate(frac = `TRUE`/(`TRUE` + `FALSE`)*100,
+         lwr = get_binCI(`TRUE`,(`TRUE` + `FALSE`))[[1]]*100,
+         upr = get_binCI(`TRUE`,(`TRUE` + `FALSE`))[[2]]*100
+         ) %>%
+  ggplot(aes(role, frac, color = is_ds)) +
+  geom_point(size = 4) +
+  geom_errorbar(aes(ymin = lwr, ymax = upr, color = is_ds)) +
+  theme(axis.text.x = element_text(angle = 35, vjust = 1, hjust = 1)) +
+  labs(x = "", y = "Very important [%]", color = "I'm a DS") +
+  ggtitle("Reproducibility seen 'very important' by role and DS self-assessment",
+          subtitle = "Research Scientists most conscious; low percentage for Students and Software Engineers")
+```
+
+We find:
+
+- There are significant differences in the importance assigned to reproducibility among the most frequent roles. **Research Scientists and Data Scientists are most conscious of this importance, whereas awareness among Students and Software Engineers still has room to improve.** The other professions show relatively large error bars that mostly overlap with either end of the spectrum. Note that percentages are high overall and only vary in the range of 60% - 80%.
+
+- For most professions there is no significant differences between those that consider themselves as DS and those who don't. One exception are Students, for which the DS education might include a focus on reproducibility. Curiously, the few professional Data Scientists who don't consider themselves as DS assign a much lower importance to reproducibility. This effect is significant despite the large uncertainty.
+
+
+Let's go one step further and study the age dependence for the four roles that show significantly low and high percentages of votes for reproducibility being "very important". Here we restrict ourselves also to age below 50 to have sufficient statistics to keep uncertainties small:
+
+```{r fig.cap ="Fig. 63"}
+multi %>%
+  filter(role %in% c("Student", "Software Engineer", "Data Scientist", "Research Scientist") &
+           !is.na(repro) & !is.na(age) &
+           age %in% c("18-21", "22-24", "25-29", "30-34", "35-39", "40-44", "45-49")) %>%
+  group_by(repro_very, role, age) %>%
+  count() %>%
+  spread(repro_very, n, fill = 0) %>%
+  mutate(frac = `TRUE`/(`TRUE` + `FALSE`)*100,
+         lwr = get_binCI(`TRUE`,(`TRUE` + `FALSE`))[[1]]*100,
+         upr = get_binCI(`TRUE`,(`TRUE` + `FALSE`))[[2]]*100
+         ) %>%
+  ggplot(aes(age, frac, color = role)) +
+  geom_point(size = 4) +
+  geom_errorbar(aes(ymin = lwr, ymax = upr, color = role)) +
+  theme(legend.position = "none") +
+  facet_wrap(~ role) +
+  labs(x = "Age group", y = "Very important [%]") +
+  ggtitle("Reproducibility 'very important' by age group",
+          subtitle = "Younger respondents more likely to see reproducibility as less important")
+  
+```
+
+We find:
+
+- **Younger respondents are more likely to see reproducibility as less important** than their older counterparts; up to their early 30s. This is particular pronounced for Data Scientists and Students.
+
+- After 30 the perception plateaus in each role. Naturally, there are fewer students as the age increases - resulting in larger uncertainties. Trends are visible but less significant for Research Scientists (universally high) and Software Engineers (universally lower).
+
+
+One more aspect to examine: The survey also asked the follow-up questions "What tools and methods do you use to make your work easy to reproduce?" and "What barriers prevent you from making your work even easier to reuse and reproduce?".
+
+```{r warning=FALSE}
+tools <- multi %>%
+  select(starts_with("What tools and methods do you use to make your work easy to reproduce"), repro, is_ds, age) %>%
+  select(-contains("Other", ignore.case = FALSE)) %>%
+  replace(.=="", NA) %>%
+  gather(starts_with("What tools and methods do you use to make your work easy to reproduce"), key = "foo", value = "repro_methods") %>%
+  filter(!is.na(repro_methods)) %>%
+  select(-foo)
+
+barriers <- multi %>%
+  select(starts_with("What barriers prevent you from making your work even easier to reuse and reproduce"), repro, is_ds, age) %>%
+  select(-contains("Other", ignore.case = FALSE)) %>%
+  replace(.=="", NA) %>%
+  gather(starts_with("What barriers prevent you from making your work even easier to reuse and reproduce?"), key = "foo", value = "repro_barriers") %>%
+  filter(!is.na(repro_barriers)) %>%
+  select(-foo)
+```
+
+
+For visualising the impact that the different reproducibility "tools" and "barriers" have we pull a treemap out of our bag of tricks; thus ending this Kernel with another visual flourish. Because we can :-)
+
+A treemap works like this: each coloured box corresponds to a specific sub-category (e.g. "define all random seeds"). The sub-categories have white text labels and are arranged in a larger box for each importance category; with the box size proportional to the number of instances in the intersection between category and subcategory (just like the height of a bar would be in a facetted barplot). Here we choose a log-scaling to keep the smaller categories readable. The larger boxes have grey labels and borders. The box sizes decrease from the lower left to the upper right corner on both the categories and sub-categories level. Sub-category colours are the same within the plot.
+
+We will use the `treemapify` [package](https://cran.r-project.org/web/packages/treemapify/index.html):
+
+```{r fig.cap ="Fig. 64"}
+tools %>%
+  filter(!is.na(repro)) %>%
+  #filter(!(industry %in% c(NA, "I am a student"))) %>%
+  group_by(repro, repro_methods) %>%
+  count() %>%
+  ungroup() %>%
+  #top_n(25, n) %>%
+  ggplot(aes(area = log10(n), fill = repro_methods, label = repro_methods, subgroup = repro)) +
+  geom_treemap() +
+  geom_treemap_subgroup_border() +
+  geom_treemap_subgroup_text(place = "centre", grow = T, alpha = 0.5, colour =
+                             "black", fontface = "italic", min.size = 0) +
+  geom_treemap_text(colour = "white", place = "topleft", reflow = T) +
+  theme(legend.position = "null") +
+  ggtitle("Reproducibility tools & methods for importance categories; box sizes log scaled")
+```
+
+
+```{r fig.cap ="Fig. 65"}
+barriers %>%
+  filter(!is.na(repro)) %>%
+  #filter(!(industry %in% c(NA, "I am a student"))) %>%
+  group_by(repro, repro_barriers) %>%
+  count() %>%
+  ungroup() %>%
+  #top_n(25, n) %>%
+  ggplot(aes(area = log10(n), fill = repro_barriers, label = repro_barriers, subgroup = repro)) +
+  geom_treemap() +
+  geom_treemap_subgroup_border() +
+  geom_treemap_subgroup_text(place = "centre", grow = T, alpha = 0.5, colour =
+                             "black", fontface = "italic", min.size = 0) +
+  geom_treemap_text(colour = "white", place = "topleft", reflow = T) +
+  theme(legend.position = "null") +
+  ggtitle("Reproducibility barriers for importance categories; box sizes log scaled")
+```
+
+We find:
+
+- **The most frequent reproducibility methods are to make sure that the code is well documented and human readable.** This is true regardless of importance perception. In terms of code (and data) sharing Github is more popular than virtual machines or hosted services. Defining relative paths is the least favourite option for those who don't regard reproducibility as important. Yet, the code-sharing habits of this group show a similar relative patterns as for the two main groups.
+
+- **The main barriers for reproducibility are lack of time and incentives.** This could be addressed through increased community awareness - emphasising the importance of budgeting time for reproducibility efforts. The fact that "requires too much technical knowledge" is another relatively frequent answer underlines the potential to address a lack of reproducibility by teaching time-efficient tools and approaches.
+
+Environments like Kaggle Kernels make reproducibility easy by taking care of most of the "technical knowledge", thus freeing time for the Data Scientist to focus on their work. On the one hand this is great because it facilitates and encourages code sharing. On the other hand, it might be useful to include courses or resources on sharing methods like Github or Docker into the Kaggle curriculum.
+
+
+# Closing Remarks
+
+Thus concludes the comprehensive analysis of the 2018 Kaggle Machine Learning and Data Science Survey. Thank you for reading this far! There is a lot of valuable insights in this data set and I hope that I succeeded in highlighting a few of them. I encourage anyone to take some of the remaining open questions and examine them in detail.
+
+The executive summary points can be found at the beginning of this Kernel and I won't repeat them here. This has the added advantage that you might read through the Kernel again after checking out the summary ... . I'm just kidding :-)  A little bit at least ;-)
+
+See you for the 2019 survey and have fun!

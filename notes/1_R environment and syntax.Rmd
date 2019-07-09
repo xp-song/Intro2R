@@ -38,7 +38,7 @@ x <- (4+5)/2
 x <- "hello"
 ```
 
-## Data Structures
+## Data Structures {.tabset .tabset-fade .tabset-pills}
 ### Vectors 
 - Sequential collection of data of the _same_ type
 - Coercion occurs if different types are mixed
@@ -337,7 +337,7 @@ lapply(mylist, length) #apply length() function to list
 
 ---
 
-# Operators in R
+# Operators in R {.tabset .tabset-fade .tabset-pills}
 ## Arithmetic  
 
 - `+` `-` `*` `/`  
@@ -373,6 +373,7 @@ x$b
 ## Subsetting {#subset}
 
 - Use square brackets `[ ]`
+- Double square brackets `[[]]` are used to extract elements of list/dataframe (similar to using `$` in `dataframe$colname`)
 - If dataset has 2 dimensions (i.e. tabular format), always specify row then column number
 - Examples:
   - `x[5]` 5th element in vector `x`

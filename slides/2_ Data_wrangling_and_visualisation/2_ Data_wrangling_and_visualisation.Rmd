@@ -19,22 +19,39 @@ class: inverse, center, middle
 
 # Outline  
 
-__[About this crash course](#4)__  
- 
-__[Getting Started](#Getstarted)__  
-
-__[R Environment and Syntax](#Renviron)__  
-
-Syntax: [Operators](#operators)
-
-Syntax: [Subsetting](#subsetting)
-
-Objects in R: [Variables](#variables)
-
-Objects in R: [Data structures](#struc)
-
-Objects in R: [Functions](#functions)
-
-__[Useful Resources](#resources)__  
+__[blah](#4)__  
 
 ---
+
+class: left
+
+# Our Example Dataset  
+
+__[Kaggle Machine Learning and Data Science Survey 2018](https://www.kaggle.com/kaggle/kaggle-survey-2018)__
+- The industry-wide survey presents the state of data science and machine learning
+- It was published in as raw a format as possible while ensuring the anonymity of respondents
+- Our survey analysis has been adapted from R Notebooks published by the Kaggle users [Heads or Tails](https://www.kaggle.com/headsortails/what-we-do-in-the-kernels-a-kaggle-survey-story) and [Jose Berengueres](https://www.kaggle.com/harriken/storytelling-the-2018-kaggle-survey)
+
+
+---
+
+class: left
+
+- Use `str()` to examine the data type for dataframe columns 
+
+- Convert all multiple choice answers into factors using `mutate_if()`
+
+
+
+- Use the pipe operator `%>%` to manipulate data in stages (from `dplyr` package)
+  - It is a key operater often used in the `tidyverse`.
+  - Rather than using nested brackets, the 'pipeline' is highly readable and follows a logical sequence.
+  - For example:
+```{r eval = FALSE}
+round(exp(diff(log(x))), 1) #using nested brackets
+
+x %>% log() %>% #using the pipe operator
+    diff() %>%
+    exp() %>%
+    round(1)
+```

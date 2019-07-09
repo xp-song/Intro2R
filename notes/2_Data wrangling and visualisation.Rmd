@@ -8,65 +8,152 @@ output:
     toc: true
     toc_depth: 3
     toc_float: true
-    number_sections: true
+    number_sections: false
     theme: paper
+    code_folding: hide
 ---
 
-```{r load_packages, echo = FALSE, message = FALSE, warning = FALSE}
-#commands are separated by ; or a new line
-library(dplyr); library(tidyr) #data manipulation
+---
+
+In this lesson, we will be analysing the [Kaggle Machine Learning and Data Science Survey 2018](https://www.kaggle.com/kaggle/kaggle-survey-2018) dataset. The industry-wide survey presents the state of data science and machine learning. It was published in as raw a format as possible while ensuring the anonymity of respondents.  
+
+The data comes in three different files:
+
+1. **Multiple choice responses**, which we will later assign to variable `multi`.  
+
+2. **Free-form responses** to open-ended questions, which we will later assign to variable `free`.
+  - To protect the privacy of respondents, the rows have been randomized such that the responses do not necessarily come from the same survey-taker as those in the multiple choice responses.
+
+3. **Survey schema** shows an overview of responses.  
+
+<br>
+
+_**Credit:** Our survey analysis has been adapted from R Notebooks published by the Kaggle users [Heads or Tails](https://www.kaggle.com/headsortails/what-we-do-in-the-kernels-a-kaggle-survey-story) and [Jose Berengueres](https://www.kaggle.com/harriken/storytelling-the-2018-kaggle-survey)._ 
+
+---
+
+# Preparation {.tabset .tabset-fade .tabset-pills}
+
+## Load packages
+
+- We delve deeper into the [tidyverse](https://www.tidyverse.org) in this lesson, which will require the installation of numerous other packages for data manipulation. 
+
+- We also will use some packages that provide functions for specific analyses and visualisations (e.g. dealing with geospatial data, interactive visualisations, etc.)  
+
+```{r load_packages, message = FALSE, warning = FALSE}
+# general data manipulation
+library(dplyr) # data manipulation
+library(readr) # input/output
+library(data.table) # data manipulation
+library(tibble) # data wrangling
+library(tidyr) # data wrangling
+library(stringr) # string manipulation
+library(forcats) # factor manipulation
+
+# specific data manipulation
+library(purrr) # string manipulation
+
+#specific visualisation
+library(highcharter) # visualisation
+library(countrycode) # visualisation
+
+
+
+
 library(ggplot2) #data visualisation 
+
 library(knitr) #to knit HMTL
 ```
 
----
+## Load data
 
-# Header
+Rather than importing our tabular data as _dataframes_, we will import them as _tibbles_. Tibbles are a modern take on dataframes; they keep the features that have stood the test of time, and drop the features that used to be convenient but are now frustrating. More info about tibbles are available [here](https://cran.r-project.org/web/packages/tibble/vignettes/tibble.html). 
 
-```{r eval = FALSE}
-data() #built-in datasets in R
-data(package="ggplot2")
+```{r}
+multi <- as_tibble(fread('../data/kaggle-survey-2018/multipleChoiceResponses.csv', skip = 1))
+free <- as_tibble(fread('../data/kaggle-survey-2018/freeFormResponses.csv', skip = 1))
 
-#library(ggplot2)
-diamonds <- data(diamonds, package = "ggplot2")
+#The function 'fread' in the library(data.table) speeds up read of data into R
+#We skip the first lines of both .csv files. The second line contains the actual question headers that become the temporary column names for our data.
 ```
 
+## Examine data
+
+- Use `colnames()` to examine column names. They are super-long descriptions that need to be abbreviated. We'll do this step-by-step later on as we analyse each topic in the survey.
+
+  - We can't have spacing in our typical column names
+  
+  - Since our colnames are _sentences_, we need to wrap the entire colname with backticks
+  
+  - E.g. `` multi$`Duration (in seconds)` ``
+
+- Use `str()` to examine the data type for dataframe columns 
+
+## Convert data type
+
+The `as_tibble()` function imports text as _character_ format by default. We want to change the multiple choice answers to _factors_ using `mutate_if()`.
+
+- Use the pipe operator `%>%` to manipulate data in stages (from `dplyr` package)
+  - It is a key operater often used in the `tidyverse`.
+  - Rather than using nested brackets, the 'pipeline' is highly readable and follows a logical sequence.
+```{r}
+multi <- multi %>%
+  mutate_if(is_character, as_factor)
+
+#the function 'is_character' and 'as_factor' is from the library(purrr) and library(forcats), respectively
+```
+
+<br>
+
+---  
+  
+# Overview
+
+Let's start with some visualisations for the entire dataset. The package [highcharter](http://jkunst.com/highcharter) was used to plot the following interactive map.
+
+  - If a country or territory received less than 50 respondents, we grouped them into a group named “Other” for anonymity." Here we don't see these "Other" nor the respondents who did not disclose their location
+
+```{r fig.height=6, fig.cap ="Fig. 1"}
+ctry_n <- multi %>%
+  mutate(country = `In which country do you currently reside?`) %>%
+  count(country) %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+  mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c")) #library(countrycode)
+
+highchart() %>% #library(highchart)
+  hc_add_series_map(worldgeojson, ctry_n, value = 'n', joinBy = 'iso3') %>%
+  hc_title(text = 'Geographical distribution of survey respondents') %>%
+  hc_colorAxis(minColor = "#ffdf3f", maxColor = "#5c46ff") %>%
+  hc_tooltip(useHTML = TRUE, headerFormat = "", pointFormat = "{point.country}: {point.n} users")
+```
+
+```{r}
+
+```
+
+
+
+
+
 ```{r eval = FALSE}
-#R automatically creates index column
-#ozone <- ozone[ , !names(ozone) %in% "X"] #you can remove this index column
 
-
-NAs in Dataframes:
-Option 1:
-na.omit(datafilename): remove ALL rows with NAs #But may remove valuable info!
-
-Option 2:
-- Check VARIABLES with high proportion of NA first using use apply(X, MARGIN, FUN, ...)+
-apply(apply(CO2,2,is.na),2,sum): indicates how many NAs in EACH column (a NESTED apply function)
-#For margin argument, "1" indicates rows while "2" indicates columns, while c(1,2) indicates both - this specifies the grouping.
-
-- Remove NAs individually
-nonNAvalues <- complete.cases(dataframename): create a logical vector
-dataframename[nonNAvalues,]: Subset & see only non-NA values
+#NAs
 is.na()
 
+#1
+na.omit(datafilename): remove ALL rows with NAs #But may remove valuable info!
+
+#2
+- Check VARIABLES with high proportion of NA first using use apply(X, MARGIN, FUN, ...)+
+apply(apply(CO2,2,is.na),2,sum): indicates how many NAs in EACH column (a NESTED apply function)
+
+#3
+nonNAvalues <- complete.cases(dataframename): create a logical vector
+dataframename[nonNAvalues,]: Subset & see only non-NA values
 
 
-SUBSCRIPTS (SUBSETTING) AND INDICES
-Subsetting:
-[]: returns object of SAME CLASS as original
-[[]]: extract elements of list/dataframe, only used to extract single element, class of object will not necessarily be the same #similar to $
-
-
-e.g. Viewing only data for Mississippi+
 CO2[CO2$Type == "Mississippi",]
-
-e.g. Viewing only ROWS for which "uptake" is greater than the mean and "conc" is greater than 200+
 CO2[CO2$uptake>mean(CO2$uptake) & CO2$conc>200,]
-
-  
-  
-OTHER DATA MANIPULATION IN DATAFRAMES
 
 unique(dataframeA): Remove DUPLICATE rows
 
@@ -95,7 +182,6 @@ scale(x, center=TRUE, scale=TRUE): centers & scales the data (deducts the mean p
 #require(stats)
 t.test()
 
-
 #other useful packages::functions to consider for surveys
 library(survey)
 svydesign() #specify survey design
@@ -104,6 +190,21 @@ survey::postStratify() #adjusts sampling weights so that the joint distribution 
 library(likert)
 
 ```
+
+
+Write data without the index column (i.e. write.csv)
+
+
+# Your turn!
+
+```{r eval = FALSE}
+diamonds <- data(diamonds, package = "ggplot2")
+
+#Some analysis
+http://statweb.stanford.edu/~jtaylo/courses/stats202/diamonds.html
+
+```
+
 
 
 
