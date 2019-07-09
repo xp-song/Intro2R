@@ -1,6 +1,6 @@
 ---
 title: "Data Wrangling and Visualisation"
-subtitle: "[Intro2R](https://github.com/xp-song/Intro2R): Lesson 2 of 3"
+subtitle: "[Intro2R](https://github.com/xp-song/Intro2R) crash course: Session 2 of 2"
 author: "author: xpsong"
 date: "updated: `r Sys.Date()`"
 output:
@@ -31,7 +31,7 @@ data(package="ggplot2")
 diamonds <- data(diamonds, package = "ggplot2")
 ```
 
-```{r}
+```{r eval = FALSE}
 #R automatically creates index column
 #ozone <- ozone[ , !names(ozone) %in% "X"] #you can remove this index column
 
@@ -51,10 +51,6 @@ dataframename[nonNAvalues,]: Subset & see only non-NA values
 is.na()
 
 
-#subsetting
-x[3,2]
-x[1:3, c(1,3)]
-x[3,]
 
 SUBSCRIPTS (SUBSETTING) AND INDICES
 Subsetting:
@@ -62,48 +58,12 @@ Subsetting:
 [[]]: extract elements of list/dataframe, only used to extract single element, class of object will not necessarily be the same #similar to $
 
 
-Retrieving elements of a vector/matrix:
-vectorname[3]: retrieves the 3rd element in the vector
-vectorname[1:4]: retrieves 1-4 element
-
-matrixname[4,6]: retrieves ROW 4 COLUMN 6
-matrixname[,6]: retrieves all elements in column 6
-matrixname[4,]: retrieves all in row 4
-
-
-Logical subscripts: Subsets data, very useful for running model for one location/species/etc. (e.g. for the vector x <- c(1,2,4,8,20,1,3,7))
-y <- x[x<4] ##1,2,1,3 (the ELEMENTS)
-x<4 ##TRUE TRUE FALSE FALSE FALSE TRUE TRUE FALSE (positions where x<4)
-which(x<4) ##1,2,6,7 (the POSITION NUMBERS)
-
-Trim vectors using negative subscripts (e.g. for the vector x <- (1,2,4,8,20,1,3,7))
-A <- x[-1]: creates new vector A with FIRST element removed
-B <- x[-length(x)]: creates new vector B with LAST element removed
-
-Checking where the values of vector C appear in vector x+
-C <- c(1)
-match(x,C) #The ORDER matters! (different from match(C,x))
-## 1 NA NA NA NA 1 NA NA
-
-
-Subsetting in Dataframes & Matrices:
-e.g.
-CO2[1,]
-CO2[3:7,4]
-e.g. Sorting the data by certain variable (e.g. Sort CO2 table by uptake (ROWS in ascending order))+
-CO2[order(CO2$uptake),]
 e.g. Viewing only data for Mississippi+
 CO2[CO2$Type == "Mississippi",]
+
 e.g. Viewing only ROWS for which "uptake" is greater than the mean and "conc" is greater than 200+
 CO2[CO2$uptake>mean(CO2$uptake) & CO2$conc>200,]
 
-Making a named subset (e.g. take all rows of columns 4 & 5)
-subset.name <- CO2[,c(4,5)]
-
-Negative subscripts:
-CO2without3rows <- CO2[-c(1:3),]
-
-$
   
   
 OTHER DATA MANIPULATION IN DATAFRAMES

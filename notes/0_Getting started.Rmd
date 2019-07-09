@@ -1,6 +1,6 @@
 ---
 title: "Getting Started"
-subtitle: "[Intro2R](https://github.com/xp-song/Intro2R) Crash Course"
+subtitle: "[Intro2R](https://github.com/xp-song/Intro2R) crash course"
 author: "author: xpsong"
 date: "updated: `r Sys.Date()`"
 output:

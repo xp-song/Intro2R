@@ -1,6 +1,6 @@
 ---
 title: "R Environment and Syntax"
-subtitle: "[Intro2R](https://github.com/xp-song/Intro2R): Lesson 1 of 3"
+subtitle: "[Intro2R](https://github.com/xp-song/Intro2R) crash course: Session 1 of 2"
 author: "author: xpsong"
 date: "updated: `r Sys.Date()`"
 output:

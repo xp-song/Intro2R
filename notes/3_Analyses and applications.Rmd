@@ -1,6 +1,6 @@
 ---
-title: "Analyses and applications"
-subtitle: "[Intro2R](https://github.com/xp-song/Intro2R): Lesson 3 of 3"
+title: "Other Applications"
+subtitle: "[Intro2R](https://github.com/xp-song/Intro2R) Crash Course"
 author: "author: xpsong"
 date: "updated: `r Sys.Date()`"
 output:
