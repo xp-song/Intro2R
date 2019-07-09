@@ -2,7 +2,8 @@
 
 This repository contains teaching materials for an introductory workshop to R. It is designed for those with minimal coding experience. It introduces the basics of R and the RStudio IDE (Integrated Development Environment). Just like how Microsoft Word as a software application provides many more functions than a basic text editor, an IDE provides comprehensive facilities for coding.
 
-We will be working entirely within RStudio, and running most of our scripts in R Notebooks, which are documents that allow us to intersperse regular text with chunks of code. Each chunk of code can be executed independently to produce outputs/visualisations, visible alongside the code inputs. This allows us to interact with our code, render documents (e.g. reports, presentations, webpages) with a click of a button, and create reproducible workflows that reflect real-time changes in data. 
+We will be working entirely within RStudio, and running most of our scripts in R Notebooks, which are documents that allow us to intersperse regular text with chunks of code. Each chunk of code can be executed independently to produce outputs/visualisations, visible alongside the code inputs. This allows us to interact with our code, render documents (e.g. reports, presentations, webpages) with a click of a button, and create reproducible workflows that reflect real-time changes in data.  
+
 This workshop is designed to be a crash-course. We will dive right into organising, visualising and analysing data, to give you a taste of the power of R and its potential applications. Hopefully this will help kick-start your journey to becoming more data-savvy :) Please note that it is not meant to be a lesson in statistics, or to substitute learning the fundamentals of the language. There are many comprehensive online courses in R which I highly recommend. Links to these materials will be provided in the slides.
 
 ## Workshop outline:
