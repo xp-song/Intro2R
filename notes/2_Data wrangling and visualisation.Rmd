@@ -1,5 +1,5 @@
 ---
-title: "Data wrangling and visualisation"
+title: "Data Wrangling and Visualisation"
 subtitle: "[Intro2R](https://github.com/xp-song/Intro2R): Lesson 2 of 3"
 author: "author: xpsong"
 date: "updated: `r Sys.Date()`"
@@ -11,6 +11,18 @@ output:
     number_sections: true
     theme: paper
 ---
+
+```{r load_packages, echo = FALSE, message = FALSE, warning = FALSE}
+#commands are separated by ; or a new line
+library(dplyr); library(tidyr) #data manipulation
+library(ggplot2) #data visualisation 
+library(knitr) #to knit HMTL
+```
+
+---
+
+# Header
+
 ```{r eval = FALSE}
 data() #built-in datasets in R
 data(package="ggplot2")

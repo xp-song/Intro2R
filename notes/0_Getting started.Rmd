@@ -102,3 +102,13 @@ __Online courses:__
 - [R Programming](https://www.coursera.org/learn/r-programming) by Coursera  
 
 
+__Online Q&A:__  
+
+- [Stack Overflow](https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example?rq=1)
+
+- Remember to check your `sessionInfo()` when troubleshooting!  
+
+
+__Others:__  
+
+- [How to use R/RStudio from an external drive](https://github.com/ClaudiaBrauer/A-very-short-introduction-to-R/blob/master/documents/Portable_versions_of_R_and_RStudio.pdf) (i.e. if you don't have admin rights to install software)
