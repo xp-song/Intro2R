@@ -28,7 +28,9 @@ The data comes in three different files:
 
 <br>
 
-_**Credit:** Our survey analysis has been adapted from R Notebooks published by the Kaggle users [Heads or Tails](https://www.kaggle.com/headsortails/what-we-do-in-the-kernels-a-kaggle-survey-story) and [Jose Berengueres](https://www.kaggle.com/harriken/storytelling-the-2018-kaggle-survey)._ 
+**In this lesson, we will only be using the file containing the multiple choice responses.**
+
+_**Credit:** Our analysis includes code adapted from R Notebooks published by the Kaggle users [Heads or Tails](https://www.kaggle.com/headsortails/what-we-do-in-the-kernels-a-kaggle-survey-story) and [Jose Berengueres](https://www.kaggle.com/harriken/storytelling-the-2018-kaggle-survey)._ 
 
 ---
 
@@ -41,7 +43,7 @@ _**Credit:** Our survey analysis has been adapted from R Notebooks published by 
 - We also will use some packages that provide functions for specific analyses and visualisations (e.g. dealing with geospatial data, interactive visualisations, etc.)  
 
 ```{r load_packages, message = FALSE, warning = FALSE}
-# general data manipulation
+#general data manipulation
 library(dplyr) # data manipulation
 library(readr) # input/output
 library(data.table) # data manipulation
@@ -50,20 +52,21 @@ library(tidyr) # data wrangling
 library(stringr) # string manipulation
 library(forcats) # factor manipulation
 
-# specific data manipulation
+#specific data manipulation
 library(purrr) # string manipulation
+
+#general visualisations
+library(ggplot2) # visualisation 
 
 #specific visualisation
 library(highcharter) # visualisation
 library(countrycode) # visualisation
 
 
-
-
-library(ggplot2) #data visualisation 
-
 library(knitr) #to knit HMTL
 ```
+
+---  
 
 ## Load data
 
@@ -71,67 +74,175 @@ Rather than importing our tabular data as _dataframes_, we will import them as _
 
 ```{r}
 multi <- as_tibble(fread('../data/kaggle-survey-2018/multipleChoiceResponses.csv', skip = 1))
-free <- as_tibble(fread('../data/kaggle-survey-2018/freeFormResponses.csv', skip = 1))
 
-#The function 'fread' in the library(data.table) speeds up read of data into R
-#We skip the first lines of both .csv files. The second line contains the actual question headers that become the temporary column names for our data.
+#The function 'fread' in the library(data.table) speeds up reading of data into R
+#We skip the first line of the .csv file. The second line contains the actual question headers that become the temporary column names for our data.
 ```
+
+---  
 
 ## Examine data
 
-- Use `colnames()` to examine column names. They are super-long descriptions that need to be abbreviated. We'll do this step-by-step later on as we analyse each topic in the survey.
+- Use `colnames()` to examine column names. 
+  - They are super-long sentences with white spaces, so we need to wrap the entire colname with backticks (e.g. `` multi$`Duration (in seconds)` ``)
+  - This is not very feasible/readable code
+  - We'll abbreviate the colnames later on as we analyse each topic in the survey.
 
-  - We can't have spacing in our typical column names
-  
-  - Since our colnames are _sentences_, we need to wrap the entire colname with backticks
-  
-  - E.g. `` multi$`Duration (in seconds)` ``
+- Use `str()` to examine the data classes/structure.
 
-- Use `str()` to examine the data type for dataframe columns 
+<br>
+
+---  
 
 ## Convert data type
 
 The `as_tibble()` function imports text as _character_ format by default. We want to change the multiple choice answers to _factors_ using `mutate_if()`.
 
-- Use the pipe operator `%>%` to manipulate data in stages (from `dplyr` package)
+- Use the pipe operator `%>%` from `library(dplyr)` to manipulate data in stages 
   - It is a key operater often used in the `tidyverse`.
   - Rather than using nested brackets, the 'pipeline' is highly readable and follows a logical sequence.
 ```{r}
 multi <- multi %>%
   mutate_if(is_character, as_factor)
 
-#the function 'is_character' and 'as_factor' is from the library(purrr) and library(forcats), respectively
+#functions 'is_character' and 'as_factor' are from the library(purrr) and library(forcats), respectively
 ```
 
-<br>
+---  
+
+# Survey results {.tabset .tabset-fade .tabset-pills}
+
+Number of respondents: __*`r nrow(multi)`*__  
+
+
+## Duration
+
+Let's first abbreviate the colname `` `Duration (in seconds)` ``  to `duration` using `rename()`, and change the units from seconds to minutes using `mutate()`.
+```{r}
+multi <- multi %>%
+  rename(duration = `Duration (in seconds)`) %>% #rename column
+  mutate(duration = duration/60) #change to minutes (use new colname)
+```
+
+
+Next, we plot a histogram using the function `ggplot()` from `library(ggplot2)`, a very popular package used for data visualisation (see [cheatsheet](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf)).  
+
+Three basic steps (linked with the `+` sign):  
+1. Provide _data_  
+2. Assign your data _variables_ to _aesthetics_  
+3. Assign the graphical _primitives_  
+```{r fig.height=3.5, fig.cap="_Note: The dashed line denotes the median survey duration. The x-axis has been transformed to a logarithmic scale._"}
+multi %>% #provide data
+  ggplot(aes(duration)) + #assign variable 'duration' to aes()
+  geom_histogram(bins = 50, fill = "grey") + #graphical primitive
+  
+  #customisation
+  scale_x_log10(breaks = c(2, 5, 10, 20, 60, 720, 1440)) + #log() x-axis to address extreme values
+  geom_vline(xintercept = median(multi$duration), linetype = 2) + #add line for median duration
+  labs(x = "Duration (mins)", y = "Number of respondents") + #change axis labels
+  ggtitle("Most respondents took 15-20 min to complete survey") #add figure title
+```
+
+- Some respondents finished the survey in < 2 mins! They may have rushed it or left it incomplete.
+- Some respondents probably left the browser tab open for a loong time.
 
 ---  
-  
-# Overview
 
-Let's start with some visualisations for the entire dataset. The package [highcharter](http://jkunst.com/highcharter) was used to plot the following interactive map.
+## Spatial distribution
 
-  - If a country or territory received less than 50 respondents, we grouped them into a group named “Other” for anonymity." Here we don't see these "Other" nor the respondents who did not disclose their location
+Here, we are interested in the column `` `In which country do you currently reside?` ``. We want a summarised table with the count of respondents per country.
 
-```{r fig.height=6, fig.cap ="Fig. 1"}
+- Abbreviate the colname to `country`
+- `count()` the number of of observations per `country`
+- `filter()` resulting table to exclude (`!`) those who selected "Other" or "I do not wish to disclose my location".
+  - Exclude factors in `country` (rows) that match the names `%in%` the specified vector
+- `mutate()` table to add a new column named `iso3` containing the country code
+  - Factor names in `country` are mapped to a three-letter code using the function in `library(countrycode)`
+- Notice that we are not overwriting the variable `multi`, but creating a new variable `ctry_n`
+
+```{r}
 ctry_n <- multi %>%
-  mutate(country = `In which country do you currently reside?`) %>%
+  rename(country = `In which country do you currently reside?`) %>%
   count(country) %>%
   filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
-  mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c")) #library(countrycode)
+  mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c")) 
+```
 
-highchart() %>% #library(highchart)
+Next, we use the package [highcharter](http://jkunst.com/highcharter) to plot an interactive map.
+```{r fig.height=6}
+highchart() %>%
   hc_add_series_map(worldgeojson, ctry_n, value = 'n', joinBy = 'iso3') %>%
   hc_title(text = 'Geographical distribution of survey respondents') %>%
   hc_colorAxis(minColor = "#ffdf3f", maxColor = "#5c46ff") %>%
   hc_tooltip(useHTML = TRUE, headerFormat = "", pointFormat = "{point.country}: {point.n} users")
 ```
 
-```{r}
+---  
 
+# Educational sources
+
+```{r}
+multi <- multi %>%
+  rename(platform = "On which online platform have you spent the most amount of time? - Selected Choice") %>%
+  mutate(platform = na_if(platform, ""))
+```
+
+, keep in mind that the “On which online platforms” question allowed for multiple answers. In terms of ML/DS training we only consider percentages > 0, since zero dominates almost every distribution (except for self-taught) and we want to focus on the difference between the small and large percentages.
+
+```{r}
+platform_lvl <- multi %>%
+  filter(!is.na(platform)) %>%
+  mutate(platform = as.character(platform)) %>%
+  count(platform) %>%
+  arrange(n) %>%
+  .$platform
+
+foo <- multi %>%
+  group_by(platform) %>%
+  summarise(most_often = n()) %>%
+  mutate(platform = as.character(platform))
+
+bar <- multi %>%
+  select(starts_with("On which online platforms have you begun or completed data science courses? (Select all that apply) - Selected Choice")) %>%
+  replace(.=="", NA) %>%
+  gather(key = "foo", value = "platform") %>%
+  mutate(platform = as.character(platform)) %>%
+  group_by(platform) %>%
+  summarise(occasionally = n())
+
+p1 <- foo %>%
+  filter(!is.na(platform)) %>%
+  left_join(bar, by = "platform") %>%
+  mutate(platform = fct_relevel(platform, platform_lvl)) %>%
+  gather(most_often, occasionally, key = "type", value = "n") %>%
+  ggplot(aes(platform, n, fill = type)) +
+  geom_col(position = "dodge") +
+  theme(legend.position = "top") +
+  coord_flip() +
+  labs(x = "", y = "Responses", fill = "Usage")  +
+  ggtitle("Online learning platforms")
 ```
 
 
+
+
+
+
+
+
+
+Write cleaned data without the index column (i.e. write.csv)
+
+
+# Your turn!
+
+```{r eval = FALSE}
+diamonds <- data(diamonds, package = "ggplot2")
+
+#Some analysis
+http://statweb.stanford.edu/~jtaylo/courses/stats202/diamonds.html
+
+```
 
 
 
@@ -161,54 +272,12 @@ scale(x, center=TRUE, scale=TRUE): centers & scales the data (deducts the mean p
 
 ```
 
+Let's filter the data to exclude respondents who look < 2 mins to complete the survey.
 
-# Data cleaning
+```{r}
 
-1) Save your .xlsx file as a csv (comma delimited) in the /raw folder and give it a name (eg. responses_YYYYMMDD.csv)
-
-2) Load it into R
-
-```{r message = FALSE, warning = FALSE}
-#svy.df <- read.csv("raw/responses_20190311.csv", stringsAsFactors = FALSE, check.names=FALSE) 
-#import the data as 'svy.df'
-#the location of .Rproj file is where the working directory is (so, no need to type the entire file path)
-```
-
-
-
-```{r other tests, eval = FALSE}
-#other tests u may consider
-
-#require(stats)
-t.test()
-
-#other useful packages::functions to consider for surveys
-library(survey)
-svydesign() #specify survey design
-survey::postStratify() #adjusts sampling weights so that the joint distribution of a set of post-stratifying variables matches the known population joint distribution. 
-
-library(likert)
 
 ```
-
-
-Write data without the index column (i.e. write.csv)
-
-
-# Your turn!
-
-```{r eval = FALSE}
-diamonds <- data(diamonds, package = "ggplot2")
-
-#Some analysis
-http://statweb.stanford.edu/~jtaylo/courses/stats202/diamonds.html
-
-```
-
-
-
-
-
 
 
 

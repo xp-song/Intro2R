@@ -15,16 +15,38 @@ class: center, middle, inverse, title-slide, title-slide
 # Intro2R
 ## Data Wrangling and Visualisation
 ### xpsong
-### updated 2019-07-09
+### updated 2019-07-10
 
 ---
+
+
+
 
 
 class: inverse, center, middle
 
 # Outline  
 
-__[blah](#4)__  
+__[About our dataset](#about)__
+
+__[Data preparation](#prep)__
+
+__[Survey analysis and results](#results)__  
+
+__It's your turn!__
+
+---
+
+class: left
+name: about
+
+# Our Example Dataset  
+
+__[Kaggle Machine Learning and Data Science Survey 2018](https://www.kaggle.com/kaggle/kaggle-survey-2018)__
+- The industry-wide survey presents the state of data science and machine learning
+- It was published in as raw a format as possible while ensuring the anonymity of respondents
+- Our analysis includes code adapted from R Notebooks published by the Kaggle users [Heads or Tails](https://www.kaggle.com/headsortails/what-we-do-in-the-kernels-a-kaggle-survey-story) and [Jose Berengueres](https://www.kaggle.com/harriken/storytelling-the-2018-kaggle-survey)
+
 
 ---
 
@@ -33,25 +55,349 @@ class: left
 # Our Example Dataset  
 
 __[Kaggle Machine Learning and Data Science Survey 2018](https://www.kaggle.com/kaggle/kaggle-survey-2018)__
-- The industry-wide survey presents the state of data science and machine learning
-- It was published in as raw a format as possible while ensuring the anonymity of respondents
-- Our survey analysis has been adapted from R Notebooks published by the Kaggle users [Heads or Tails](https://www.kaggle.com/headsortails/what-we-do-in-the-kernels-a-kaggle-survey-story) and [Jose Berengueres](https://www.kaggle.com/harriken/storytelling-the-2018-kaggle-survey)
+- Data comes in 3 files, located in the folder `~/data/kaggle-survey-2018`
+  1. **Multiple choice responses**  
 
+  2. **Free-form responses** to open-ended questions
+
+  3. **Survey schema** shows an overview of responses  
+  
+**In this lesson, we will only be using the file containing the multiple choice responses.**
+
+&lt;img src="images/previewdata.png" width="1000" style="display: block; margin: auto;" /&gt;
+
+???
+
+- Note: 2 rows of headers
+
+---
+
+class: inverse, left, center, middle
+
+# Before we begin...
+
+__Install and load packages__
+
+We will be using more packages from the [tidyverse](https://www.tidyverse.org), as well as other specialised packages
+
+---
+
+class: left
+name: prep
+
+# Load data
+
+**Import tabular data as _tibbles_**
+- [Tibbles](https://cran.r-project.org/web/packages/tibble/vignettes/tibble.html) are a modern take on dataframes. They...
+  - Never change the input type (e.g. character strings will not be converted to factors)
+  - Never adjust the names of variables (e.ge will not replace white space with `.`)
+  - Never uses `row.names()`
+  - Always return another tibble during subsetting operations  
+
+--
+
+
+```r
+multi &lt;- as_tibble(fread('../../data/kaggle-survey-2018/multipleChoiceResponses.csv', skip = 1))
+```
+
+_Notes:_  
+`fread()` Speeds up reading of data into R  
+`skip = 1` Skip the first line of the .csv file
 
 ---
 
 class: left
 
-- Use `str()` to examine the data type for dataframe columns 
+# Examine data
 
-- Convert all multiple choice answers into factors using `mutate_if()`
+__Use `colnames()` to examine column names__  
+
+```
+## [1] "Duration (in seconds)"                                                                                          
+## [2] "What is your gender? - Selected Choice"                                                                         
+## [3] "What is your gender? - Prefer to self-describe - Text"                                                          
+## [4] "What is your age (# years)?"                                                                                    
+## [5] "In which country do you currently reside?"                                                                      
+## [6] "What is the highest level of formal education that you have attained or plan to attain within the next 2 years?"
+```
+
+&lt;br&gt;
+
+--
+
+Because of the white spaces, we need to wrap the colname with backticks. For example:
+
+```r
+multi$`Duration (in seconds)`
+```
+  - This is not very feasible/readable  
+  - We'll abbreviate the colnames later on as we analyse each topic in the survey  
+
+---
+
+class: left
+
+# Examine data
+
+__Use `head()` or `str()` to examine data type/structure__
 
 
+```
+## # A tibble: 6 x 395
+##   `Duration (in s… `What is your g… `What is your g… `What is your a…
+##              &lt;int&gt; &lt;chr&gt;                       &lt;int&gt; &lt;chr&gt;           
+## 1              710 Female                         -1 45-49           
+## 2              434 Male                           -1 30-34           
+## 3              718 Female                         -1 30-34           
+## 4              621 Male                           -1 35-39           
+## 5              731 Male                           -1 22-24           
+## 6             1142 Male                           -1 25-29           
+## # … with 391 more variables: `In which country do you currently
+## #   reside?` &lt;chr&gt;, `What is the highest level of formal education that
+## #   you have attained or plan to attain within the next 2 years?` &lt;chr&gt;,
+## #   `Which best describes your undergraduate major? - Selected
+## #   Choice` &lt;chr&gt;, `Select the title most similar to your current role (or
+## #   most recent title if retired): - Selected Choice` &lt;chr&gt;, `Select the
+## #   title most similar to your current role (or most recent title if
+## #   retired): - Other - Text` &lt;int&gt;, `In what industry is your current
+## #   employer/contract (or your most recent employer if retired)? -
+## #   Selected Choice` &lt;chr&gt;, `In what industry is your current
+## #   employer/contract (or your most recent employer if retired)? - Other -
+## #   Text` &lt;int&gt;, `How many years of experience do you have in your current
+## #   role?` &lt;chr&gt;, `What is your current yearly compensation (approximate
+## #   $USD)?` &lt;chr&gt;, `Does your current employer incorporate machine
+## #   learning methods into their business?` &lt;chr&gt;, `Select any activities
+## #   that make up an important part of your role at work: (Select all that
+## #   apply) - Selected Choice - Analyze and understand data to influence
+## #   product or business decisions` &lt;chr&gt;, `Select any activities that make
+## #   up an important part of your role at work: (Select all that apply) -
+## #   Selected Choice - Build and/or run a machine learning service that
+## #   operationally improves my product or workflows` &lt;chr&gt;, `Select any
+## #   activities that make up an important part of your role at work:
+## #   (Select all that apply) - Selected Choice - Build and/or run the data
+## #   infrastructure that my business uses for storing, analyzing, and
+## #   operationalizing data` &lt;chr&gt;, `Select any activities that make up an
+## #   important part of your role at work: (Select all that apply) -
+## #   Selected Choice - Build prototypes to explore applying machine
+## #   learning to new areas` &lt;chr&gt;, `Select any activities that make up an
+## #   important part of your role at work: (Select all that apply) -
+## #   Selected Choice - Do research that advances the state of the art of
+## #   machine learning` &lt;chr&gt;, `Select any activities that make up an
+## #   important part of your role at work: (Select all that apply) -
+## #   Selected Choice - None of these activities are an important part of my
+## #   role at work` &lt;chr&gt;, `Select any activities that make up an important
+## #   part of your role at work: (Select all that apply) - Selected Choice -
+## #   Other` &lt;chr&gt;, `Select any activities that make up an important part of
+## #   your role at work: (Select all that apply) - Other - Text` &lt;int&gt;,
+## #   `What is the primary tool that you use at work or school to analyze
+## #   data? (include text response) - Selected Choice` &lt;chr&gt;, `What is the
+## #   primary tool that you use at work or school to analyze data? (include
+## #   text response) - Basic statistical software (Microsoft Excel, Google
+## #   Sheets, etc.) - Text` &lt;int&gt;, `What is the primary tool that you use at
+## #   work or school to analyze data? (include text response) - Advanced
+## #   statistical software (SPSS, SAS, etc.) - Text` &lt;int&gt;, `What is the
+## #   primary tool that you use at work or school to analyze data? (include
+## #   text response) - Business intelligence software (Salesforce, Tableau,
+## #   Spotfire, etc.) - Text` &lt;int&gt;, `What is the primary tool that you use
+## #   at work or school to analyze data? (include text response) - Local or
+## #   hosted development environments (RStudio, JupyterLab, etc.) -
+## #   Text` &lt;int&gt;, `What is the primary tool that you use at work or school
+## #   to analyze data? (include text response) - Cloud-based data software &amp;
+## #   APIs (AWS, GCP, Azure, etc.) - Text` &lt;int&gt;, `What is the primary tool
+## #   that you use at work or school to analyze data? (include text
+## #   response) - Other - Text` &lt;int&gt;, `Which of the following integrated
+## #   development environments (IDE's) have you used at work or school in
+## #   the last 5 years? (Select all that apply) - Selected Choice -
+## #   Jupyter/IPython` &lt;chr&gt;, `Which of the following integrated development
+## #   environments (IDE's) have you used at work or school in the last 5
+## #   years? (Select all that apply) - Selected Choice - RStudio` &lt;chr&gt;,
+## #   `Which of the following integrated development environments (IDE's)
+## #   have you used at work or school in the last 5 years? (Select all that
+## #   apply) - Selected Choice - PyCharm` &lt;chr&gt;, `Which of the following
+## #   integrated development environments (IDE's) have you used at work or
+## #   school in the last 5 years? (Select all that apply) - Selected Choice
+## #   - Visual Studio Code` &lt;chr&gt;, `Which of the following integrated
+## #   development environments (IDE's) have you used at work or school in
+## #   the last 5 years? (Select all that apply) - Selected Choice -
+## #   nteract` &lt;chr&gt;, `Which of the following integrated development
+## #   environments (IDE's) have you used at work or school in the last 5
+## #   years? (Select all that apply) - Selected Choice - Atom` &lt;chr&gt;, `Which
+## #   of the following integrated development environments (IDE's) have you
+## #   used at work or school in the last 5 years? (Select all that apply) -
+## #   Selected Choice - MATLAB` &lt;chr&gt;, `Which of the following integrated
+## #   development environments (IDE's) have you used at work or school in
+## #   the last 5 years? (Select all that apply) - Selected Choice - Visual
+## #   Studio` &lt;chr&gt;, `Which of the following integrated development
+## #   environments (IDE's) have you used at work or school in the last 5
+## #   years? (Select all that apply) - Selected Choice - Notepad++` &lt;chr&gt;,
+## #   `Which of the following integrated development environments (IDE's)
+## #   have you used at work or school in the last 5 years? (Select all that
+## #   apply) - Selected Choice - Sublime Text` &lt;chr&gt;, `Which of the
+## #   following integrated development environments (IDE's) have you used at
+## #   work or school in the last 5 years? (Select all that apply) - Selected
+## #   Choice - Vim` &lt;chr&gt;, `Which of the following integrated development
+## #   environments (IDE's) have you used at work or school in the last 5
+## #   years? (Select all that apply) - Selected Choice - IntelliJ` &lt;chr&gt;,
+## #   `Which of the following integrated development environments (IDE's)
+## #   have you used at work or school in the last 5 years? (Select all that
+## #   apply) - Selected Choice - Spyder` &lt;chr&gt;, `Which of the following
+## #   integrated development environments (IDE's) have you used at work or
+## #   school in the last 5 years? (Select all that apply) - Selected Choice
+## #   - None` &lt;chr&gt;, `Which of the following integrated development
+## #   environments (IDE's) have you used at work or school in the last 5
+## #   years? (Select all that apply) - Selected Choice - Other` &lt;chr&gt;,
+## #   `Which of the following integrated development environments (IDE's)
+## #   have you used at work or school in the last 5 years? (Select all that
+## #   apply) - Other - Text` &lt;int&gt;, `Which of the following hosted notebooks
+## #   have you used at work or school in the last 5 years? (Select all that
+## #   apply) - Selected Choice - Kaggle Kernels` &lt;chr&gt;, `Which of the
+## #   following hosted notebooks have you used at work or school in the last
+## #   5 years? (Select all that apply) - Selected Choice - Google
+## #   Colab` &lt;chr&gt;, `Which of the following hosted notebooks have you used
+## #   at work or school in the last 5 years? (Select all that apply) -
+## #   Selected Choice - Azure Notebook` &lt;chr&gt;, `Which of the following
+## #   hosted notebooks have you used at work or school in the last 5 years?
+## #   (Select all that apply) - Selected Choice - Domino Datalab` &lt;chr&gt;,
+## #   `Which of the following hosted notebooks have you used at work or
+## #   school in the last 5 years? (Select all that apply) - Selected Choice
+## #   - Google Cloud Datalab` &lt;chr&gt;, `Which of the following hosted
+## #   notebooks have you used at work or school in the last 5 years? (Select
+## #   all that apply) - Selected Choice - Paperspace` &lt;chr&gt;, `Which of the
+## #   following hosted notebooks have you used at work or school in the last
+## #   5 years? (Select all that apply) - Selected Choice - Floydhub` &lt;chr&gt;,
+## #   `Which of the following hosted notebooks have you used at work or
+## #   school in the last 5 years? (Select all that apply) - Selected Choice
+## #   - Crestle` &lt;chr&gt;, `Which of the following hosted notebooks have you
+## #   used at work or school in the last 5 years? (Select all that apply) -
+## #   Selected Choice - JupyterHub/Binder` &lt;chr&gt;, `Which of the following
+## #   hosted notebooks have you used at work or school in the last 5 years?
+## #   (Select all that apply) - Selected Choice - None` &lt;chr&gt;, `Which of the
+## #   following hosted notebooks have you used at work or school in the last
+## #   5 years? (Select all that apply) - Selected Choice - Other` &lt;chr&gt;,
+## #   `Which of the following hosted notebooks have you used at work or
+## #   school in the last 5 years? (Select all that apply) - Other -
+## #   Text` &lt;int&gt;, `Which of the following cloud computing services have you
+## #   used at work or school in the last 5 years? (Select all that apply) -
+## #   Selected Choice - Google Cloud Platform (GCP)` &lt;chr&gt;, `Which of the
+## #   following cloud computing services have you used at work or school in
+## #   the last 5 years? (Select all that apply) - Selected Choice - Amazon
+## #   Web Services (AWS)` &lt;chr&gt;, `Which of the following cloud computing
+## #   services have you used at work or school in the last 5 years? (Select
+## #   all that apply) - Selected Choice - Microsoft Azure` &lt;chr&gt;, `Which of
+## #   the following cloud computing services have you used at work or school
+## #   in the last 5 years? (Select all that apply) - Selected Choice - IBM
+## #   Cloud` &lt;chr&gt;, `Which of the following cloud computing services have
+## #   you used at work or school in the last 5 years? (Select all that
+## #   apply) - Selected Choice - Alibaba Cloud` &lt;chr&gt;, `Which of the
+## #   following cloud computing services have you used at work or school in
+## #   the last 5 years? (Select all that apply) - Selected Choice - I have
+## #   not used any cloud providers` &lt;chr&gt;, `Which of the following cloud
+## #   computing services have you used at work or school in the last 5
+## #   years? (Select all that apply) - Selected Choice - Other` &lt;chr&gt;,
+## #   `Which of the following cloud computing services have you used at work
+## #   or school in the last 5 years? (Select all that apply) - Other -
+## #   Text` &lt;int&gt;, `What programming languages do you use on a regular
+## #   basis? (Select all that apply) - Selected Choice - Python` &lt;chr&gt;,
+## #   `What programming languages do you use on a regular basis? (Select all
+## #   that apply) - Selected Choice - R` &lt;chr&gt;, `What programming languages
+## #   do you use on a regular basis? (Select all that apply) - Selected
+## #   Choice - SQL` &lt;chr&gt;, `What programming languages do you use on a
+## #   regular basis? (Select all that apply) - Selected Choice -
+## #   Bash` &lt;chr&gt;, `What programming languages do you use on a regular
+## #   basis? (Select all that apply) - Selected Choice - Java` &lt;chr&gt;, `What
+## #   programming languages do you use on a regular basis? (Select all that
+## #   apply) - Selected Choice - Javascript/Typescript` &lt;chr&gt;, `What
+## #   programming languages do you use on a regular basis? (Select all that
+## #   apply) - Selected Choice - Visual Basic/VBA` &lt;chr&gt;, `What programming
+## #   languages do you use on a regular basis? (Select all that apply) -
+## #   Selected Choice - C/C++` &lt;chr&gt;, `What programming languages do you use
+## #   on a regular basis? (Select all that apply) - Selected Choice -
+## #   MATLAB` &lt;chr&gt;, `What programming languages do you use on a regular
+## #   basis? (Select all that apply) - Selected Choice - Scala` &lt;chr&gt;, `What
+## #   programming languages do you use on a regular basis? (Select all that
+## #   apply) - Selected Choice - Julia` &lt;chr&gt;, `What programming languages
+## #   do you use on a regular basis? (Select all that apply) - Selected
+## #   Choice - Go` &lt;chr&gt;, `What programming languages do you use on a
+## #   regular basis? (Select all that apply) - Selected Choice -
+## #   C#/.NET` &lt;chr&gt;, `What programming languages do you use on a regular
+## #   basis? (Select all that apply) - Selected Choice - PHP` &lt;chr&gt;, `What
+## #   programming languages do you use on a regular basis? (Select all that
+## #   apply) - Selected Choice - Ruby` &lt;chr&gt;, `What programming languages do
+## #   you use on a regular basis? (Select all that apply) - Selected Choice
+## #   - SAS/STATA` &lt;chr&gt;, `What programming languages do you use on a
+## #   regular basis? (Select all that apply) - Selected Choice -
+## #   None` &lt;chr&gt;, `What programming languages do you use on a regular
+## #   basis? (Select all that apply) - Selected Choice - Other` &lt;chr&gt;, `What
+## #   programming languages do you use on a regular basis? (Select all that
+## #   apply) - Other - Text` &lt;int&gt;, `What specific programming language do
+## #   you use most often? - Selected Choice` &lt;chr&gt;, `What specific
+## #   programming language do you use most often? - Other - Text` &lt;int&gt;,
+## #   `What programming language would you recommend an aspiring data
+## #   scientist to learn first? - Selected Choice` &lt;chr&gt;, `What programming
+## #   language would you recommend an aspiring data scientist to learn
+## #   first? - Other - Text` &lt;int&gt;, `What machine learning frameworks have
+## #   you used in the past 5 years? (Select all that apply) - Selected
+## #   Choice - Scikit-Learn` &lt;chr&gt;, `What machine learning frameworks have
+## #   you used in the past 5 years? (Select all that apply) - Selected
+## #   Choice - TensorFlow` &lt;chr&gt;, `What machine learning frameworks have you
+## #   used in the past 5 years? (Select all that apply) - Selected Choice -
+## #   Keras` &lt;chr&gt;, `What machine learning frameworks have you used in the
+## #   past 5 years? (Select all that apply) - Selected Choice -
+## #   PyTorch` &lt;chr&gt;, `What machine learning frameworks have you used in the
+## #   past 5 years? (Select all that apply) - Selected Choice - Spark
+## #   MLlib` &lt;chr&gt;, `What machine learning frameworks have you used in the
+## #   past 5 years? (Select all that apply) - Selected Choice - H20` &lt;chr&gt;,
+## #   `What machine learning frameworks have you used in the past 5 years?
+## #   (Select all that apply) - Selected Choice - Fastai` &lt;chr&gt;, `What
+## #   machine learning frameworks have you used in the past 5 years? (Select
+## #   all that apply) - Selected Choice - Mxnet` &lt;chr&gt;, `What machine
+## #   learning frameworks have you used in the past 5 years? (Select all
+## #   that apply) - Selected Choice - Caret` &lt;chr&gt;, `What machine learning
+## #   frameworks have you used in the past 5 years? (Select all that apply)
+## #   - Selected Choice - Xgboost` &lt;chr&gt;, `What machine learning frameworks
+## #   have you used in the past 5 years? (Select all that apply) - Selected
+## #   Choice - mlr` &lt;chr&gt;, `What machine learning frameworks have you used
+## #   in the past 5 years? (Select all that apply) - Selected Choice -
+## #   Prophet` &lt;chr&gt;, `What machine learning frameworks have you used in the
+## #   past 5 years? (Select all that apply) - Selected Choice -
+## #   randomForest` &lt;chr&gt;, `What machine learning frameworks have you used
+## #   in the past 5 years? (Select all that apply) - Selected Choice -
+## #   lightgbm` &lt;chr&gt;, `What machine learning frameworks have you used in
+## #   the past 5 years? (Select all that apply) - Selected Choice -
+## #   catboost` &lt;chr&gt;, `What machine learning frameworks have you used in
+## #   the past 5 years? (Select all that apply) - Selected Choice -
+## #   CNTK` &lt;chr&gt;, …
+```
 
-- Use the pipe operator `%&gt;%` to manipulate data in stages (from `dplyr` package)
-  - It is a key operater often used in the `tidyverse`.
-  - Rather than using nested brackets, the 'pipeline' is highly readable and follows a logical sequence.
-  - For example:
+???
+
+- Colnames are so long that you can't even read them properly
+
+- What is your gender? - character vectors
+
+---
+
+class: left
+
+# Convert data
+
+__Convert columns of _character_ strings into _factors_ using `mutate_if()`__
+
+
+```r
+multi &lt;- multi %&gt;%
+  mutate_if(is_character, as_factor)
+```
+
+--
+
+## More Info 🧐  
+__The pipe operator `%&gt;%`__  
+- Used to manipulate data in stages
+- Often used in the `tidyverse`
+- Highly readable and follows a logical sequence
+- For example:
 
 ```r
 round(exp(diff(log(x))), 1) #using nested brackets
@@ -61,6 +407,115 @@ x %&gt;% log() %&gt;% #using the pipe operator
     exp() %&gt;%
     round(1)
 ```
+
+---
+
+class: left
+
+# Convert data
+
+__Convert columns of _character_ strings into _factors_ using `mutate_if()`__
+
+
+```r
+multi &lt;- multi %&gt;%
+  mutate_if(is_character, as_factor)
+```
+
+- Overwrite existing variable `multi`
+
+- Remember to access help about functions `?mutate_if` `?is_character` `?as_factor`
+  - `mutate_if(.tbl, .predicate, .funs, ...)`
+
+---
+
+class: inverse, left, center, middle
+name: results
+
+# Survey Results
+
+_23859 respondents_
+
+???
+
+- How do I get the no. of respondents? nrow()
+
+---
+
+class: left
+
+# Survey duration
+
+Let's do a little housekeeping...  
+- Abbreviate the colname to `duration` using `rename()` 
+- Change the units from seconds to minutes using `mutate()`
+
+```r
+multi &lt;- multi %&gt;%
+  rename(duration = `Duration (in seconds)`) %&gt;% #rename column
+  mutate(duration = duration/60) #change to minutes (use new colname)
+
+head(multi$duration) #see first few rows
+```
+
+```
+## [1] 11.833333  7.233333 11.966667 10.350000 12.183333 19.033333
+```
+
+---
+
+class: left
+
+# Survey duration
+
+__Plot a histogram using the `ggplot2` package__
+
+- A very popular package used for data visualisation
+- It provides a systematic way to create graphics based on [The Grammar of Graphics](https://www.amazon.com/Grammar-Graphics-Statistics-Computing/dp/0387245448/ref=as_li_ss_tl?ie=UTF8&amp;qid=1477928463&amp;sr=8-1&amp;keywords=the+grammar+of+graphics&amp;linkCode=sl1&amp;tag=ggplot2-20&amp;linkId=f0130e557161b83fbe97ba0e9175c431) (see [cheatsheet](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf)).  
+
+---
+
+class: left
+
+# Survey duration
+
+__Plot a histogram using the `ggplot()` function__
+
+Three basic steps:  
+1. Provide _data_  
+2. Assign your data _variables_ to _aesthetics_  
+3. Assign the graphical _primitives_  
+
+
+```r
+multi %&gt;% #provide data
+  ggplot(aes(duration)) + #assign variable 'duration' to aes()
+  geom_histogram(bins = 50, fill = "grey") + #graphical primitive
+  
+  #customisation
+  scale_x_log10(breaks = c(2, 5, 10, 20, 60, 720, 1440)) + #log() x-axis to address extreme values
+  geom_vline(xintercept = median(multi$duration), linetype = 2) + #add line for median duration
+  labs(x = "Duration (mins)", y = "Number of respondents") + #change axis labels
+  ggtitle("Most respondents took 15-20 min to complete survey") #add figure title
+```
+
+---
+
+class: left
+
+# Survey duration
+
+__Plot a histogram using the `ggplot()` function__
+
+![](2__Data_wrangling_and_visualisation_files/figure-html/unnamed-chunk-11-1.svg)&lt;!-- --&gt;
+
+_Note: The dashed line denotes the median survey duration. The x-axis has been transformed to a logarithmic scale._
+
+---
+
+class: left
+
+# Spatial distribution
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
