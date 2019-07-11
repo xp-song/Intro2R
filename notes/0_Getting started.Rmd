@@ -112,3 +112,12 @@ __Online Q&A:__
 __Others:__  
 
 - [How to use R/RStudio from an external drive](https://github.com/ClaudiaBrauer/A-very-short-introduction-to-R/blob/master/documents/Portable_versions_of_R_and_RStudio.pdf) (i.e. if you don't have admin rights to install software)
+
+
+<br>
+
+---
+
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
+
+Copyright (c) 2019 Song, Xiao Ping

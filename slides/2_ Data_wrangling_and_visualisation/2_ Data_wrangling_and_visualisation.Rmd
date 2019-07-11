@@ -49,7 +49,7 @@ __[About our dataset](#about)__
 
 __[Data preparation](#prep)__
 
-__[Survey analysis and results](#results)__  
+__[Survey analysis](#results)__  
 
 __It's your turn!__
 
@@ -63,7 +63,7 @@ name: about
 __[Kaggle Machine Learning and Data Science Survey 2018](https://www.kaggle.com/kaggle/kaggle-survey-2018)__
 - The industry-wide survey presents the state of data science and machine learning
 - It was published in as raw a format as possible while ensuring the anonymity of respondents
-- Our analysis includes code adapted from R Notebooks published by the Kaggle users [Heads or Tails](https://www.kaggle.com/headsortails/what-we-do-in-the-kernels-a-kaggle-survey-story) and [Jose Berengueres](https://www.kaggle.com/harriken/storytelling-the-2018-kaggle-survey)
+- Our survey analysis includes some code snippets adapted from R Notebooks created by the Kaggle users [Heads or Tails](https://www.kaggle.com/headsortails/what-we-do-in-the-kernels-a-kaggle-survey-story) and [Jose Berengueres](https://www.kaggle.com/harriken/storytelling-the-2018-kaggle-survey)
 
 
 ---
@@ -217,7 +217,7 @@ multi <- multi %>%
 class: inverse, left, center, middle
 name: results
 
-# Survey Results
+# Survey Analysis
 
 _`r nrow(multi) ` respondents_
 
@@ -269,11 +269,12 @@ Three basic steps:
 ```{r fig.height=4, eval = FALSE}
 multi %>% #provide data
   ggplot(aes(duration)) + #assign variable 'duration' to aes()
-  geom_histogram(bins = 50, fill = "grey") + #graphical primitive
+  
+  geom_histogram(bins = 50, fill = "grey") +
+  geom_vline(xintercept = median(multi$duration), linetype = 2) + #add line for median duration
   
   #customisation
   scale_x_log10(breaks = c(2, 5, 10, 20, 60, 720, 1440)) + #log() x-axis to address extreme values
-  geom_vline(xintercept = median(multi$duration), linetype = 2) + #add line for median duration
   labs(x = "Duration (mins)", y = "Number of respondents") + #change axis labels
   ggtitle("Most respondents took 15-20 min to complete survey") #add figure title
 ```
@@ -306,11 +307,24 @@ class: left
 
 # Spatial distribution
 
-We want a summary table with the count of respondents per country.
+__Create summary table with the count of respondents per country__
 
+First, let's abbreviate the colname to `country`
 ```{r}
+multi <- multi %>%
+  rename(country = `In which country do you currently reside?`) #rename col
+```
+
+---
+
+class: left
+
+# Spatial distribution
+
+__Create summary table with the count of respondents per country__
+
+```{r echo = FALSE}
 ctry_n <- multi %>%
-  rename(country = `In which country do you currently reside?`) %>%
   count(country) %>%
   filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
   mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c")) 
@@ -320,7 +334,7 @@ ctry_n <- multi %>%
 ctry_n %>%
   DT::datatable(fillContainer = FALSE, 
                 rownames = FALSE,
-                options = list(pageLength = 4))
+                options = list(pageLength = 8))
 ```
 
 ---
@@ -329,21 +343,66 @@ class: left
 
 # Spatial distribution
 
-We want a summary table with the count of respondents per country.
+__Create summary table with the count of respondents per country__
 
 ```{r eval = FALSE}
 ctry_n <- multi %>%
-  rename(country = `In which country do you currently reside?`) %>%
   count(country) %>%
   filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
   mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c")) 
 ```
 
-- Abbreviate the colname to `country`
 - `count()` the number of of observations per `country`
 - `filter()` to exclude (`!`) invalid country names (rows) specified `%in%` the vector
 - `mutate()` table to add a new column `iso3`, where factor names in `country` are mapped to the country code using `countrycode()`
-- Notice that we are not overwriting the variable `multi`, but creating a new variable `ctry_n`
+- We create a new variable `ctry_n`
+
+---
+
+class: left
+
+# Spatial distribution
+
+__Dealing with duplicates__
+
+Before we proceed, let's check if there are any duplicated country codes
+
+```{r}
+length(unique(ctry_n$iso3)) == length(ctry_n$iso3)
+```
+--
+```{r}
+ctry_n[duplicated(ctry_n$iso3) | duplicated(ctry_n$iso3, fromLast=TRUE),]
+```
+
+<br>
+
+Seems like there were two options for South Korea!
+
+---
+
+class: left
+
+# Spatial distribution
+
+__Dealing with duplicates__
+
+Let's combine the two rows for South Korea and add up the number of respondents `n`.
+
+```{r}
+ctry_n <- ctry_n %>%
+  group_by(iso3) %>%
+  summarise(country = first(country), #get the first value for country name
+            n = sum(n)) #sum up duplicates
+```
+
+--
+
+Check again:
+
+```{r}
+length(unique(ctry_n$iso3)) == length(ctry_n$iso3)
+```
 
 ---
 
@@ -387,3 +446,8 @@ highchart() %>%
   hc_tooltip(useHTML = TRUE, headerFormat = "", pointFormat = "{point.country}: {point.n} respondents")
 ```
 
+---
+
+class: left
+
+# Country Analysis

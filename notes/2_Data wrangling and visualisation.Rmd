@@ -30,7 +30,7 @@ The data comes in three different files:
 
 **In this lesson, we will only be using the file containing the multiple choice responses.**
 
-_**Credit:** Our analysis includes code adapted from R Notebooks published by the Kaggle users [Heads or Tails](https://www.kaggle.com/headsortails/what-we-do-in-the-kernels-a-kaggle-survey-story) and [Jose Berengueres](https://www.kaggle.com/harriken/storytelling-the-2018-kaggle-survey)._ 
+_**Credit:** Our survey analysis includes some code snippets adapted from R Notebooks created by the Kaggle users [Heads or Tails](https://www.kaggle.com/headsortails/what-we-do-in-the-kernels-a-kaggle-survey-story) and [Jose Berengueres](https://www.kaggle.com/harriken/storytelling-the-2018-kaggle-survey)._
 
 ---
 
@@ -112,7 +112,7 @@ multi <- multi %>%
 
 ---  
 
-# Survey results {.tabset .tabset-fade .tabset-pills}
+# Survey analysis {.tabset .tabset-fade .tabset-pills}
 
 Number of respondents: __*`r nrow(multi)`*__  
 
@@ -136,11 +136,12 @@ Three basic steps (linked with the `+` sign):
 ```{r fig.height=3.5, fig.cap="_Note: The dashed line denotes the median survey duration. The x-axis has been transformed to a logarithmic scale._"}
 multi %>% #provide data
   ggplot(aes(duration)) + #assign variable 'duration' to aes()
-  geom_histogram(bins = 50, fill = "grey") + #graphical primitive
+  
+  geom_histogram(bins = 50, fill = "grey") +
+  geom_vline(xintercept = median(multi$duration), linetype = 2) + #add line for median duration
   
   #customisation
   scale_x_log10(breaks = c(2, 5, 10, 20, 60, 720, 1440)) + #log() x-axis to address extreme values
-  geom_vline(xintercept = median(multi$duration), linetype = 2) + #add line for median duration
   labs(x = "Duration (mins)", y = "Number of respondents") + #change axis labels
   ggtitle("Most respondents took 15-20 min to complete survey") #add figure title
 ```
@@ -155,8 +156,10 @@ multi %>% #provide data
 Here, we are interested in the column `` `In which country do you currently reside?` ``. We want a summary table with the count of respondents per country.
 
 ```{r}
+multi <- multi %>%
+  rename(country = `In which country do you currently reside?`) #rename col first
+
 ctry_n <- multi %>%
-  rename(country = `In which country do you currently reside?`) %>%
   count(country) %>%
   filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
   mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c"))
@@ -166,7 +169,7 @@ ctry_n <- multi %>%
 - `count()` the number of of observations per `country`
 - `filter()` to exclude (`!`) invalid country names (rows) specified `%in%` the vector
 - `mutate()` table to add a new column `iso3`, where factor names in `country` are mapped to the country code using `countrycode()`
-- Notice that we are not overwriting the variable `multi`, but creating a new variable `ctry_n`
+- We create a new variable `ctry_n`
 
 ```{r echo = FALSE}
 kable(ctry_n, format = "html") %>%
@@ -176,7 +179,39 @@ kable(ctry_n, format = "html") %>%
 
 <br>
 
-Next, we plot our summary table `ctry_n` as an interactive map using the package [highcharter](http://jkunst.com/highcharter). The map data comes from https://code.highcharts.com/mapdata/custom/world.js. More info [here](https://cran.rstudio.com/web/packages/highcharter/highcharter.pdf). 
+Before we proceed, let's run a few checks. Are there any duplicated country codes?
+
+```{r eval = FALSE}
+duplicated(ctry_n$iso3) #yes!
+length(unique(ctry_n$iso3)) == length(ctry_n$iso3) #length of unique values is not equal
+
+#look for the duplicated row
+which(duplicated(ctry_n$iso3)) #row 56
+ctry_n[duplicated(ctry_n$iso3),] #print row
+
+#print ALL rows using fromLast=TRUE argument
+ctry_n[duplicated(ctry_n$iso3) | duplicated(ctry_n$iso3, fromLast=TRUE),]
+```
+
+```{r eval = TRUE, echo = FALSE}
+ctry_n[duplicated(ctry_n$iso3) | duplicated(ctry_n$iso3, fromLast=TRUE),]
+```
+
+Seems like there were two options for South Korea. Let's combine them into 1 row and add up the number of respondents `n`.
+
+```{r}
+ctry_n <- ctry_n %>%
+  group_by(iso3) %>%
+  summarise(country = first(country), #get the first value for country name
+            n = sum(n)) #sum up duplicates
+
+#ctry_n[!duplicated(ctry_n$iso3),] #if you want to remove duplicated rows
+```
+
+
+<br>
+
+We can now plot our summary table `ctry_n` as an interactive map using the package [highcharter](http://jkunst.com/highcharter). The map data comes from https://code.highcharts.com/mapdata/custom/world.js. More info [here](https://cran.rstudio.com/web/packages/highcharter/highcharter.pdf). 
 
 ```{r fig.height=6}
 highchart() %>%
@@ -193,8 +228,160 @@ highchart() %>%
 
 ---
 
-## 
+## Country analysis
 
+### Import other data
+
+Let's load some other datasets to analyse alongside our survey data. 
+
+
+__Total population counts__ from [The World Bank](https://data.worldbank.org/indicator/SP.POP.TOTL), which we assign to variable `pops`:  
+```{r warning = FALSE}
+pops <- as_tibble(fread('../data/POP_TOTAL_DS2_en_v2.csv', skip = 4, header = TRUE))
+
+pops <- pops %>% 
+  rename(country = "Country Name", population = "2018") %>% 
+  select(country, population) %>% #we are only interested in these 2 columns 
+  mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c"))
+```
+
+```{r echo = FALSE}
+kable(pops, format = "html") %>%
+    kable_styling(bootstrap_options = c("striped", "hover"), full_width = T, position = "center") %>%
+    scroll_box(height = "200px")
+```
+
+Some country names could not be matched to a country code. Let's see which values in `iso3` are  `NA` values and remove them.
+
+```{r eval = FALSE}
+which(is.na(pops$iso3)) #index of NA values
+pops[is.na(pops$iso3),] #rows with NA values for iso3
+```
+
+```{r echo = FALSE}
+pops[is.na(pops$iso3),] #rows with NA values for iso3
+```
+
+```{r eval = FALSE}
+pops <- pops[!is.na(pops$iso3),]
+
+#alternatives:
+pops <- pops[complete.cases(pops),] #only include rows that are complete!
+na.omit(pops)
+```
+
+```{r echo = FALSE}
+pops <- pops[!is.na(pops$iso3),]
+
+```
+
+
+<br>
+
+__Global Innovation Index__ from [INSEAD](https://www.kaggle.com/harriken/insead-global-innovation-index/downloads/insead-global-innovation-index.zip/1), which we assign to variable `innov`:
+```{r}
+innov <- as_tibble(fread('../data/INSEADGlobalinnovationIndex2018.csv', skip = 0))
+
+innov <- innov %>% 
+  rename(country = "Economy", index = "Score") %>% 
+  select(country, index) %>%
+  mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c"))
+```
+
+```{r echo = FALSE}
+kable(innov, format = "html") %>%
+    kable_styling(bootstrap_options = c("striped", "hover"), full_width = T, position = "center") %>%
+    scroll_box(height = "200px")
+```
+
+<br>
+
+### Combine country data
+
+At this point, we have 3 summary tables about countries (the _country_ is a single row/data point):  
+
+1. `ctry_n` Number of survey respondents
+2. `pops` Total population
+3. `innov` Innovation index
+
+<br>
+
+Let's combine these tables by country code (`iso3` column)  
+
+- The tables may have different countries from each other
+- Let's only keep the rows (countries) that are present in all 3 tables, using the function `inner_join()`
+- Check out other ways to join tabular data using `?inner_join`
+```{r}
+ctry_data <- ctry_n %>% 
+  inner_join(innov, by = "iso3") %>% 
+  inner_join(pops, by = "iso3")
+```
+
+```{r echo = FALSE}
+kable(ctry_data, format = "html") %>%
+    kable_styling(bootstrap_options = c("striped", "hover"), full_width = T, position = "center") %>%
+    scroll_box(height = "200px")
+```
+
+<br>
+
+- The colname `country` are also common across the 3 tables. These duplicate variables are given a suffix in the new table.
+- Joining tables by country code `iso3` gives us a larger dataset than joining by `country`, since naming of the countries are not always similar
+
+### Proportional representation
+
+Let's calculate the number of respondents as a porportion of the total population in each country, and save it in a new colname `respop10k`.
+
+```{r}
+ctry_data$respop10k <- ctry_data$n / ctry_data$population * 10000 #per 10k ppl
+```
+
+<br>
+
+Now let's visualise this new column `respop10k`. This time, let's plot it in a bar chart instead of in a world map. But before that, we can specify some design (color) customisations in a new column we'll call `label`.  
+```{r fig.height = 7.5}
+#design customisations: barplot color
+ctry_data$label <- c("normal")
+ctry_data[ctry_data$iso3=="USA",]$label = c("benchmark")
+ctry_data[ctry_data$iso3=="SGP",]$label = c("high")
+ctry_data$label <- factor(ctry_data$label, levels = c("normal", "benchmark", "high")) #convert to factor with specified levels
+cols <- c("grey50","black","red") #create vector of corresponding colors
+
+#plot 
+plot <- ctry_data %>%
+  ggplot(aes(x = reorder(country, respop10k), #plot countries in desc order
+             y = respop10k,
+             fill = label)) + #barplot fill color
+  
+  geom_hline(yintercept = c(ctry_data$respop10k[ctry_data$iso3=="USA"],
+                            mean(ctry_data$respop10k)),
+             linetype = "dotted", 
+             color = "grey50") +
+  geom_col() +
+  
+  scale_fill_manual(values = cols) + #values from 'cols' vector mapped to 'fill' aesthetic
+  
+  #customisation
+  labs(x = "", y = "Kaggle survey respondents per 10k population") +
+  
+  coord_flip()  + #switch x & y axis  
+  
+  theme(legend.position = "none", 
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+    
+  annotate("label", x = 7, y = ctry_data$respop10k[ctry_data$iso3=="USA"], label = "USA",size=3, color="black") +
+  annotate("label", x = 7, y = mean(ctry_data$respop10k), label = "Overall mean",size=3, color="black")
+
+print(plot)
+```
+
+```{r eval = FALSE}
+
+#learn to save plot
+```
 
 
 ---  
@@ -268,34 +455,13 @@ http://statweb.stanford.edu/~jtaylo/courses/stats202/diamonds.html
 
 ```{r eval = FALSE}
 
-#NAs
-is.na()
 
-#1
-na.omit(datafilename): remove ALL rows with NAs #But may remove valuable info!
 
-#2
-- Check VARIABLES with high proportion of NA first using use apply(X, MARGIN, FUN, ...)+
-apply(apply(CO2,2,is.na),2,sum): indicates how many NAs in EACH column (a NESTED apply function)
-
-#3
-nonNAvalues <- complete.cases(dataframename): create a logical vector
-dataframename[nonNAvalues,]: Subset & see only non-NA values
+scale(x, center=TRUE, scale=TRUE): centers & scales the data (deducts the mean per column, divides by standard deviation)
 
 
 CO2[CO2$Type == "Mississippi",]
 CO2[CO2$uptake>mean(CO2$uptake) & CO2$conc>200,]
-
-unique(dataframeA): Remove DUPLICATE rows
-
-scale(x, center=TRUE, scale=TRUE): centers & scales the data (deducts the mean per column, divides by standard deviation)
-
-```
-
-Let's filter the data to exclude respondents who look < 2 mins to complete the survey.
-
-```{r}
-
 
 ```
 
@@ -358,3 +524,10 @@ server <- function(input, output) {
 shinyApp(ui, server)
 ```
 
+<br>
+
+---
+
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
+
+Copyright (c) 2019 Song, Xiao Ping

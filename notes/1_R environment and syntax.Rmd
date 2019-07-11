@@ -8,7 +8,7 @@ output:
     toc: true
     toc_depth: 3
     toc_float: true
-    number_sections: true
+    number_sections: false
     theme: paper
 ---
 
@@ -382,3 +382,14 @@ x$b
   - `df[3:5,]` Row 3,4 & 5, all cols of dataframe `df`
   - `df[-2,]` Everything except row 2 of dataframe `df`
   - `df[df$gender=='F' & df$age > 65, ]` Subset in combination with other operators
+
+
+#  
+
+<br>
+
+---
+
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
+
+Copyright (c) 2019 Song, Xiao Ping
