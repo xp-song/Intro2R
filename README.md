@@ -40,5 +40,3 @@ In the downloaded folder you will see a few important items.
 ![](https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png "license")
 
 Copyright (c) 2019 Song, Xiao Ping
-
-[Intro2R](https://github.com/xp-song/Intro2R) is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/.
