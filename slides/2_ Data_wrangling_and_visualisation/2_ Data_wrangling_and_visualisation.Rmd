@@ -39,6 +39,7 @@ library(countrycode) # visualisation
 library(knitr)
 library(magrittr)
 library(DT)
+library(kableExtra)
 ```
 
 class: inverse, center, middle
@@ -49,7 +50,11 @@ __[About our dataset](#about)__
 
 __[Data preparation](#prep)__
 
-__[Survey analysis](#results)__  
+__[Survey analysis](#results)__
+
+_Survey analysis: [Geography](#geography)_
+
+_Survey analysis: [Countries](#countries)_
 
 __It's your turn!__
 
@@ -65,6 +70,14 @@ __[Kaggle Machine Learning and Data Science Survey 2018](https://www.kaggle.com/
 - It was published in as raw a format as possible while ensuring the anonymity of respondents
 - Our survey analysis includes some code snippets adapted from R Notebooks created by the Kaggle users [Heads or Tails](https://www.kaggle.com/headsortails/what-we-do-in-the-kernels-a-kaggle-survey-story) and [Jose Berengueres](https://www.kaggle.com/harriken/storytelling-the-2018-kaggle-survey)
 
+--
+
+__More about Kaggle__
+- An online community for data science, owned by Google (>1 mil users in 2017)
+- Users can:
+  - Find and publish data sets
+  - Explore and build models in a web-based environment
+  - Work with others to enter machine learning competitions
 
 ---
 
@@ -239,7 +252,7 @@ multi <- multi %>%
   rename(duration = `Duration (in seconds)`) %>% #rename column
   mutate(duration = duration/60) #change to minutes (use new colname)
 
-head(multi$duration) #see first few rows
+head(multi$duration) #see first few elements
 ```
 
 ---
@@ -303,9 +316,16 @@ _Note: The dashed line denotes the median survey duration. The x-axis has been t
 
 ---
 
+class: inverse, left, center, middle
+name: geography
+
+# Survey Analysis: Geography
+
+---
+
 class: left
 
-# Spatial distribution
+# Geographical distribution
 
 __Create summary table with the count of respondents per country__
 
@@ -319,7 +339,7 @@ multi <- multi %>%
 
 class: left
 
-# Spatial distribution
+# Geographical distribution
 
 __Create summary table with the count of respondents per country__
 
@@ -341,7 +361,7 @@ ctry_n %>%
 
 class: left
 
-# Spatial distribution
+# Geographical distribution
 
 __Create summary table with the count of respondents per country__
 
@@ -361,7 +381,7 @@ ctry_n <- multi %>%
 
 class: left
 
-# Spatial distribution
+# Geographical distribution
 
 __Dealing with duplicates__
 
@@ -383,7 +403,7 @@ Seems like there were two options for South Korea!
 
 class: left
 
-# Spatial distribution
+# Geographical distribution
 
 __Dealing with duplicates__
 
@@ -408,7 +428,7 @@ length(unique(ctry_n$iso3)) == length(ctry_n$iso3)
 
 class: left
 
-# Spatial distribution
+# Geographical distribution
 
 __Plot `ctry_n` as an interactive map using the package [highcharter](http://jkunst.com/highcharter)__
 
@@ -431,7 +451,7 @@ highchart() %>%
 
 class: left
 
-# Spatial distribution
+# Geographical distribution
 
 ```{r fig.height=6, echo = FALSE}
 highchart() %>%
@@ -445,9 +465,336 @@ highchart() %>%
   hc_colorAxis(minColor = "#edf8b1", maxColor = "#2c7fb8") %>%
   hc_tooltip(useHTML = TRUE, headerFormat = "", pointFormat = "{point.country}: {point.n} respondents")
 ```
+---
+
+class: inverse, left, center, middle
+name: countries
+
+# Survey Analysis: Countries
 
 ---
 
 class: left
 
 # Country Analysis
+
+.left-column[ 
+### Datasets
+]
+
+.right-column[ 
+Country-level datasets to analyse alongside our survey:
+
+__Total population count__ ([The World Bank](https://data.worldbank.org/indicator/SP.POP.TOTL))  
+```{r warning = FALSE}
+pops <- as_tibble(fread('../../data/POP_TOTAL_DS2_en_v2.csv', skip = 4, header = TRUE))
+
+pops <- pops %>% 
+  rename(country = "Country Name", population = "2018") %>% 
+  select(country, population) %>% #we are only interested in these 2 columns 
+  mutate(iso3 = countrycode(country, origin = "country.name", 
+                            destination = "iso3c"))
+```
+
+```{r eval = TRUE, echo = FALSE, out.width=1000, fig.align='center'}
+knitr::include_graphics("images/popdata.png")
+```
+]
+---
+
+class: left
+
+# Country Analysis
+
+.left-column[ 
+### Datasets
+]
+
+.right-column[ 
+Country-level datasets to analyse alongside our survey:
+
+__Total population count__ ([The World Bank](https://data.worldbank.org/indicator/SP.POP.TOTL)) 
+```{r echo = FALSE}
+pops %>%
+  DT::datatable(fillContainer = FALSE, 
+                rownames = FALSE,
+                options = list(pageLength = 5))
+```
+]
+
+---
+
+class: left
+
+# Country Analysis
+
+.left-column[ 
+### Datasets
+]
+
+.right-column[ 
+Country-level datasets to analyse alongside our survey:
+
+__Total population count__ ([The World Bank](https://data.worldbank.org/indicator/SP.POP.TOTL)) 
+
+- Some country names could not be matched to a country code. Use `is.na()` to look for `NA` values
+```{r}
+pops[is.na(pops$iso3),]
+```
+]
+
+???
+
+- Dealing with NAs. Impt!
+
+---
+
+class: left
+
+# Country Analysis
+
+.left-column[ 
+### Datasets
+]
+
+.right-column[ 
+Country-level datasets to analyse alongside our survey:
+
+__Total population count__ ([The World Bank](https://data.worldbank.org/indicator/SP.POP.TOTL)) 
+
+- Remove `NA` values with logical operator
+```{r}
+pops <- pops[!is.na(pops$iso3),]
+```
+]
+--
+.right-column[ 
+- Stricter alternative: use `complete.cases()`
+```{r eval = FALSE}
+pops <- pops[complete.cases(pops),] #only includes rows that are complete!
+```
+]
+
+---
+
+class: left
+
+# Country Analysis
+
+.left-column[ 
+### Datasets
+]
+
+.right-column[ 
+Country-level datasets to analyse alongside our survey:
+
+__Global Innovation Index__ ([INSEAD](https://www.kaggle.com/harriken/insead-global-innovation-index/downloads/insead-global-innovation-index.zip/1))
+
+```{r warning = FALSE}
+innov <- as_tibble(fread('../../data/INSEADGlobalinnovationIndex2018.csv'))
+
+innov <- innov %>% 
+  rename(country = "Economy", index = "Score") %>% 
+  select(country, index) %>%
+  mutate(iso3 = countrycode(country, origin = "country.name", 
+                            destination = "iso3c"))
+```
+
+```{r eval = TRUE, echo = FALSE, out.width=1000, fig.align='center'}
+knitr::include_graphics("images/innovdata.png")
+```
+]
+
+---
+
+class: left
+
+# Country Analysis
+
+.left-column[ 
+### Datasets
+]
+
+.right-column[ 
+Country-level datasets to analyse alongside our survey:
+
+__Global Innovation Index__ ([INSEAD](https://www.kaggle.com/harriken/insead-global-innovation-index/downloads/insead-global-innovation-index.zip/1))
+```{r echo = FALSE}
+innov %>%
+  DT::datatable(fillContainer = FALSE, 
+                rownames = FALSE,
+                options = list(pageLength = 5))
+```
+
+]
+---
+
+class: left
+
+# Country Analysis
+
+.left-column[ 
+### <span style="color:grey">Datasets</span>
+### Join
+]
+.right-column[
+We have 3 summary tables with _'countries'_ as data points (each row):  
+
+1. `ctry_n` Number of survey respondents
+2. `pops` Total population
+3. `innov` Innovation index
+]
+
+---
+
+class: left
+
+# Country Analysis
+
+.left-column[ 
+### <span style="color:grey">Datasets</span>
+### Join
+]
+.right-column[
+__Combine these tables by country code__ (`iso3` column)  
+
+- The tables may have different countries from each other
+- Only keep the rows (countries) that are present in all 3 tables, using the function `inner_join()`
+```{r}
+ctry_data <- ctry_n %>% 
+  inner_join(innov, by = "iso3") %>% 
+  inner_join(pops, by = "iso3")
+```
+]
+--
+.right-column[
+- Check out different ways to join tables with `?inner_join`! 
+- For example: `left_join()`, `right_join()`, `full_join()`...
+]
+
+---
+
+class: left
+
+# Country Analysis
+
+.left-column[ 
+### <span style="color:grey">Datasets</span>
+### Join
+]
+.right-column[
+__Combine these tables by country code__ (`iso3` column)  
+```{r echo = FALSE}
+ctry_data %>%
+  kable("html") %>%
+  kable_styling(bootstrap_options = "striped", font_size = 10)
+```
+]
+???
+- The colname `country` are also common across the 3 tables.
+- These duplicate variables are given a suffix in the new table.
+- Since the naming of countries are not always similar, joining tables by country code `iso3` gives us a larger dataset 
+---
+
+class: left
+
+# Country Analysis
+
+.left-column[ 
+### <span style="color:grey">Datasets</span>
+### Join
+]
+.right-column[
+__Remove `country.x` and `country.y`__  
+```{r}
+ctry_data <- subset(ctry_data, select = -c(country.x,country.y))
+```
+]
+
+---
+
+class: left
+
+# Country Analysis
+
+.left-column[ 
+### <span style="color:grey">Datasets</span>
+### Join
+]
+.right-column[
+__Remove `country.x` and `country.y`__  
+```{r echo = FALSE}
+ctry_data %>%
+  kable("html") %>%
+  kable_styling(bootstrap_options = "striped", font_size = 10)
+```
+]
+
+
+---
+
+class: left
+
+# Country Analysis
+
+## Kaggle membership
+
+- Calculate the no. of respondents as a proportion of the total population
+- Possible proxy for interest/prevalence of data science in each country
+- Save it in a new colname `respop10k`
+
+```{r}
+ctry_data$respop10k <- ctry_data$n / ctry_data$population * 10000 #respondents per 10k ppl
+```
+--
+```{r echo = FALSE}
+ctry_data %>%
+  kable("html") %>%
+  kable_styling(bootstrap_options = "striped", font_size = 10)
+```
+
+---
+
+class: left
+
+# Country Analysis
+
+## Kaggle membership
+
+- Let's visualise `respop10k` in a bar chart instead of in a world map
+- But before that, we can specify some design (color) customisations in a new column we'll call `label`
+```{r}
+ctry_data$label <- c("normal")
+ctry_data[ctry_data$iso3=="USA",]$label = c("benchmark") #take US as a benchmark
+ctry_data[ctry_data$iso3=="SGP",]$label = c("highlight") #highlight Singapore
+```
+--
+```{r}
+#convert to factor with specified levels
+ctry_data$label <- factor(ctry_data$label, 
+                          levels = c("normal", 
+                                     "benchmark", 
+                                     "highlight"))
+levels(ctry_data$label)
+```
+--
+```{r}
+cols <- c("grey50","black","red") #create vector of corresponding colors
+```
+
+
+---
+
+class: left
+
+# Country Analysis
+
+## Kaggle membership
+
+- Let's visualise `respop10k` in a bar chart instead of in a world map
+- But before that, we can specify some design (color) customisations in a new column we'll call `label`
+```{r echo = FALSE}
+ctry_data %>%
+  kable("html") %>%
+  kable_styling(bootstrap_options = "striped", font_size = 10)
+```

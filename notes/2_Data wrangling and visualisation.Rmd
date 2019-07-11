@@ -151,7 +151,7 @@ multi %>% #provide data
 
 ---  
 
-## Spatial distribution
+## Geography
 
 Here, we are interested in the column `` `In which country do you currently reside?` ``. We want a summary table with the count of respondents per country.
 
@@ -228,9 +228,9 @@ highchart() %>%
 
 ---
 
-## Country analysis
+## Countries
 
-### Import other data
+### Load other data
 
 Let's load some other datasets to analyse alongside our survey data. 
 
@@ -296,9 +296,9 @@ kable(innov, format = "html") %>%
 
 <br>
 
-### Combine country data
+### Join country data
 
-At this point, we have 3 summary tables about countries (the _country_ is a single row/data point):  
+At this point, we have 3 summary tables with _'countries'_ as data points (each row):  
 
 1. `ctry_n` Number of survey respondents
 2. `pops` Total population
@@ -326,14 +326,22 @@ kable(ctry_data, format = "html") %>%
 <br>
 
 - The colname `country` are also common across the 3 tables. These duplicate variables are given a suffix in the new table.
-- Joining tables by country code `iso3` gives us a larger dataset than joining by `country`, since naming of the countries are not always similar
+- Since the naming of countries are not always similar, joining tables by country code `iso3` gives us a larger dataset
+- We can choose to keep the colname `country` only and discard the other two.
+```{r}
+ctry_data <- subset(ctry_data, select = -c(country.x,country.y))
+```
 
-### Proportional representation
 
-Let's calculate the number of respondents as a porportion of the total population in each country, and save it in a new colname `respop10k`.
+### Kaggle membership
+
+Let's calculate the number of respondents as a proportion of the total population in each country.  
+
+- Possible proxy for interest/prevalence of data science in each country
+- Save it in a new colname `respop10k`.
 
 ```{r}
-ctry_data$respop10k <- ctry_data$n / ctry_data$population * 10000 #per 10k ppl
+ctry_data$respop10k <- ctry_data$n / ctry_data$population * 10000 #respondents per 10k
 ```
 
 <br>
@@ -343,8 +351,8 @@ Now let's visualise this new column `respop10k`. This time, let's plot it in a b
 #design customisations: barplot color
 ctry_data$label <- c("normal")
 ctry_data[ctry_data$iso3=="USA",]$label = c("benchmark")
-ctry_data[ctry_data$iso3=="SGP",]$label = c("high")
-ctry_data$label <- factor(ctry_data$label, levels = c("normal", "benchmark", "high")) #convert to factor with specified levels
+ctry_data[ctry_data$iso3=="SGP",]$label = c("highlight")
+ctry_data$label <- factor(ctry_data$label, levels = c("normal", "benchmark", "highlight")) #convert to factor with specified levels
 cols <- c("grey50","black","red") #create vector of corresponding colors
 
 #plot 
