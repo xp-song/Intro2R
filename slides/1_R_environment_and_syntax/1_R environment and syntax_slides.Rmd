@@ -2,11 +2,11 @@
 title: "Intro2R"
 subtitle: "R Environment and Syntax"
 author: "xpsong"
-institute: ""
+institute: "https://github.com/xp-song/Intro2R"
 date: "updated `r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: [default, metropolis, "custom-fonts.css"] #themes: names(xaringan:::list_css()) ("xaringan-themer.css" if you specify within .Rmd)
+    css: [default, "theme-tweaks.css", metropolis, "custom-fonts.css"] #themes: names(xaringan:::list_css()) ("xaringan-themer.css" if you specify within .Rmd)
     lib_dir: libs
     nature:
       titleSlideClass: [center, middle, inverse, title-slide] #default

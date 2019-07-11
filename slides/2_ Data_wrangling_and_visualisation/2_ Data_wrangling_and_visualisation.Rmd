@@ -2,17 +2,17 @@
 title: "Intro2R"
 subtitle: "Data Wrangling and Visualisation"
 author: "xpsong"
-institute: ""
+institute: "https://github.com/xp-song/Intro2R"
 date: "updated `r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: [default, metropolis, "custom-fonts.css"] #themes: names(xaringan:::list_css()) ("xaringan-themer.css" if you specify within .Rmd)
+    css: [default, "theme-tweaks.css", metropolis, "custom-fonts.css"] #themes: names(xaringan:::list_css()) ("xaringan-themer.css" if you specify within .Rmd)
     lib_dir: libs
     nature:
-      titleSlideClass: [center, middle, inverse, title-slide] #default
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
+      titleSlideClass: [center, middle, inverse, title-slide"] #default
 ---
 
 ```{r load packages, echo = FALSE, warning = FALSE, message = FALSE}
@@ -38,8 +38,8 @@ library(countrycode) # visualisation
 #knitting rmd output
 library(knitr)
 library(magrittr)
+library(DT)
 ```
-
 
 class: inverse, center, middle
 
@@ -292,7 +292,7 @@ multi %>% #provide data
   geom_histogram(bins = 50, fill = "grey") + #graphical primitive
   
   #customisation
-  scale_x_log10(breaks = c(2, 5, 10, 20, 60, 720, 1440)) + #log() x-axis to address extreme values
+  scale_x_log10(breaks = c(2, 5, 10, 20, 60, 720, 1440)) + #log x-axis to address extreme values
   geom_vline(xintercept = median(multi$duration), linetype = 2) + #add line for median duration
   labs(x = "Duration (mins)", y = "Number of respondents") + #change axis labels
   ggtitle("Most respondents took 15-20 min to complete survey") #add figure title
@@ -306,6 +306,84 @@ class: left
 
 # Spatial distribution
 
+We want a summary table with the count of respondents per country.
 
+```{r}
+ctry_n <- multi %>%
+  rename(country = `In which country do you currently reside?`) %>%
+  count(country) %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+  mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c")) 
+```
 
+```{r echo = FALSE}
+ctry_n %>%
+  DT::datatable(fillContainer = FALSE, 
+                rownames = FALSE,
+                options = list(pageLength = 4))
+```
+
+---
+
+class: left
+
+# Spatial distribution
+
+We want a summary table with the count of respondents per country.
+
+```{r eval = FALSE}
+ctry_n <- multi %>%
+  rename(country = `In which country do you currently reside?`) %>%
+  count(country) %>%
+  filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
+  mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c")) 
+```
+
+- Abbreviate the colname to `country`
+- `count()` the number of of observations per `country`
+- `filter()` to exclude (`!`) invalid country names (rows) specified `%in%` the vector
+- `mutate()` table to add a new column `iso3`, where factor names in `country` are mapped to the country code using `countrycode()`
+- Notice that we are not overwriting the variable `multi`, but creating a new variable `ctry_n`
+
+---
+
+class: left
+
+# Spatial distribution
+
+__Plot `ctry_n` as an interactive map using the package [highcharter](http://jkunst.com/highcharter)__
+
+```{r fig.height=6, eval = FALSE}
+highchart() %>%
+  hc_add_series_map(worldgeojson, #map data to add
+                    ctry_n, #our data
+                    value = 'n', #colname of interest in ctry_n
+                    joinBy = 'iso3') %>% #both datasets have this colname (country code)
+  
+  #customisation
+  hc_title(text = 'Geographical distribution of survey respondents') %>%
+  hc_colorAxis(minColor = "#edf8b1", maxColor = "#2c7fb8") %>%
+  hc_tooltip(useHTML = TRUE, headerFormat = "", pointFormat = "{point.country}: {point.n} respondents")
+```
+
+- Map data `worldgeojson` comes from https://code.highcharts.com/mapdata/custom/world.js. 
+
+---
+
+class: left
+
+# Spatial distribution
+
+```{r fig.height=6, echo = FALSE}
+highchart() %>%
+  hc_add_series_map(worldgeojson, #map data to add
+                    ctry_n, #our data
+                    value = 'n', #colname of interest in ctry_n
+                    joinBy = 'iso3') %>% #both datasets have this colname (country code)
+  
+  #customisation
+  hc_title(text = 'Geographical distribution of survey respondents') %>%
+  hc_colorAxis(minColor = "#edf8b1", maxColor = "#2c7fb8") %>%
+  hc_tooltip(useHTML = TRUE, headerFormat = "", pointFormat = "{point.country}: {point.n} respondents")
+```
 

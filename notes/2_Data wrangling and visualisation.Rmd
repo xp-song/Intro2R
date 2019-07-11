@@ -63,7 +63,9 @@ library(highcharter) # visualisation
 library(countrycode) # visualisation
 
 
-library(knitr) #to knit HMTL
+#to knit HMTL document
+library(knitr) 
+library(kableExtra) 
 ```
 
 ---  
@@ -150,36 +152,54 @@ multi %>% #provide data
 
 ## Spatial distribution
 
-Here, we are interested in the column `` `In which country do you currently reside?` ``. We want a summarised table with the count of respondents per country.
-
-- Abbreviate the colname to `country`
-- `count()` the number of of observations per `country`
-- `filter()` resulting table to exclude (`!`) those who selected "Other" or "I do not wish to disclose my location".
-  - Exclude factors in `country` (rows) that match the names `%in%` the specified vector
-- `mutate()` table to add a new column named `iso3` containing the country code
-  - Factor names in `country` are mapped to a three-letter code using the function in `library(countrycode)`
-- Notice that we are not overwriting the variable `multi`, but creating a new variable `ctry_n`
+Here, we are interested in the column `` `In which country do you currently reside?` ``. We want a summary table with the count of respondents per country.
 
 ```{r}
 ctry_n <- multi %>%
   rename(country = `In which country do you currently reside?`) %>%
   count(country) %>%
   filter(!(country %in% c("Other", "I do not wish to disclose my location"))) %>%
-  mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c")) 
+  mutate(iso3 = countrycode(country, origin = "country.name", destination = "iso3c"))
 ```
 
-Next, we use the package [highcharter](http://jkunst.com/highcharter) to plot an interactive map.
+- Abbreviate the colname to `country`
+- `count()` the number of of observations per `country`
+- `filter()` to exclude (`!`) invalid country names (rows) specified `%in%` the vector
+- `mutate()` table to add a new column `iso3`, where factor names in `country` are mapped to the country code using `countrycode()`
+- Notice that we are not overwriting the variable `multi`, but creating a new variable `ctry_n`
+
+```{r echo = FALSE}
+kable(ctry_n, format = "html") %>%
+    kable_styling(bootstrap_options = c("striped", "hover"), full_width = T, position = "center") %>%
+    scroll_box(height = "200px")
+```
+
+<br>
+
+Next, we plot our summary table `ctry_n` as an interactive map using the package [highcharter](http://jkunst.com/highcharter). The map data comes from https://code.highcharts.com/mapdata/custom/world.js. More info [here](https://cran.rstudio.com/web/packages/highcharter/highcharter.pdf). 
+
 ```{r fig.height=6}
 highchart() %>%
-  hc_add_series_map(worldgeojson, ctry_n, value = 'n', joinBy = 'iso3') %>%
+  hc_add_series_map(worldgeojson, #map data to add
+                    ctry_n, #our data
+                    value = 'n', #colname of interest in ctry_n
+                    joinBy = 'iso3') %>% #both datasets have this colname (country code)
+  
+  #customisation
   hc_title(text = 'Geographical distribution of survey respondents') %>%
-  hc_colorAxis(minColor = "#ffdf3f", maxColor = "#5c46ff") %>%
-  hc_tooltip(useHTML = TRUE, headerFormat = "", pointFormat = "{point.country}: {point.n} users")
+  hc_colorAxis(minColor = "#edf8b1", maxColor = "#2c7fb8") %>%
+  hc_tooltip(useHTML = TRUE, headerFormat = "", pointFormat = "{point.country}: {point.n} respondents")
 ```
+
+---
+
+## 
+
+
 
 ---  
 
-# Educational sources
+## Educational sources
 
 ```{r}
 multi <- multi %>%
@@ -280,4 +300,61 @@ Let's filter the data to exclude respondents who look < 2 mins to complete the s
 ```
 
 
+
+# Interactive Graphs using Plotly
+
+- Try example in _.Rmd_ file
+```{r warning = FALSE, message = FALSE, eval = FALSE}
+library(shiny)
+library(plotly)
+
+data(diamonds, package = "ggplot2")
+nms <- names(diamonds)
+
+ui <- fluidPage(
+
+    headerPanel("Diamonds Explorer"),
+    sidebarPanel(
+        sliderInput('sampleSize', 'Sample Size', min = 1, max = nrow(diamonds),
+                                value = 1000, step = 500, round = 0),
+        selectInput('x', 'X', choices = nms, selected = "carat"),
+        selectInput('y', 'Y', choices = nms, selected = "price"),
+        selectInput('color', 'Color', choices = nms, selected = "clarity"),
+
+        selectInput('facet_row', 'Facet Row', c(None = '.', nms), selected = "clarity"),
+        selectInput('facet_col', 'Facet Column', c(None = '.', nms)),
+        sliderInput('plotHeight', 'Height of plot (in pixels)', 
+                    min = 100, max = 2000, value = 1000)
+    ),
+    mainPanel(
+      plotlyOutput('trendPlot', height = "900px")
+    )
+)
+
+server <- function(input, output) {
+
+  #add reactive data information. Dataset = built in diamonds data
+  dataset <- reactive({
+    diamonds[sample(nrow(diamonds), input$sampleSize),]
+  })
+
+  output$trendPlot <- renderPlotly({
+
+    # build graph with ggplot syntax
+    p <- ggplot(dataset(), aes_string(x = input$x, y = input$y, color = input$color)) + 
+      geom_point()
+
+    # if at least one facet column/row is specified, add it
+    facets <- paste(input$facet_row, '~', input$facet_col)
+    if (facets != '. ~ .') p <- p + facet_grid(facets)
+
+    ggplotly(p) %>% 
+      layout(height = input$plotHeight, autosize=TRUE)
+
+  })
+
+}
+
+shinyApp(ui, server)
+```
 
