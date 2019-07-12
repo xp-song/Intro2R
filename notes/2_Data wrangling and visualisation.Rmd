@@ -57,11 +57,11 @@ library(purrr) # string manipulation
 
 #general visualisations
 library(ggplot2) # visualisation 
+library(ggrepel) # visualisation 
 
 #specific visualisation
 library(highcharter) # visualisation
 library(countrycode) # visualisation
-
 
 #to knit HMTL document
 library(knitr) 
@@ -90,7 +90,8 @@ multi <- as_tibble(fread('../data/kaggle-survey-2018/multipleChoiceResponses.csv
   - This is not very feasible/readable code
   - We'll abbreviate the colnames later on as we analyse each topic in the survey.
 
-- Use `str()` to examine the data classes/structure.
+- Use `summary()` or `str()` to examine the data summary/structure.
+- Use `head()` to preview first few rows of data
 
 <br>
 
@@ -332,6 +333,13 @@ kable(ctry_data, format = "html") %>%
 ctry_data <- subset(ctry_data, select = -c(country.x,country.y))
 ```
 
+- Let's save this summary table `ctry_data` on our computer!
+```{r eval = FALSE}
+write_csv(ctry_data, "../output/country_data.csv", 
+          append = FALSE, #overwrites existing file if present
+          col_names = TRUE) #writes colnames as headers
+```
+
 
 ### Kaggle membership
 
@@ -356,16 +364,16 @@ ctry_data$label <- factor(ctry_data$label, levels = c("normal", "benchmark", "hi
 cols <- c("grey50","black","red") #create vector of corresponding colors
 
 #plot 
-plot <- ctry_data %>%
+ctryplot <- ctry_data %>%
   ggplot(aes(x = reorder(country, respop10k), #plot countries in desc order
              y = respop10k,
              fill = label)) + #barplot fill color
   
-  geom_hline(yintercept = c(ctry_data$respop10k[ctry_data$iso3=="USA"],
+  geom_hline(yintercept = c(ctry_data$respop10k[ctry_data$iso3=="USA"], #vertical lines
                             mean(ctry_data$respop10k)),
              linetype = "dotted", 
              color = "grey50") +
-  geom_col() +
+  geom_col() + #barplot
   
   scale_fill_manual(values = cols) + #values from 'cols' vector mapped to 'fill' aesthetic
   
@@ -383,101 +391,78 @@ plot <- ctry_data %>%
   annotate("label", x = 7, y = ctry_data$respop10k[ctry_data$iso3=="USA"], label = "USA",size=3, color="black") +
   annotate("label", x = 7, y = mean(ctry_data$respop10k), label = "Overall mean",size=3, color="black")
 
-print(plot)
+print(ctryplot)
 ```
 
-```{r eval = FALSE}
+- We can save the plot to an image file using `jpeg()`, `tiff()`, `png()`, etc.
+- Run the following code chunk at one go
+```{r eval=FALSE}
+jpeg(filename = "../output/ctryplot.jpeg", width = 1800, height = 2000, res = 300)
+print(ctryplot)
+dev.off() #finish creating the image file
+```
 
-#learn to save plot
+### Innovation
+
+```{r fig.height = 7, fig.width = 8}
+ggplot(ctry_data, aes(x = respop10k, 
+                     y = index, 
+                     color = label, 
+                     label = country)) + 
+  geom_point() + #plot points
+  geom_text_repel(size = 3.5) + #plot text (country label), from library(ggrepel)
+  
+  scale_color_manual(values = cols) + #values from 'cols' vector mapped to 'color' aesthetic
+  
+  #customisation
+  labs(y = "Global Innovation Index", 
+       x = "Kaggle survey respondents per 10k population") + 
+  theme(legend.position = "none", 
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black", 
+        arrow = arrow(length = unit(0.08, "inches"), type = "open")))
+```
+
+- According to the [Global Innovation Index](https://www.kaggle.com/harriken/insead-global-innovation-index/downloads/insead-global-innovation-index.zip/1), Switzerland was the most innovative country in 2018.
+
+```{r warning = FALSE}
+#calculate correlation
+cor_results <- cor.test(ctry_data$respop10k, ctry_data$index, 
+                        method = "spearman") #ranked comparisons
 ```
 
 
----  
-
-## Educational sources
+- The correlation between the two variables is `r round(cor_results$estimate,3)` (P = `r formatC(cor_results$p.value, format = "e", digits = 2)`)
 
 ```{r}
-multi <- multi %>%
-  rename(platform = "On which online platform have you spent the most amount of time? - Selected Choice") %>%
-  mutate(platform = na_if(platform, ""))
+#remove objects from r
+rm(cor_results, ctry_data, ctry_n, ctryplot, innov, multi, pops, cols)
 ```
 
-, keep in mind that the “On which online platforms” question allowed for multiple answers. In terms of ML/DS training we only consider percentages > 0, since zero dominates almost every distribution (except for self-taught) and we want to focus on the difference between the small and large percentages.
+---
 
+# It's your turn!
+
+Load dataset `diamonds` from the package `ggplot2`:
 ```{r}
-platform_lvl <- multi %>%
-  filter(!is.na(platform)) %>%
-  mutate(platform = as.character(platform)) %>%
-  count(platform) %>%
-  arrange(n) %>%
-  .$platform
-
-foo <- multi %>%
-  group_by(platform) %>%
-  summarise(most_often = n()) %>%
-  mutate(platform = as.character(platform))
-
-bar <- multi %>%
-  select(starts_with("On which online platforms have you begun or completed data science courses? (Select all that apply) - Selected Choice")) %>%
-  replace(.=="", NA) %>%
-  gather(key = "foo", value = "platform") %>%
-  mutate(platform = as.character(platform)) %>%
-  group_by(platform) %>%
-  summarise(occasionally = n())
-
-p1 <- foo %>%
-  filter(!is.na(platform)) %>%
-  left_join(bar, by = "platform") %>%
-  mutate(platform = fct_relevel(platform, platform_lvl)) %>%
-  gather(most_often, occasionally, key = "type", value = "n") %>%
-  ggplot(aes(platform, n, fill = type)) +
-  geom_col(position = "dodge") +
-  theme(legend.position = "top") +
-  coord_flip() +
-  labs(x = "", y = "Responses", fill = "Usage")  +
-  ggtitle("Online learning platforms")
+data(diamonds, package = "ggplot2")
 ```
 
+__Code the following figures:__  
 
+![](../output/diamond_price.jpeg)
 
+<br>
 
+![](../output/diamond_scatter.jpeg)
 
+<br>
 
+__Interactive Graphs using Plotly__  
 
-
-
-Write cleaned data without the index column (i.e. write.csv)
-
-
-# Your turn!
-
-```{r eval = FALSE}
-diamonds <- data(diamonds, package = "ggplot2")
-
-#Some analysis
-http://statweb.stanford.edu/~jtaylo/courses/stats202/diamonds.html
-
-```
-
-
-
-```{r eval = FALSE}
-
-
-
-scale(x, center=TRUE, scale=TRUE): centers & scales the data (deducts the mean per column, divides by standard deviation)
-
-
-CO2[CO2$Type == "Mississippi",]
-CO2[CO2$uptake>mean(CO2$uptake) & CO2$conc>200,]
-
-```
-
-
-
-# Interactive Graphs using Plotly
-
-- Try example in _.Rmd_ file
+- Try executing the following code chunk in the _.Rmd_ file:
 ```{r warning = FALSE, message = FALSE, eval = FALSE}
 library(shiny)
 library(plotly)
@@ -531,6 +516,31 @@ server <- function(input, output) {
 
 shinyApp(ui, server)
 ```
+
+<br>
+
+---
+
+# Further applications
+
+__Data communication__  
+
+- Interactive plots with [Plotly](https://plot.ly/r/)
+- Visualisation with the [rCharts](http://www.rpubs.com/dnchari/rcharts) package
+- Interactive web apps with [Shiny](https://shiny.rstudio.com)
+- Alternative outputs for [R Markdown](https://bookdown.org/yihui/rmarkdown/) documents
+
+__Statistics in R__  
+
+- [r-statistics.co](https://r-statistics.co) by Selva Prabhakaran
+- [R Tutorial: An Introduction to Statistics](http://www.r-tutor.com/elementary-statistics)
+- [Learning Statistics with R](https://learningstatisticswithr.com) by Danielle Navarro
+- [Statistics Fundamentals with R](https://www.datacamp.com/tracks/learn-statistics-with-r) by Datacamp
+- [Statistics and R](https://online-learning.harvard.edu/course/statistics-and-r) by Havard University
+  
+__Other resources__  
+
+- [Skill tracks in R](https://www.datacamp.com/tracks/skill) by Datacamp
 
 <br>
 

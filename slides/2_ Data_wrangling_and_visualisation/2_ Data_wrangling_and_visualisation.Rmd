@@ -30,6 +30,7 @@ library(purrr) # string manipulation
 
 #general visualisations
 library(ggplot2) # visualisation 
+library(ggrepel) # visualisation
 
 #specific visualisation
 library(highcharter) # visualisation
@@ -56,7 +57,9 @@ _Survey analysis: [Geography](#geography)_
 
 _Survey analysis: [Countries](#countries)_
 
-__It's your turn!__
+__[It's your turn!](#exercise)__
+
+__[Further applications](#resources)__
 
 ---
 
@@ -165,16 +168,16 @@ class: left
 
 # Examine data
 
-__Use `head()` or `str()` to examine data type/structure__
+__Use `summary()` or `str()` to examine the data summary/structure, or `head()` to see the first few rows__
 
-```{r echo = FALSE}
+```{r}
 head(multi)
 ```
 
 ???
 
+- head() to see first few rows
 - Colnames are so long that you can't even read them properly
-
 - What is your gender? - character vectors
 
 ---
@@ -465,6 +468,7 @@ highchart() %>%
   hc_colorAxis(minColor = "#edf8b1", maxColor = "#2c7fb8") %>%
   hc_tooltip(useHTML = TRUE, headerFormat = "", pointFormat = "{point.country}: {point.n} respondents")
 ```
+
 ---
 
 class: inverse, left, center, middle
@@ -500,6 +504,7 @@ pops <- pops %>%
 knitr::include_graphics("images/popdata.png")
 ```
 ]
+
 ---
 
 class: left
@@ -627,6 +632,7 @@ innov %>%
 ```
 
 ]
+
 ---
 
 class: left
@@ -694,6 +700,7 @@ ctry_data %>%
 - The colname `country` are also common across the 3 tables.
 - These duplicate variables are given a suffix in the new table.
 - Since the naming of countries are not always similar, joining tables by country code `iso3` gives us a larger dataset 
+
 ---
 
 class: left
@@ -730,6 +737,25 @@ ctry_data %>%
 ```
 ]
 
+---
+
+class: left
+
+# Country Analysis
+
+.left-column[ 
+### <span style="color:grey">Datasets</span>
+### <span style="color:grey">Join</span>
+### Save
+]
+.right-column[
+__Let's save this summary table `ctry_data` on our computer!__
+```{r eval = FALSE}
+write_csv(ctry_data, "../output/country_data.csv", 
+          append = FALSE, #overwrites existing file if present
+          col_names = TRUE) #writes colnames as headers
+```
+]
 
 ---
 
@@ -798,3 +824,382 @@ ctry_data %>%
   kable("html") %>%
   kable_styling(bootstrap_options = "striped", font_size = 10)
 ```
+
+---
+
+class: left
+
+# Country Analysis
+
+## Kaggle membership
+
+- Use `ggplot` to plot the columns `country`, `respop10k` and `label`
+- We can assign the plot to a new variable `ctryplot`
+
+```{r eval = FALSE}
+ctryplot <- ctry_data %>%
+  ggplot(aes(x = reorder(country, respop10k), #plot countries in desc order
+             y = respop10k,
+             fill = label)) + #barplot fill color
+  
+  geom_hline(yintercept = c(ctry_data$respop10k[ctry_data$iso3=="USA"], #vertical lines
+                            mean(ctry_data$respop10k)),
+             linetype = "dotted", 
+             color = "grey50") +
+  geom_col() + #barplot
+  
+  scale_fill_manual(values = cols) + #values from 'cols' vector mapped to 'fill' aesthetic
+  
+  #customisation
+  labs(x = "", y = "Kaggle survey respondents per 10k population") +
+  
+  coord_flip()  + #switch x & y axis  
+```
+
+---
+
+class: left
+
+# Country Analysis
+
+## Kaggle membership
+
+- Use `ggplot` to plot the columns `country`, `respop10k` and `label`
+- We can assign the plot to a new variable `ctryplot`
+```{r eval = FALSE}
+#<continued>
+ theme(legend.position = "none", 
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
+    
+  annotate("label", x = 7, y = ctry_data$respop10k[ctry_data$iso3=="USA"], 
+           label = "USA",size=3, color="black") +
+  annotate("label", x = 7, y = mean(ctry_data$respop10k), 
+           label = "Overall mean", size=3, color="black")
+```
+
+```{r echo = FALSE}
+ctryplot <- ctry_data %>%
+  ggplot(aes(x = reorder(country, respop10k), #plot countries in desc order
+             y = respop10k,
+             fill = label)) + #barplot fill color
+  
+  geom_hline(yintercept = c(ctry_data$respop10k[ctry_data$iso3=="USA"], #vertical lines
+                            mean(ctry_data$respop10k)),
+             linetype = "dotted", 
+             color = "grey50") +
+  geom_col() + #barplot
+  
+  scale_fill_manual(values = cols) + #values from 'cols' vector mapped to 'fill' aesthetic
+  
+  #customisation
+  labs(x = "", y = "Kaggle survey respondents per 10k population") +
+  
+  coord_flip()  + #switch x & y axis  
+  
+  theme(legend.position = "none", 
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        axis.text.y = element_text(size=8)) +
+    
+  annotate("label", x = 7, y = ctry_data$respop10k[ctry_data$iso3=="USA"], label = "USA",size=3, color="black") +
+  annotate("label", x = 7, y = mean(ctry_data$respop10k), label = "Overall mean",size=3, color="black")
+```
+--
+- Finally, let's print the figure!
+```{r eval = FALSE}
+print(ctryplot)
+```
+
+---
+
+class: left
+
+# Country Analysis
+
+## Kaggle membership
+
+```{r fig.height=6, fig.width=10, dev='svg', echo = FALSE}
+print(ctryplot)
+```
+
+---
+
+class: left
+
+# Country Analysis
+
+## Kaggle membership
+
+- We can save the plot to an image file using `jpeg()`, `tiff()`, `png()`, etc.
+- Run the following code chunk at one go
+```{r eval=FALSE}
+jpeg(filename = "../output/ctryplot.jpeg", width = 1800, height = 2000, res = 300)
+print(ctryplot)
+dev.off() #finish creating the image file
+```
+
+---
+
+class: left
+
+# Country Analysis
+
+### Innovation
+
+- Let's make a scatter plot with columns `respop10k` (x) against the innovation `index` (y)
+
+```{r eval = FALSE}
+ggplot(ctry_data, aes(x = respop10k, 
+                     y = index, 
+                     color = label, 
+                     label = country)) + 
+  geom_point() + #plot points
+  geom_text_repel(size = 3.5) + #plot text (country label), from library(ggrepel)
+  
+  scale_color_manual(values = cols) + #values from 'cols' vector mapped to 'color' aesthetic
+  
+  #customisation
+  labs(y = "Global Innovation Index", 
+       x = "Kaggle survey respondents per 10k population") + 
+  theme(legend.position = "none", 
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black", 
+        arrow = arrow(length = unit(0.08, "inches"), type = "open")))
+```
+
+---
+
+class: left
+
+# Country Analysis
+
+### Innovation
+
+```{r fig.height = 5, fig.width = 8, echo = FALSE, dev='svg'}
+ggplot(ctry_data, aes(x = respop10k, 
+                     y = index, 
+                     color = label, 
+                     label = country)) + 
+  geom_point() + #plot points
+  geom_text_repel(size = 3.5) + #plot text (country label), from library(ggrepel)
+  
+  scale_color_manual(values = cols) + #values from 'cols' vector mapped to 'color' aesthetic
+  
+  #customisation
+  labs(y = "Global Innovation Index", 
+       x = "Kaggle survey respondents per 10k population") + 
+  theme(legend.position = "none", 
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black", 
+        arrow = arrow(length = unit(0.08, "inches"), type = "open")))
+```
+
+???
+
+- Switzerland was the most innovative country in 2018
+
+- There were more respondents in Singapore as a proportion of the population
+
+---
+
+class: left
+
+# Country Analysis
+
+__We can test the correlation between `respop10k` and the innovation `index`__
+
+- Use the function `cor.test()`
+
+```{r warning = FALSE}
+cor.test(ctry_data$respop10k, ctry_data$index, 
+         method = "spearman") #ranked comparisons
+```
+
+???
+
+- Strong correlation
+- Remove objects from R using rm()
+
+---
+
+class: inverse, left, center, middle
+name: exercise
+
+# It's your turn!
+
+```{r echo = FALSE}
+#remove objects from r
+rm(ctry_data, ctry_n, ctryplot, innov, multi, pops, cols)
+```
+
+---
+
+class: left
+
+# It's your turn!
+
+__Load dataset `diamonds` from the package `ggplot2`__
+
+--
+
+```{r}
+data(diamonds, package = "ggplot2")
+```
+
+--
+
+__Summarise columns in dataset__
+
+--
+```{r}
+summary(diamonds)
+```
+
+---
+
+class: left
+
+# It's your turn!
+
+__Filter diamonds that are less than $3000 with a Premium cut__
+
+--
+```{r}
+diamonds[diamonds$price < 3000 & diamonds$cut == "Premium", ]
+```
+
+---
+
+class: left
+
+# It's your turn!
+
+__Code the following figure__
+
+```{r echo = FALSE, dev='svg', message=FALSE, fig.height=5}
+#jpeg(filename = "../../output/diamond_price.jpeg", width = 1800, height = 1500, res = 300)
+diamonds %>%
+  ggplot(aes(x = price)) + 
+  geom_histogram()
+#dev.off()
+```
+
+???
+
+- Histogram of price
+
+---
+
+class: left
+
+# It's your turn!
+
+__Code the following figure__
+
+```{r eval = FALSE}
+diamonds %>%
+  ggplot(aes(x = price)) + 
+  geom_histogram()
+```
+
+---
+
+class: left
+
+# It's your turn!
+
+__Code the following figure__
+
+```{r eval = FALSE, echo=FALSE, dev='svg', fig.height=5}
+#a bit laggy. Load image instead
+#jpeg(filename = "../../output/diamond_scatter.jpeg", width = 1800, height = 1500, res = 300)
+diamonds %>%
+  ggplot(aes(x = price, 
+             y = carat,
+             color = cut)) + 
+  geom_point(alpha = 0.5) + 
+  
+  #customisation
+  scale_color_brewer(type = "seq") 
+#dev.off()
+```
+
+```{r eval = TRUE, echo = FALSE, out.height=500, fig.align='center'}
+knitr::include_graphics("images/diamond_scatter.jpeg")
+```
+
+---
+
+class: left
+
+# It's your turn!
+
+__Code the following figure__
+
+```{r eval = FALSE}
+diamonds %>%
+  ggplot(aes(x = price, 
+             y = carat,
+             color = cut)) + 
+```
+--
+```{r eval = FALSE}
+  geom_point(alpha = 0.5) + #alpha adjusts transparency
+```
+--
+```{r eval = FALSE}
+  #customisation
+  scale_color_brewer(type = "seq") #sequential color scale
+```
+
+---
+
+class: inverse, center, middle
+
+# Questions?  
+  
+__[About our dataset](#about)__
+
+__[Data preparation](#prep)__
+
+__[Survey analysis](#results)__
+
+_Survey analysis: [Geography](#geography)_
+
+_Survey analysis: [Countries](#countries)_
+
+__[It's your turn!](#exercise)__
+
+__[Resources and further applications](#resources)__
+
+---
+
+class: left
+name: resources
+
+# Further applications
+
+__Data communication__  
+- Interactive plots with [Plotly](https://plot.ly/r/)
+- Visualisation with the [rCharts](http://www.rpubs.com/dnchari/rcharts) package
+- Interactive web apps with [Shiny](https://shiny.rstudio.com)
+- Alternative outputs for [R Markdown](https://bookdown.org/yihui/rmarkdown/) documents
+
+__Statistics in R__  
+- [r-statistics.co](https://r-statistics.co) by Selva Prabhakaran
+- [R Tutorial: An Introduction to Statistics](http://www.r-tutor.com/elementary-statistics)
+- [Learning Statistics with R](https://learningstatisticswithr.com) by Danielle Navarro
+- [Statistics Fundamentals with R](https://www.datacamp.com/tracks/learn-statistics-with-r) by Datacamp
+- [Statistics and R](https://online-learning.harvard.edu/course/statistics-and-r) by Havard University
+  
+__Other resources__  
+- [Skill tracks in R](https://www.datacamp.com/tracks/skill) by Datacamp
