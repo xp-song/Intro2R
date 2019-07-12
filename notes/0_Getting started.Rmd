@@ -87,25 +87,20 @@ install.packages("knitr")
 __Online tutorials:__  
 
 - [R for Data Science](https://r4ds.had.co.nz)  
-
 - [Quick R](https://www.statmethods.net)  
-
 - [R for cats](https://www.rforcats.net) (blog post)  
-
 - [swirl](https://swirlstats.com) (good for practice)  
 
   
 __Online courses:__  
 
 - [Introuction to R](https://www.datacamp.com/courses/free-introduction-to-r) by Datacamp  
-
 - [R Programming](https://www.coursera.org/learn/r-programming) by Coursera  
 
 
 __Online Q&A:__  
 
 - [Stack Overflow](https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example?rq=1)
-
 - Remember to check your `sessionInfo()` when troubleshooting!  
 
 
