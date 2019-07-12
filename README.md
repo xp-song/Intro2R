@@ -9,13 +9,13 @@ This workshop is designed to be a crash-course. We will dive right into organisi
 ## Workshop outline:
 
 1. Getting Started
-  - [Notes](https://htmlpreview.github.io/?https://github.com/xp-song/Intro2R/blob/master/notes/0_Getting_started.html)
+    - [Notes](https://htmlpreview.github.io/?https://github.com/xp-song/Intro2R/blob/master/notes/0_Getting_started.html)
 2. R Environment and Syntax
-  - [Slide deck](https://xp-song.github.io/files/slides/Intro2r_1/1_R_environment_and_syntax_slides#1)
-  - [Notes](https://htmlpreview.github.io/?https://github.com/xp-song/Intro2R/blob/master/notes/1_R_environment_and_syntax.html)
+    - [Slide deck](https://xp-song.github.io/files/slides/Intro2r_1/1_R_environment_and_syntax_slides#1)
+    - [Notes](https://htmlpreview.github.io/?https://github.com/xp-song/Intro2R/blob/master/notes/1_R_environment_and_syntax.html)
 3. Data Wrangling and Visualisation
-  - [Slide deck](https://xp-song.github.io/files/slides/Intro2r_2/2_Data_wrangling_and_visualisation_slides#1)
-  - [Notes](https://htmlpreview.github.io/?https://github.com/xp-song/Intro2R/blob/master/notes/2_Data_wrangling_and_visualisation.html)
+    - [Slide deck](https://xp-song.github.io/files/slides/Intro2r_2/2_Data_wrangling_and_visualisation_slides#1)
+    - [Notes](https://htmlpreview.github.io/?https://github.com/xp-song/Intro2R/blob/master/notes/2_Data_wrangling_and_visualisation.html)
 
 
 ## Instructions:
