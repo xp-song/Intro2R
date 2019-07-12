@@ -3,5 +3,5 @@
 .RData
 .Ruserdata
 .DS_store
-.Rmd
-!notes/.Rmd
+*.Rmd
+!notes/*.Rmd

@@ -30,7 +30,7 @@ In the downloaded folder you will see a few important items.
 
 * The _'data'_ folder. It contains example datasets we will use in this workshop.
 
-* The _'output'_ folder (empty). When generating outputs (i.e. figures, graphs), we will specify in our code to export files to this location.
+* The _'output'_ folder. When generating outputs (i.e. figures, graphs), we will specify in our code to export files to this location.
 
 
 <br>
