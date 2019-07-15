@@ -31,11 +31,11 @@ In the downloaded folder you will see a few important items.
 
 * The _'notes'_ folder. It contains the course notes in _.Rmd_ format (R Notebooks) and nicely rendered HTML.
 
-* The _'slides'_ folder. It contains the presentation slides for the workshop (view HTML).
+* The _'slides'_ folder. It contains the presentation slides for the workshop (HTML).
 
 * The _'data'_ folder. It contains example datasets we will use in this workshop.
 
-* The _'output'_ folder. When generating outputs (i.e. figures, graphs), we will specify in our code to export files to this location.
+* The _'output'_ folder. When generating outputs (i.e. figures, graphs), we will specify in our code to export files to this location. 
 
 
 <br>
