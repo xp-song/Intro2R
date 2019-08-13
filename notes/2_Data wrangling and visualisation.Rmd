@@ -36,34 +36,44 @@ _**Credit:** Our survey analysis includes some code snippets adapted from R Note
 
 # Preparation {.tabset .tabset-fade .tabset-pills}
 
-## Load packages
+## R Packages
 
-- We delve deeper into the [tidyverse](https://www.tidyverse.org) in this lesson, which will require the installation of numerous other packages for data manipulation. 
+Install necessary packages on your computer (you only need to do this once):
 
-- We also will use some packages that provide functions for specific analyses and visualisations (e.g. dealing with geospatial data, interactive visualisations, etc.)  
+- [tidyverse](https://www.tidyverse.org/packages/): Contains multiple packages commonly used for data analyses (i.e. dplyr, ggplot2, etc.)
 
-```{r load_packages, message = FALSE, warning = FALSE}
-#general data manipulation
-library(dplyr) # data manipulation
-library(readr) # input/output
-library(data.table) # data manipulation
-library(tibble) # data wrangling
-library(tidyr) # data wrangling
-library(stringr) # string manipulation
-library(forcats) # factor manipulation
+- Other packages that provide functions for specific analyses and visualisations (e.g. interactive visualisations, geospatial analyses)  
+
+```{r install_packages, eval = FALSE, message = FALSE}
+install.packages("tidyverse") #data manipulation/visualisation
 
 #specific data manipulation
-library(purrr) # string manipulation
+install.packages("data.table") # quick data manipulation
+install.packages("stringr") # string manipulation
+install.packages("forcats") # factor manipulation
 
-#general visualisations
-library(ggplot2) # visualisation 
-library(ggrepel) # visualisation 
+#specific visualisations
+install.packages("highcharter") # interactive visualisation
+install.packages("countrycode") # map country names to country code
+install.packages("ggrepel") 
 
-#specific visualisation
-library(highcharter) # visualisation
-library(countrycode) # visualisation
+#customise outputs from R Notebooks
+install.packages("rmarkdown")
+install.packages("knitr")
+install.packages("kableExtra") 
+```
 
-#to knit HMTL document
+```{r load_packages, message = FALSE, warning = FALSE}
+library(tidyverse)
+
+library(data.table) 
+library(stringr)
+library(forcats)
+
+library(ggrepel) 
+library(highcharter) 
+library(countrycode)
+
 library(knitr) 
 library(kableExtra) 
 ```

@@ -17,7 +17,7 @@ class: center, middle, inverse, title-slide, title-slide
 ## R Environment and Syntax
 ### xpsong
 ### <a href="https://github.com/xp-song/Intro2R" class="uri">https://github.com/xp-song/Intro2R</a>
-### updated 2019-07-26
+### updated 2019-08-14
 
 ---
 
@@ -28,49 +28,75 @@ class: center, middle, inverse, title-slide, title-slide
 
 class: inverse, center, middle
 
+# Before we begin...
+
+1. Navigate to course webpage and read background information  
+*https://github.com/xp-song/Intro2R*  
+
+2. Ensure that you have installed __R__ on your computer, followed by __R Studio__  
+*(follow links under '_Instructions_' section of webpage)*
+
+3. [Download](https://github.com/xp-song/Intro2R/archive/master.zip) workshop materials  
+*(green button on webpage)*
+
+---
+
+class: inverse, center, middle
+name: about
+
 # Outline  
 
-__[About this crash course](#4)__  
+__[About](#about)__  
  
-__[Getting Started](#Getstarted)__  
+[Getting Started](#Getstarted)  
 
-__[R Environment and Syntax](#Renviron)__  
+[General Syntax](#gensyntax)    
 
-Syntax: [Operators](#operators)
+[Data Structures](#structures)  
 
-Syntax: [Subsetting](#subsetting)
+[Functions](#functions)  
 
-Objects in R: [Variables](#variables)
-
-Objects in R: [Data structures](#struc)
-
-Objects in R: [Functions](#functions)
-
-__[Useful Resources](#resources)__  
+[Useful Resources](#resources)  
 
 ---
 
 background-image: url(https://www.r-project.org/logo/Rlogo.svg)
 background-size: 100px
-background-position: 95% 5%
+background-position: 95% 15%
 class: left
 
 # What is R?
 
-- Programming language and software environment
-- Started in the 1990s mainly for statistical analysis
-- Command line interface
-- RStudio is commonly used as a graphical user interface
-- Both R and RStudio are open source software
-- Many resources and help available online from large community of developers/users
-- Huge (and growing) library of user-created _packages_ offer many functions beyond statistics (even to translate R to other languages!)
+- Programming language and software environment with a command line interface
 
+- RStudio is often used as a software client
 
 ???
 
-- Cmd line: unlike GUI-based software such as Excel, SPSS, etc.
-- Rstudio: Just like how Microsoft Word provides many more functions than a basic text editor, RStudio provides many functions for coding.
-- Huge library: make beautiful graphics, build websites, etc.
+- Cmd line interface is text-based
+  
+  - Different from Excel/SPSS, where users interact with the software using a GUI
+
+- Rstudio: E.g. Microsoft Word provides &gt; basic text editor (Notepad)
+
+  - In this course, we will work entirely within RStudio  
+
+--
+
+- Both R and RStudio are open source software
+
+- Huge library of packages created by the R community
+
+???
+
+- Open source:
+
+  - Anyone can contribute to its development
+
+  - Easy to look for help online (Q&amp;A sites, forums)
+  
+- Packages: Like apps/toolboxes, each has diff functions
+  - E.g. run statistical analysis, build websites, make slides &amp; reports (these course materials)
 
 ---
 class: left
@@ -79,53 +105,67 @@ class: left
 
 ## What it IS
 - Designed for those with minimal coding experience
-- Dive right into organising, visualising and analysing data
-- Give you a taste of the power of R and its potential applications
-- Help you kick-start your journey to becoming more data-savvy 🤓 
+- Give you a taste of what R can do
+
+???
+- ... hopefully give you some ideas on how you can use R for your own projects
+  - Slide deck 1: Look at the structure/syntax of the language (English - nouns, verbs.. R - different objects) 
+  - Slide deck 2: Dive right into analysing data
 
 --
 
 ## What it is NOT
-- A substitute to learning the fundamentals of the language
+- A substitute to practicing the fundamentals of the language
 - A lesson in statistics
 
----
-
-class: left
-
-# About this crash course
-
-&lt;img src="https://www.rstudio.com/wp-content/uploads/2018/10/RStudio-Logo-flat.svg" height="70" /&gt;
-  
-We will work entirely with RStudio, and run our scripts in R Notebooks (*.Rmd* files)&lt;sup&gt;1&lt;/sup&gt;, instead of basic R scripts (*.R* files).
-
-&lt;br&gt;
-  
-**What are R Notebooks?**
-- They are [R Markdown](http://rmarkdown.rstudio.com) documents that allow us to intersperse regular text with chunks of code
-- They allow us to interact with our code and view outputs within a single document
-- They can be '_knit_' into different file-types (i.e. Word, Slides, PDF, HTML, etc.)
-
-
-.footnote[
-[1] All materials in this course were created from _.Rmd_ files. We will work within these source files available in the _/notes_ folder. The course slides and their source files are located at _/slides_.
-]
+???
+- I have provided links to more resources in your notes.. check them out if you're interested
 
 ---
 
 class: inverse, center, middle
 name: Getstarted
 
-# Getting Started
+# Outline  
 
-1. [Download the materials for this workshop](https://github.com/xp-song/Intro2R/archive/master.zip) from the Github repository __Intro2R__  
-https://github.com/xp-song/Intro2R  
+[About](#about)  
+ 
+__[Getting Started](#Getstarted)__  
 
-2. Open up the RStudio Project file **_Intro2R.Rproj_**  
+[General Syntax](#gensyntax)    
 
-3. In the file browser (bottom-right panel), navigate to _/notes_ and open the R Notebook   
-**_0_Getting started.Rmd_**
+[Data Structures](#structures)  
 
+[Functions](#functions)  
+
+[Useful Resources](#resources)  
+
+---
+
+class: inverse, center
+
+# Course materials
+
+&lt;br&gt;
+
+&lt;br&gt;
+
+**_Intro2R_**  
+  
+_/notes_ &lt;sup&gt;1&lt;/sup&gt;  
+_/slides_ &lt;sup&gt;1&lt;/sup&gt;  
+_/data_  
+_/output_  
+_/Intro2R.Rproj_  
+
+.footnote[[1] View course materials in your web browser by opening the '_.html_' files
+]
+
+???
+
+- During the workshop, you'll probably need to refer to the notes...can leave them open
+- Output: when we generate figures/graphs, we will specify in our code to export them here.
+- Let's open the RStudio Project file. This boots up RStudio (demo)
 
 ---
 
@@ -135,30 +175,85 @@ class: left
 
 &lt;img src="images/rstudioclient.png" width="600" style="display: block; margin: auto;" /&gt;
 
-- __Console:__ Command line input/output. All you would see if you ran R without RStudio.  
-- __Script editor:__ View/edit files that contain code. Code can be sent to the console.
-- __Environment/History:__ Shows all objects in R's memory. The history tab keeps track of past commands.
+- __Console:__ Command line input/output  
+- __Script editor:__ View/edit files that contain code
+- __Environment/History__  
 - __Files/Plots/Packages/Help/Viewer__
 
 ???
 
-- The console is more for real-time testing &amp; interaction.  
+- Console: shows real-time interaction (inputs AND OUTPUTS)
+  - All you would see if you ran R without RStudio!
+  - E.g. Try doing some calculations
 
-- It is important to edit and save code within scripts 
-
-- This is because we want to be able to replicate what we did in the past  
+- Create new .R script (File &gt; New File &gt; R script) &gt; Script editor
+  - Write some calculations &gt; Cmd+Enter
+  - Code sent to the console!
+  - Comment on your code (R skips over anything after '#')
+  - Scripts let us edit/save/share our code with others!  
 
 ---
 
 class: left
 
-# R Studio Client
+# R Notebooks
 
-- Try creating a new R Notebook `File &gt; New File &gt; R Notebook`
+## What are R Notebooks?
+
+- R Notebooks (a.k.a. [R Markdown Notebooks](http://rmarkdown.rstudio.com)) are files ending with '_.Rmd_'.  
+
+- Compared to basic '_.R_' scripts, they allows us to:  
+  - Write normal text alongside code
+  - Interact with code within a single document
+  - Generate (i.e. '_knit_') different types of files 
+
+???
+- R Notebooks = R Markdown files  
+
+- E.g. All materials in this course were created from _.Rmd_ files.
 
 --
 
-- Try creating a new RStudio Project `File &gt; New Project &gt; New Directory &gt; New Project`
+&lt;br&gt;
+
+**Try creating a new R Notebook `File &gt; New File &gt; R Notebook`**
+
+---
+
+class: left
+
+# R Notebooks
+
+&lt;img src="images/notebook.png" width="700" style="display: block; margin: auto;" /&gt;
+- __Header section:__ specify document [parameters](https://bookdown.org/yihui/rmarkdown/html-document.html)  
+- __Normal text__  
+- __Code chunk:__ write code and specify code [parameters](https://bookdown.org/yihui/rmarkdown/r-code.html)   
+
+???
+- YAML Ain't Markup Language (readable language commonly used for config files)  
+- Follow instructions  
+
+- Code chunk: Results appear beneath the chunk
+  - Plot(): our very first function (tool in toolbox)
+  - Name of function always followed by brackets
+  - Look up a function with `?`
+  - Can name the chunk
+
+--
+
+**Save our new file as _'myanalysis.Rmd'_**  
+
+???
+
+- We will use this R Notebook for the rest of the lecture
+
+---
+
+class: left
+
+# RStudio Projects
+
+**Try creating a new RStudio Project `File &gt; New Project &gt; New Directory &gt; New Project`**
 
 &lt;img src="images/new project.png" width="300" style="display: block; margin: auto;" /&gt;
 
@@ -166,339 +261,807 @@ class: left
 
 class: left
 
-# R Studio Projects
+# RStudio Projects
 
-The folder containing the RStudio Project is the 'working directory', where R inputs/outputs/saves information (data, documents, history, etc.)
+## What are RStudio Projects?
+
+- RStudio Projects help organise your work into separate 'R sessions'.
+
+- Each project is it's own workspace (separate configuration, history, etc.)
+
+--
+
+- The location of the '_.RProj_' file defines the 'working directory'
+
+  - **Type `getwd()` in the _console_ of our new project**
   
-- Type `getwd()` in the console of the new project (or Intro2R project)
-  
-  - This returns the path to our working directory  
+  - This returns the absolute path to our working directory  
   e.g. `/Users/&lt;computer_username&gt;/Desktop/test`
-
-- Run `getwd()` within a _code chunk_ of an R Notebook in the Intro2R project
-
-  - When working in an R Notebook, the location of the `.Rmd` file is the working directory
-
+  
 ???
 
-- setwd(): manually specify the working directory
+- Try typing `getwd()` in the Intro2R project
+
+- Delete test project
 
 ---
 
 class: left
 
-# R Studio Projects
+# RStudio Projects
 
 ## 🌟 Best Practice
 
-- Keep all project items within the folder containing the R Project file 
+- Keep all project items in the working directory 
 
-- Rather than using _absolute_ paths in our scripts, use **_relative_** paths
+- Use _relative_ paths in your script
 
-  - E.g. In the Intro2R Project _console_, we can read ozone data with either `read.delim("/&lt;path to Intro2R folder&gt;/Intro2R/data/ozone_data.txt")` or `read.delim("data/ozone_data.txt")`
+  - **Try reading in data in your R Notebook**  
+  `read.csv("&lt;path to Intro2R folder&gt;/Intro2R/data/ozone_data.csv")`
+  `read.csv("data/ozone_data.csv")`
   
-  - Navigate to parent directory using `../` if `.Rmd` file is at different location from the `.Rproj` file  
-  `read.delim("../data/ozone_data.txt")`  
-
-- This allows scripts to work when we move the project around, even across different computers
-
 ???
 
-- RStudo Project file acts as a 'homing beacon', so we don't need to write out the initial path
+- Relative paths allow scripts to work across different computers
 
-- Close/delete the test project
-
-
----
-
-class: left
-
-# 0_Getting started.Rmd
-
-## YAML Header
-&lt;img src="images/yaml.png" width="700" style="display: block; margin: auto;" /&gt;
-  - Output is [HTML](http://htmlpreview.github.io/?https://github.com/xp-song/Intro2R/blob/master/notes/0_Getting_started.html)  
-  - See [this online book](https://bookdown.org/yihui/rmarkdown/html-document.html) for examples of different parameters (for .html and other outputs) 
-
-???
-
-- YAML Ain't Markup Language
-- Readable language commonly used for config files  
-
----
-
-class: left
-
-# 0_Getting started.Rmd
-
-## Code Chunks
-
-- Add a new chunk: 
-  - Using the mouse: `Insert` button
-  - `Cmd+Option+I`.
-- Run code chunk (_try it!_):
-  - Using the mouse: `Run/Play` button
-  - `Cmd+Shift+Enter` (cursor must be inside chunk)
-  - `Cmd+Enter` (single line of code)
-&lt;img src="images/code chunk.png" width="700" style="display: block; margin: auto;" /&gt;
-
-???
-
-- Comments are not run as code
-- You can name code chunks
-- You can also set different parameters for each code chunk
-- 'Knit' button: run all the code &amp; re-generate the whole document  
-
----
-
-class: left
-
-# 0_Getting started.Rmd
-
-## Install packages
-
-- [tidyverse](https://www.tidyverse.org/packages/): Contains multiple packages commonly used for data analyses
-  - [ggplot2](https://ggplot2.tidyverse.org), [dplyr](https://dplyr.tidyverse.org), [tidyr](https://tidyr.tidyverse.org), [readr](https://readr.tidyverse.org), [purr](https://purrr.tidyverse.org), [tibble](https://tibble.tidyverse.org)
-- [rmarkdown](https://www.rdocumentation.org/packages/rmarkdown/versions/1.8): Next generation of R Markdown based on [pandoc](https://pandoc.org)  
-- [knitr](https://www.rdocumentation.org/packages/knitr/versions/1.23): General purpose tool to knit reports from R Notebooks  
-
-&lt;div class="figure" style="text-align: center"&gt;
-&lt;img src="images/tidyverse.png" alt="Image from medium.com" width="550" /&gt;
-&lt;p class="caption"&gt;Image from medium.com&lt;/p&gt;
-&lt;/div&gt;
-
-???
-
-- The tidyverse is a collection of packages that share an underlying design philosophy:
-  - language structure, data structures
-- We will not be using all of these packages in this workshop  
+- RStudo Project -&gt; 'homing beacon'... don't need to write out initial path
 
 ---
 
 class: inverse, center, middle
-name: Renviron
+name: gensyntax
 
-# R Environment and Syntax
+# Outline  
 
-Open **1_R environment and syntax.Rmd**  in the _/notes_ folder
+[About](#about)  
+ 
+[Getting Started](#Getstarted)  
 
-Load packages with &lt;span style="color:black"&gt;`library("&lt;package_name&gt;")`&lt;/span&gt;
+__[General Syntax](#gensyntax)__  
+
+[Data Structures](#structures)  
+
+[Functions](#functions)  
+
+[Useful Resources](#resources)  
 
 ---
 
 class: left
-name: operators
 
-# Operators
+# General Syntax
 
 .left-column[ 
-### Syntax
+### Operators
 ]
 .right-column[ 
 __Arithmetic__  
-- `+` `-` `*` `/`  
-- `^` or `**` Exponentiate  
-- `%%` Modulus (e.g. `5%%2` = 1)  
-- `%/%` Integer division (e.g. `23%/%5` = 4)  
   
-__Logical__  
-- `&lt;` `&lt;=` `&gt;` `&gt;=`
-- `==` Exactly equal (e.g. `1e3 == 1*10^3`; `1e-3 == 1*10^-3`)  
-- `!=` Not equal
-- `!x` Not x
-- `x|y` x OR y  
-- `x&amp;y` x AND y  
-
-
-__Other__  
-- `1:10` creates a numeric sequence from 1 to 10
-
+**Solve the following:**  
+$$
+\frac{ (1+2) * (4-5)}{50}
+$$
 ] 
 
----
+???
 
-class: left
-name: variables
+- Refer to your notes for the list of operators
 
-# Objects in R
+- We will only go through some operators now
 
-.left-column[ 
-### Syntax
-]
-.right-column[ 
-**Variables**
-- Used to store data
-- Data types: _Numeric, character, integer, logical (T/F) or complex_
-- Assign a variable `x &lt;- 4` (arrow shortcut: `Option/Alt`+`-`)  
-- Words (characters) must be within quotation marks `"hello"` 
-] 
 --
 .right-column[ 
-**🌟Best Practice**
-- `x = 4` and ` x &lt;- 4` produce similar results
-- However, code consistency is important
-- In R, we use `&lt;-` as an assignment operator, and `=` for arguments within functions 
-- Spacing is also important for readability e.g. `myvar&lt;-4` ☹️   
-- Naming should be consistent/clear (case sensitive, no numbers/symbols/whitespace). E.g. treeHeight_m, species_count
-]
 
-???
-
-- try assigning a variable, call it myvar
-- variable should appear in your environment
-
----
-
-class: left
-name: struc
-
-# Objects in R
-
-.left-column[ 
-### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
-### Structures
-]
-.right-column[
-**Vectors**
-- Sequential collection of data of the _same_ type
-- Coercion occurs if different types are mixed
-- Asking and coercion can be done manually to change the vector (data) type
-- Note that the `c()` function combines (concatenates) its arguments to form a vector
-&lt;img src="images/vectors.png" width="550" style="display: block; margin: auto;" /&gt;
-]
----
-
-class: left
-
-# Objects in R
-
-.left-column[ 
-### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
-### Structures
-]
-.right-column[
-**Lists**
-- Consist of different elements (i.e. variables/vectors) that _can be of different types_ 
-- E.g. `mylist &lt;- list(num_vec, char_vec, 1, "hello")`
-- Elements in a list are indexed with [[]], individual items are in []
-&lt;img src="images/lists.png" width="1000" style="display: block; margin: auto;" /&gt;
-]
-
----
-
-class: left
-
-# Objects in R
-
-.left-column[ 
-### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
-### Structures
-]
-.right-column[
-**Factors**
-- Used to represent categorical, ordinal, or even binary data
-- Can be coded as character or numeric
-- Some examples:
-  - Tom, Dick, Harry
-  - Blue, Black, Brown (eye color)
-  - High, Medium, Low (3, 2, 1)
-  - SD, D, Neutral, A, SA (-2:2)
-  - Male, Female (1, 2)
-&lt;img src="images/factors.png" width="1000" style="display: block; margin: auto;" /&gt;
-]
-
-???
-
-- What is wrong with the output?
-
----
-
-class: left
-
-# Objects in R
-
-.left-column[ 
-### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
-### Structures
-]
-.right-column[
-**Matrices**
-- Data in rectangular format (2D array with rows &amp; columns)
-- Data must be of the _same_ type!
-- More memory efficient than dataframes
-&lt;img src="images/matrices.png" width="1000" style="display: block; margin: auto;" /&gt;
-]
-
----
-
-class: left
-
-# Objects in R
-
-.left-column[ 
-### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
-### Structures
-]
-.right-column[
-**Dataframes**
-- Data in rectangular format (2D array with rows &amp; columns)
-- Columns can contain _different_ types of data variables
-- Each column are vectors/lists of similar length
-- Import tabular data as dataframes using `read.table()` family of functions (i.e. `read.csv()`, `read.delim()`)
-- `$` Extracts elements by colnames  
-&lt;img src="images/dataframes.png" width="450" style="display: block; margin: auto;" /&gt;
-]
-
----
-
-class: left
-name: subsetting
-
-# Subsetting in R
-
-.left-column[ 
-### Syntax
-### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
-]
-.right-column[
-- Use square brackets `[ ]`
-- If dataset has 2 dimensions (i.e. tabular format), always specify row then column number
-- Examples:
-  - `x[5]` 5th element in vector `x`  
-  - `df[3,5]` Element in 3rd row &amp; 5th col of dataframe `df`
-  - `df[c(3,5),]` Row 3 &amp; 5, all cols of dataframe `df`
-  - `df[3:5,]` Row 3,4 &amp; 5, all cols of dataframe `df`
-  - `df[-2,]` Everything except row 2 of dataframe `df`  
+```r
+(1+2)*(4-5)/50
+```
 
 ```
-##                    mpg cyl disp  hp drat    wt  qsec vs am gear carb
-## Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
-## Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
-## Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
-## Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
-## Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
-## Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+## [1] -0.06
 ```
 ]
 
-???
+---
 
-- At this point I want to introduce another operator: Subsetting
+class: left
+
+# General Syntax
+
+.left-column[ 
+### Operators
+]
+.right-column[ 
+__Logical__  
+  
+**Check if `1e3` is larger or equal to `1*10^3`**  
+**What is the output?**  
+] 
+
+--
+.right-column[ 
+
+```r
+1e3 &gt;= 1*10^3
+```
+
+```
+## [1] TRUE
+```
+]
 
 ---
 
 class: left
 
-# Subsetting in R
+# General Syntax
 
 .left-column[ 
-### Syntax
-### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Operators&lt;/span&gt;
+### Variables
+]
+.right-column[ 
+Variables are named object used to store data
+- `&lt;-` is used to assign variable names in R (e.g. `x &lt;- 4`)
+- Print variables by name (`x` vs. `"x"`)
+- Assigning data to an existing variable overwrites it (`x &lt;- 10`)
+]
+
+???
+- Arrow shortcut `Option/Alt`+`-`
+- `=` produces a similar result, but we reserve it for other uses (in functions)
+- New variable in environment
+
+- Case sensitive!
+- "hello" vs. hello (text in quotation)
+
+--
+.right-column[ 
+**🌟Best Practice**  
+- Clear and consistent names
+- Avoid numbers/symbols/whitespace
+]
+
+---
+
+class: left
+
+# General Syntax
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Operators&lt;/span&gt;
+### Variables
+]
+.right-column[ 
+__Data types and examples:__
+- Numeric (`3.142`), Integer (`5L`)
+- Character (`"hello"`)
+- Logical (`TRUE, FALSE`)
+- Complex
+] 
+
+--
+
+.right-column[ 
+**Let's assign new variables `name`, `age`, and `weight`**
+]
+
+???
+- Print out 
+
+--
+
+.right-column[ 
+**Check the data type for each variable using the function `is.numeric()`, `is.integer()`, `is.character()`**
+]
+
+???
+
+- try `is.integer()` for age (compare when add `L`)
+---
+
+class: inverse, center, middle
+name: structures
+
+# Outline  
+
+[About](#about)  
+ 
+[Getting Started](#Getstarted)  
+
+[General Syntax](#gensyntax)  
+
+__[Data Structures](#structures)__  
+
+[Functions](#functions)  
+
+[Useful Resources](#resources)  
+
+---
+
+class: left
+
+# Data Structures
+
+.left-column[ 
+### Vectors
 ]
 .right-column[
-**Quick test!⚡️**
-- `mtcars` dataset
-- What is the code to extract all data on cars that have a fuel efficiency of at least 20 mpg, and are more than 108 hp? 
+- Linear collection of data 
+- Must be of the _same_ data type
+]
+--
+.right-column[
+**Assign a _vector_ of names to the variable `name`**  
+(use the concatenate function `c()`)
+
+```r
+name &lt;- c("Me", "Tom", "Dick", "Harry", "Susan") # character vector
+```
+]
+
+???
+- What if we add a number? Treated as "character" (see environment)! COERCION
+
+--
+.right-column[
+**Assign a _vector_ of numbers to the variable `age`**
+
+```r
+age &lt;- c(20, 25, 30, 35, 40) # numeric vector
+```
+]
+???
+- What if we add characters/text? COERCE
+- What if we add LOGICAL data? (1 = TRUE, 0 = FALSE)
+
+---
+
+class: left
+
+# Data Structures
+
+.left-column[ 
+### Vectors
+]
+.right-column[
+- Linear collection of data 
+- Must be of the _same_ data type
+- _Operations in R are vectorised_
+]
+--
+.right-column[
+**Subtract 5 from the vector `age`**
+
+```r
+age-5
+```
+
+```
+## [1] 15 20 25 30 35
+```
+]
+--
+.right-column[
+**Add together two vectors**
+
+```r
+age+age
+```
+
+```
+## [1] 40 50 60 70 80
+```
+]
+
+---
+
+class: left
+
+# Data Structures
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Vectors&lt;/span&gt;
+### Lists
+]
+.right-column[
+- Linear collection of data 
+- Can contain of different _types_ and _structure_ of data
+]
+--
+.right-column[
+**Create a list with a mix of data types and variables**
+
+```r
+myteam &lt;- list(name, age, "Group 1", 2019)
+```
+]
+
+---
+
+class: left
+
+# Data Structures
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Vectors&lt;/span&gt;
+### Lists
+]
+.right-column[
+- Linear collection of data 
+- Can contain of different _types_ and _structure_ of data
+]
+.right-column[
+
+```r
+myteam
+```
+
+```
+## [[1]]
+## [1] "Me"    "Tom"   "Dick"  "Harry" "Susan"
+## 
+## [[2]]
+## [1] 20 25 30 35 40
+## 
+## [[3]]
+## [1] "Group 1"
+## 
+## [[4]]
+## [1] 2019
+```
+]
+???
+- Elements in a list are indexed with [[]]
+- Sub-indices are in [] (nested like tree branches)
+- Lists are very flexible!
+
+---
+
+class: left
+
+# Data Structures
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Vectors&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Lists&lt;/span&gt;
+### Factors
+]
+.right-column[
+- A special kind of vector that represents categorical data with discrete levels
+]
+???
+- Includes ordinal/binary
+--
+.right-column[
+**Let's code the sex of each person in `name` variable**  
+(use the functions `factor()` and `c()`)
+
+```r
+sex &lt;- factor(c("M","M","M","M","F")) 
+```
+]
+--
+.right-column[
+
+```r
+sex
+```
+
+```
+## [1] M M M M F
+## Levels: F M
+```
+]
+???
+- Levels are shown (binary)
+
+---
+
+class: left
+
+# Data Structures
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Vectors&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Lists&lt;/span&gt;
+### Factors
+]
+.right-column[
+- A special kind of vector that represents categorical data with discrete levels
+]
+--
+.right-column[
+**Let's code the performance of each person in `name`**  
+
+```r
+perform &lt;- factor(c("High", "Low", "Med", "Med", "High"))
+```
+]
+--
+.right-column[
+
+```r
+perform
+```
+
+```
+## [1] High Low  Med  Med  High
+## Levels: High Low Med
+```
+What is wrong with this output?
+]
+
+---
+
+class: left
+
+# Data Structures
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Vectors&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Lists&lt;/span&gt;
+### Factors
+]
+.right-column[
+**Define the order using the `levels=` argument in `factor()`**
+
+```r
+perform &lt;- factor(c("High", "Low", "Med", "Med", "High"), 
+                  levels = c("Low", "Med", "High"))
+perform
+```
+
+```
+## [1] High Low  Med  Med  High
+## Levels: Low Med High
+```
+]
+???
+- Order of levels are alphabetical unless specified
+---
+
+class: left
+
+# Data Structures
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Vectors&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Lists&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Factors&lt;/span&gt;
+### Matrices
+]
+.right-column[
+- Tabular data (rows &amp; columns)
+- Must be of the _same_ data type
+]
+???
+- 2D/rectangular data
+- E.g. Image processing (each pixel has a value), spatial data..
+--
+.right-column[
+**Create a 4 by 3 matrix of sequential numbers**  
+Use `matrix()` and the `:` operator to create a sequence
+
+```r
+m &lt;- matrix(1:12, nrow = 4)
+```
+]
+--
+.right-column[
+
+```r
+m
+```
+
+```
+##      [,1] [,2] [,3]
+## [1,]    1    5    9
+## [2,]    2    6   10
+## [3,]    3    7   11
+## [4,]    4    8   12
+```
+]
+
+---
+
+class: left
+
+# Data Structures
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Vectors&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Lists&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Factors&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Matrices&lt;/span&gt;
+### Dataframes
+]
+.right-column[
+- Tabular data (rows &amp; columns)
+- Rows represent data entries, columns represent different variables
+]
+--
+.right-column[
+**Import the dataset `ozone_data.csv` into your R Notebook using `read.csv()`**
+
+
+```r
+ozone &lt;- read.csv("/data/ozone_data.csv") # column headers in first row
+```
+]
+
+---
+
+class: left
+
+# Data Structures
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Vectors&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Lists&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Factors&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Matrices&lt;/span&gt;
+### Dataframes
+]
+.right-column[
+**View the first few rows of `ozone`**  
+
+```r
+head(ozone) #print first few rows
+```
+
+```
+##   rad temp wind ozone
+## 1 190   67  7.4    41
+## 2 118   72  8.0    36
+## 3 149   74 12.6    12
+## 4 313   62 11.5    18
+## 5 299   65  8.6    23
+## 6  99   59 13.8    19
+```
+]
+--
+.right-column[
+**Check the dimensions of `ozone`**  
+
+```r
+dim(ozone)
+```
+
+```
+## [1] 111   4
+```
+]
+
+???
+
+- Tabular data in R: rows, cols
+
+---
+
+class: left
+
+# Data Structures
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Vectors&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Lists&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Factors&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Matrices&lt;/span&gt;
+### Dataframes
+]
+.right-column[
+**Check the names of `ozone` using `dimnames()`, `rownames()` and `colnames()`**  
+
+```r
+dimnames(ozone)
+```
+
+```
+## [[1]]
+##   [1] "1"   "2"   "3"   "4"   "5"   "6"   "7"   "8"   "9"   "10"  "11" 
+##  [12] "12"  "13"  "14"  "15"  "16"  "17"  "18"  "19"  "20"  "21"  "22" 
+##  [23] "23"  "24"  "25"  "26"  "27"  "28"  "29"  "30"  "31"  "32"  "33" 
+##  [34] "34"  "35"  "36"  "37"  "38"  "39"  "40"  "41"  "42"  "43"  "44" 
+##  [45] "45"  "46"  "47"  "48"  "49"  "50"  "51"  "52"  "53"  "54"  "55" 
+##  [56] "56"  "57"  "58"  "59"  "60"  "61"  "62"  "63"  "64"  "65"  "66" 
+##  [67] "67"  "68"  "69"  "70"  "71"  "72"  "73"  "74"  "75"  "76"  "77" 
+##  [78] "78"  "79"  "80"  "81"  "82"  "83"  "84"  "85"  "86"  "87"  "88" 
+##  [89] "89"  "90"  "91"  "92"  "93"  "94"  "95"  "96"  "97"  "98"  "99" 
+## [100] "100" "101" "102" "103" "104" "105" "106" "107" "108" "109" "110"
+## [111] "111"
+## 
+## [[2]]
+## [1] "rad"   "temp"  "wind"  "ozone"
+```
+]
+???
+- Try using `rownames()` and `colnames()`
+
+---
+
+class: left
+
+# Data Structures
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Vectors&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Lists&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Factors&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Matrices&lt;/span&gt;
+### Dataframes
+]
+.right-column[
+**Extract data by colnames using `$`**  
+(output is a vector)
+
+```r
+ozone$temp
+```
+
+```
+##   [1] 67 72 74 62 65 59 61 69 66 68 58 64 66 57 68 62 59 73 61 61 67 81 79
+##  [24] 76 82 90 87 82 77 72 65 73 76 84 85 81 83 83 88 92 92 89 73 81 80 81
+##  [47] 82 84 87 85 74 86 85 82 86 88 86 83 81 81 81 82 89 90 90 86 82 80 77
+##  [70] 79 76 78 78 77 72 79 81 86 97 94 96 94 91 92 93 93 87 84 80 78 75 73
+##  [93] 81 76 77 71 71 78 67 76 68 82 64 71 81 69 63 70 75 76 68
+```
+]
+
+---
+
+class: left
+
+# Data Structures
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Vectors&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Lists&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Factors&lt;/span&gt;
+### &lt;span style="color:grey"&gt;Matrices&lt;/span&gt;
+### Dataframes
+]
+.right-column[
+**Create a dataframe with the vectors `name`,`sex`, `age` and `perform`**
+
+```r
+team_details &lt;- data.frame(name, age, sex, perform)
+```
+]
+--
+.right-column[
+
+```r
+team_details
+```
+
+```
+##    name age sex perform
+## 1    Me  20   M    High
+## 2   Tom  25   M     Low
+## 3  Dick  30   M     Med
+## 4 Harry  35   M     Med
+## 5 Susan  40   F    High
+```
+]
+
+---
+
+class: left
+
+# Back to operators...
+
+## Subsetting in R  
+
+**What is 5th element in the vector `name`?**
+
+```r
+name[5]
+```
+
+```
+## [1] "Susan"
+```
+--
+**What is the 5th element of the column `name` in the dataframe `team_details`?**  
+(hint: use `$` to extract columns as vectors)
+--
+
+```r
+team_details$name[5]
+```
+
+```
+## [1] Susan
+## Levels: Dick Harry Me Susan Tom
+```
+
+---
+
+class: left
+
+# Back to operators...
+
+## Subsetting in R  
+
+**Extract the element in the 2nd row and 4th col in `team_details`** 
+
+```r
+team_details[2,4]
+```
+
+```
+## [1] Low
+## Levels: Low Med High
+```
+--
+**Extract 2nd row and all cols in `team_details`** 
+
+```r
+team_details[2,]
+```
+
+```
+##   name age sex perform
+## 2  Tom  25   M     Low
+```
+--
+**Extract the 4th col and all rows except the 2nd in `team_details`** 
+
+```r
+team_details[-2,4]
+```
+
+```
+## [1] High Med  Med  High
+## Levels: Low Med High
+```
+---
+
+class: left
+
+# Back to operators...
+
+## Subsetting in R  
+**Extract rows 1 to 3 in `team_details`**  
+--
+
+```r
+team_details[1:3,]
+```
+
+```
+##   name age sex perform
+## 1   Me  20   M    High
+## 2  Tom  25   M     Low
+## 3 Dick  30   M     Med
+```
+--
+**Extract rows 1 and 3 in `team_details`**  
+--
+
+```r
+team_details[c(1,3),]
+```
+
+```
+##   name age sex perform
+## 1   Me  20   M    High
+## 3 Dick  30   M     Med
+```
+
+---
+
+class: left
+
+# Back to operators...
+
+## Subsetting in R: Quick test!⚡️  
+Extract R's built-in dataset `data(mtcars)`  
+
+--
+
+**Extract data on cars with a fuel efficiency of at least 20 mpg, and that are more than 108 hp**  
+
 
 ```
 ##                 mpg cyl  disp  hp drat    wt  qsec vs am gear carb
@@ -508,133 +1071,159 @@ class: left
 ## Lotus Europa   30.4   4  95.1 113 3.77 1.513 16.90  1  1    5    2
 ## Volvo 142E     21.4   4 121.0 109 4.11 2.780 18.60  1  1    4    2
 ```
-]
 
 --
 
-.right-column[
+- **Hint:** `mtcars[  &amp; , ]`
+
+--
+
 - **Answer:** `mtcars[mtcars$mpg &gt;= 20 &amp; mtcars$hp &gt; 108, ]`
-]
 
 ???
-- Refer to 'subsetting' section of notes for examples/hints
+- Refer to 'Operators' in notes
 
 ---
 
-class: center
-
-# Let's Revise!
-In the figure, name all the objects that could be the following data structures:  
-__List, Matrix, Vector__
-&lt;div class="figure" style="text-align: center"&gt;
-&lt;img src="images/list_in_df.png" alt="Image from https://hbctraining.github.io/Intro-to-R" width="400" /&gt;
-&lt;p class="caption"&gt;Image from https://hbctraining.github.io/Intro-to-R&lt;/p&gt;
-&lt;/div&gt;
-
-???
-- List: Everything except matrix (note df can consist of lists)
-
-- Matrix: Everything except df
-
-- Vector: Everything (single-element vectors)
-
----
-
-class: left
+class: inverse, center, middle
 name: functions
 
-# Objects in R
+# Outline  
 
-.left-column[ 
-### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
-### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
-### Functions
-]
-.right-column[
-- We have already been using many in-built functions
-- Functions break our code into simpler parts/modules, which helps improve readability
-- You can create your own (user-defined) functions, and edit existing ones
-- Inputs to a function include R objects and arguments
-  - Look up details with `?functionname`  
-]
+[About](#about)  
+ 
+[Getting Started](#Getstarted)  
 
-???
+[General Syntax](#gensyntax)  
 
-- Some basic functions are in your notes. 
-- We wont' cover them but u can google/refer to them when necessary
+[Data Structures](#structures)  
+
+__[Functions](#functions)__  
+
+[Useful Resources](#resources) 
 
 ---
 
 class: left
 
-# Objects in R
+# Functions
 
 .left-column[ 
-### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
-### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
-### Functions
+### Overview
 ]
 .right-column[
-__User-defined Functions__  
-- Writing functions are incredibly powerful
-- You define your own inputs and outputs
-- General structure:  
-`functionname &lt;- function(argumentlist){calculations}`
+Functions have inputs and outputs (look up details with `?`)  
 ]
 
 ???
 
-- All calculations are within squiggly brackets
+- Tools in toolbox (functions in packages)
+- Inputs/outputs: Orange squeezer, juicer, blender
+  - input (data/arguments) = orange
+  - output = orange juice, smoothie
+  
+--
+.right-column[
+**E.g. Plot the performance distribution in `team_details`**
+
+```r
+plot(team_details$perform)
+```
+
+![](1_R_environment_and_syntax_slides_files/figure-html/unnamed-chunk-35-1.png)&lt;!-- --&gt;
+]
+???
+- plotting functions
 
 ---
 
 class: left
 
-# Objects in R
+# Functions
 
 .left-column[ 
-### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
-### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
-### Functions
+### Overview
 ]
 .right-column[
-__User-defined Functions__  
-E.g. Load `grades.csv`  
+Functions have inputs and outputs (look up details with `?`)  
+]
+.right-column[
+**E.g. Find the mean age in `team_details`**
+
+```r
+mean(team_details$age)
+```
 
 ```
-##     subject grade grade_point credits
-## 1      Math     A         5.0       5
-## 2   English     B         3.5       5
-## 3 Economics     C         2.0       4
-## 4  Mandarin    B+         4.0       5
-## 5  Sleeping    A+         5.0       0
-## 6  Cantrmbr     F         0.0       5
-## 7   Intro2R    A+         5.0       1
+## [1] 30
 ```
-Calculate the GPA using the formula:  
-$$
-\frac{ sum(Module\ grade\ point * Module\ credits)}{ sum(All\ module\ credits)}
-$$
+]
+
+???
+- Statistical functions
+- Some basic functions are in your notes (u can refer to them)
+--
+.right-column[
+**E.g. Find the number of people (rows) in `team_details`**
 ]
 --
 .right-column[
-`sum(grades$grade_point * grades$credits) / sum(grades$credits)`
+
+```r
+nrow(team_details)
+```
+
+```
+## [1] 5
+```
 ]
 
 ---
 
 class: left
 
-# Objects in R
+# Functions
 
 .left-column[ 
-### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
-### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
-### Functions
+### &lt;span style="color:grey"&gt;Overview&lt;/span&gt;
+### User-defined
 ]
 .right-column[
-__User-defined Functions__  
-E.g. Load `grades.csv`  
+__General structure when defining a function:__   
+
+```r
+functionname &lt;- function(inputs){
+  # calculations...
+  output
+  }
+```
+]
+???
+
+- You define the inputs and outputs
+- All calculations are within squiggly brackets
+--
+.right-column[
+**Subsequent calls to the function:**  
+`functionname(inputs)`
+]
+
+???
+
+- The function will be an object in your environment
+
+---
+
+class: left
+
+# Functions
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Overview&lt;/span&gt;
+### User-defined
+]
+.right-column[
+E.g. Load `data/grades.csv`  
 
 ```
 ##     subject grade grade_point credits
@@ -643,218 +1232,204 @@ E.g. Load `grades.csv`
 ## 3 Economics     C         2.0       4
 ## 4  Mandarin    B+         4.0       5
 ## 5  Sleeping    A+         5.0       0
-## 6  Cantrmbr     F         0.0       5
+## 6  Cantrmbr     F         1.0       5
 ## 7   Intro2R    A+         5.0       1
 ```
-
-- Create a function named `scorer` instead:
-
-```r
-scorer &lt;- function(gradepts, creds){ #inputs are vector objects
-  sum(gradepts*creds) / sum(creds)
-  }
-
-myGPA &lt;- scorer(grades$grade_point, grades$credits) #use function
-```
 ]
-
-???
-
-- Can save output to a variable
 
 ---
 
 class: left
 
-# Objects in R
+# Functions
 
 .left-column[ 
-### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
-### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
-### Functions
+### &lt;span style="color:grey"&gt;Overview&lt;/span&gt;
+### User-defined
+]
+$$
+\frac{ \sum_{i=1}^{n} gradepoint_i \times credits_i}{ \sum_{i=1}^{n} credits_i}
+$$
+.right-column[
+**Calculate the GPA in R using the formula above**  
+]
+--
+.right-column[
+
+```r
+sum(grades$grade_point * grades$credits) / sum(grades$credits)
+```
+
+```
+## [1] 3.22
+```
+]
+
+???
+- What is the answer?
+- Vectorised multiplication in R
+
+---
+
+class: left
+
+# Functions
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Overview&lt;/span&gt;
+### User-defined
 ]
 .right-column[
-__User-defined Functions: Loops__  
-- 'Loop' functions iterate over data to produce output
-- Repeats a task/calculation (no. of repeats usually denoted as `i`)  
-- Various types of loops:
-  - `for` Execute a fixed number of times 
-  - `if` or `ifelse` Execute on specific conditions
-  - `while` Execute while a condition is true
-  - `repeat` Execute an infinite loop
-- Actions within a loop:
-  - `break` Break execution
-  - `next` Skip an iteration 
-  - `return` Exit a function
-- Loops can be nested! (i.e. loop within a loop)  
+Create a function named `scorer` that:
+- Takes a dataframe as input
+- Outputs a calculation based on the colnames `grade_point` and `credits`
+
+```r
+scorer &lt;- function(x=grades){
+  sum(x$grade_point*x$credits) / sum(x$credits)
+  }
+```
+]
+--
+.right-column[
+
+```r
+scorer(grades) #use function
+```
+
+```
+## [1] 3.22
+```
+]
+
+---
+
+class: left
+
+# Functions
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Overview&lt;/span&gt;
+### User-defined
+### Loops
+]
+.right-column[
+- Loop functions repeat code `i` number of times
 - Perform subsetting to extract/write calculations within loops
   - E.g. `x[i]` refers to the `i`th element in vector `x`
 ]
----
-
-class: left
-
-# Objects in R
-
-.left-column[ 
-### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
-### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
-### Functions
-]
-
-.right-column[
-__User-defined Functions: FOR Loops__  
-
-
-```r
-grades$weightage &lt;- 0 #add new col for weightage of each module
-
-for(i in 1:nrow(grades)){ #iterate across each row (7 times)
-  grades$weightage[i] &lt;- grades$credits[i] / sum(grades$credits) #write 
-  }
-
-grades
-```
-
-```
-##     subject grade grade_point credits weightage
-## 1      Math     A         5.0       5      0.20
-## 2   English     B         3.5       5      0.20
-## 3 Economics     C         2.0       4      0.16
-## 4  Mandarin    B+         4.0       5      0.20
-## 5  Sleeping    A+         5.0       0      0.00
-## 6  Cantrmbr     F         0.0       5      0.20
-## 7   Intro2R    A+         5.0       1      0.04
-```
-]
 
 ???
-
-- Note that you an also calculate directly without a loop (element-wise calculation of vectors)
-
+- We will briefly touch on a few common types of loops
 ---
 
 class: left
 
-# Objects in R
+# Functions
 
 .left-column[ 
-### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
-### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
-### Functions
+### &lt;span style="color:grey"&gt;Overview&lt;/span&gt;
+### User-defined
+### Loops
 ]
-
 .right-column[
-__User-defined Functions: IF Loops__  
-
+**Find the range of values for _each_ numeric column in `grades`**  
+]
+???
+- Range: 2 values per column &gt; let's make a list!
+--
+.right-column[
 
 ```r
-grades$pass &lt;- 0 
+colrange &lt;- list() # create empty list
+```
+]
+--
+.right-column[
 
-for(i in 1:nrow(grades)){ #iterate across each row (7 times)
-  
-  if(grades$grade_point[i] &gt;= 2){ #loop within loop
-    grades$pass[i] &lt;- "yes"
-    } else {
-      grades$pass[i] &lt;- "no"
-    }
+```r
+for(i in 3:ncol(grades)){ # iterate across numeric cols 3-4 (2 times)
+  colrange[[i]] &lt;- range(grades[,i])
 }
-grades
-```
-
-```
-##     subject grade grade_point credits weightage pass
-## 1      Math     A         5.0       5      0.20  yes
-## 2   English     B         3.5       5      0.20  yes
-## 3 Economics     C         2.0       4      0.16  yes
-## 4  Mandarin    B+         4.0       5      0.20  yes
-## 5  Sleeping    A+         5.0       0      0.00  yes
-## 6  Cantrmbr     F         0.0       5      0.20   no
-## 7   Intro2R    A+         5.0       1      0.04  yes
 ```
 ]
+???
+- E.g. of a FOR loop
 
 ---
 
 class: left
 
-# Objects in R
+# Functions
 
 .left-column[ 
-### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
-### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
-### Functions
+### &lt;span style="color:grey"&gt;Overview&lt;/span&gt;
+### User-defined
+### Loops
 ]
-
 .right-column[
-__User-defined Functions: Loop functions__  
-
+**Find the range of values for _each_ numeric column in `grades`**  
+]
+.right-column[
 
 ```r
-passchecker &lt;- function(gradepts){ #vector input, not dataframe!
-  
-  results &lt;- rep(0,length(gradepts)) #create empty results vector
-  
-  for(i in 1:length(gradepts)){ #iterate across length of 'gradepts'
-    
-    if(gradepts[i] &gt;= 2){ 
-      results[i] &lt;- "yes"
-      } else {
-        results[i] &lt;- "no"
-      }
-  } 
-  results #remember to specify output
-} 
-
-passchecker(grades$grade_point) #run function
+names(colrange) &lt;- names(grades) # convert to named list
+colrange
 ```
 
 ```
-## [1] "yes" "yes" "yes" "yes" "yes" "no"  "yes"
+## $subject
+## NULL
+## 
+## $grade
+## NULL
+## 
+## $grade_point
+## [1] 1 5
+## 
+## $credits
+## [1] 0 5
 ```
 ]
 
 ???
-
-- A function within a function
+- Other egs of loops in notes
 
 ---
 
 class: left
 
-# Objects in R
+# Functions
 
 .left-column[ 
-### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
-### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
-### Functions
+### &lt;span style="color:grey"&gt;Overview&lt;/span&gt;
+### &lt;span style="color:grey"&gt;User-defined&lt;/span&gt;
+### Loops
 ]
 
 .right-column[
-__Loop functions in base R__  
-
+**Loop functions in base R**  
 `lapply(x, FUN)`: Apply a function on each element of `x`, returns a _list_
-
+]
+--
+.right-column[
+**Find the range of values for _each_ numeric column in `grades`**  
+]
+???
+- Similar to our previous eg!
+--
+.right-column[
 
 ```r
-#create a list of different types of R objects
-a1 &lt;- c("A","B") #char vector
-a2 &lt;- c(1,1,2,3,4,4) #numeric vector
-a3 &lt;- matrix(1, ncol=3, nrow=3) #matrix
-mylist &lt;- list(a1, a2, a3)
-
-lapply(mylist, length) #apply length() function to list
+lapply(grades[,3:4], range) #apply range() function
 ```
 
 ```
-## [[1]]
-## [1] 2
+## $grade_point
+## [1] 1 5
 ## 
-## [[2]]
-## [1] 6
-## 
-## [[3]]
-## [1] 9
+## $credits
+## [1] 0 5
 ```
 ]
 
@@ -862,58 +1437,77 @@ lapply(mylist, length) #apply length() function to list
 
 class: left
 
-# Objects in R
+# Functions
 
 .left-column[ 
-### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
-### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
-### Functions
+### &lt;span style="color:grey"&gt;Overview&lt;/span&gt;
+### &lt;span style="color:grey"&gt;User-defined&lt;/span&gt;
+### Loops
 ]
 
 .right-column[
-__Loop functions in base R__  
-
-`apply(x, MARGIN, FUN)`: Apply a function to tabular data by rows or columns (2D dataset)
-- `MARGIN` argument: `1` indicates rows, `2` indicates cols, `c(1,2)` indicates rows &amp; col
-- E.g. Add a "mean" column:  
-`cbind(matrixname, apply(matrixname, 2, mean))`  
+**Loop functions in base R**  
+`apply(x, MARGIN, FUN)`: Apply a function to tabular data by rows (`1`), cols (`2`), or both `c(1,2)`
 ]
+--
+.right-column[
+**Find the range of values for _each_ numeric column in `grades`**  
+]
+--
+.right-column[
 
+```r
+apply(grades, 2, range) # 2 means apply across cols
+```
+
+```
+##      subject    grade grade_point credits
+## [1,] "Cantrmbr" "A"   "1.0"       "0"    
+## [2,] "Sleeping" "F"   "5.0"       "5"
+```
+]
+???
+- range() of factors are alphabetical (don't mean anything)
 ---
 
 class: left
 
-# Objects in R
+# Functions
 
 .left-column[ 
-### &lt;span style="color:grey"&gt;Syntax&lt;/span&gt;
-### &lt;span style="color:grey"&gt;Structures&lt;/span&gt;
-### Functions
+### &lt;span style="color:grey"&gt;Overview&lt;/span&gt;
+### &lt;span style="color:grey"&gt;User-defined&lt;/span&gt;
+### Loops
 ]
 
 .right-column[
-
 __Quick test!⚡️__  
   
-Calculate the mean for each numeric variable in dataset `economics` (`ggplot2` package)
-]
---
-.right-column[
+**Calculate the mean for each numeric variable in `data(economics, package="ggplot2")`**  
 
-```r
-data(economics, package="ggplot2")
+```
+##         date   pce    pop psavert uempmed unemploy
+## 1 1967-07-01 506.7 198712    12.6     4.5     2944
+## 2 1967-08-01 509.8 198911    12.6     4.7     2945
+## 3 1967-09-01 515.6 199113    11.9     4.6     2958
+## 4 1967-10-01 512.2 199311    12.9     4.9     3143
+## 5 1967-11-01 517.4 199498    12.8     4.7     3066
+## 6 1967-12-01 525.1 199657    11.8     4.8     3018
 ```
 ]
+???
+- 1st few rows
 --
 .right-column[
+**Answer:**  
 
 ```r
-apply(economics[,-1], 2, mean) #apply mean() function across columns
+apply(economics[,-1], 2, mean) # remove date col
 ```
 
 ```
 ##          pce          pop      psavert      uempmed     unemploy 
-## 4.843510e+03 2.571894e+05 7.936585e+00 8.610105e+00 7.771557e+03
+## 4.820093e+03 2.571597e+05 8.567247e+00 8.608711e+00 7.771310e+03
 ```
 ]
 
@@ -924,32 +1518,25 @@ Remember to subset away the date variable!
 ---
 
 class: inverse, center, middle
+name: resources
 
 # Questions?  
-  
 
-__[About this crash course](#4)__  
+[About](#about)  
  
-__[Getting Started](#Getstarted)__  
+[Getting Started](#Getstarted)  
 
-__[R Environment and Syntax](#Renviron)__  
+[General Syntax](#gensyntax)  
 
-Syntax: [Operators](#operators)
+[Data Structures](#structures)  
 
-Syntax: [Subsetting](#subsetting)
+[Functions](#functions)    
 
-Objects in R: [Variables](#variables)
-
-Objects in R: [Data structures](#struc)
-
-Objects in R: [Functions](#functions)
-
-__[Useful Resources](#resources)__  
+[Useful Resources](#resources) 
 
 ---
 
 class: left
-name: resources
 
 # Useful Resources
 __Online tutorials__

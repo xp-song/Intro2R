@@ -8,7 +8,7 @@ output:
     toc: true
     toc_depth: 3
     toc_float: true
-    number_sections: false
+    number_sections: true
     theme: paper
 ---
 
@@ -19,12 +19,72 @@ library(ggplot2) #data visualisation
 library(knitr) #to knit HMTL
 ```
 
+<br>
+
 ---
 
-# Objects in R
+# General Syntax
+
+## Operators in R {.tabset .tabset-fade .tabset-pills}
+### Arithmetic  
+
+- `+` `-` `*` `/`  
+- `^` or `**` Exponentiate  
+- `%%` Modulus (e.g. `5%%2` = 1)  
+- `%/%` Integer division (e.g. `23%/%5` = 4)  
+  
+<br>
+
+---
+
+### Logical
+
+- `<` `<=` `>` `>=`
+- `==` Exactly equal (e.g. `1e3 == 1*10^3`; `1e-3 == 1*10^-3`)
+- `!=` Not equal
+- `!x` Not x
+- `x|y` x OR y  
+- `x&y` x AND y  
+
+<br>
+
+---
+
+### Other  
+
+- `1:10` creates a sequence:
+```{r echo = FALSE}
+1:10
+```
+- `$` Extract elements by name from a named list (colnames for tabular data)
+```{r}
+x <- list(a=1, b=2, c=3)
+x$b
+```
+
+<br>
+
+---
+
+### Subsetting {#subset}
+
+- Use square brackets `[ ]`
+- Double square brackets `[[]]` are used to extract elements of list/dataframe (similar to using `$` in `dataframe$colname`)
+- If dataset has 2 dimensions (i.e. tabular format), always specify row then column number
+- Examples:
+  - `x[5]` 5th element in vector `x`
+  - `df[3,5]` Element in 3rd row & 5th col of dataframe `df`
+  - `df[c(3,5),]` Row 3 & 5, all cols of dataframe `df`
+  - `df[3:5,]` Row 3,4 & 5, all cols of dataframe `df`
+  - `df[-2,]` Everything except row 2 of dataframe `df`
+  - `df[df$gender=='F' & df$age > 65, ]` Subset in combination with other operators
+
+<br>
+
+---
 
 ## Variables
-- Used to store data
+- Named objects used to store data
 - Naming should be consistent/clear
   - Case sensitive, no numbers/symbols/whitespace
   - E.g. treeHeight_m, species_count
@@ -38,9 +98,13 @@ x <- (4+5)/2
 x <- "hello"
 ```
 
-## Data Structures {.tabset .tabset-fade .tabset-pills}
-### Vectors 
-- Sequential collection of data of the _same_ type
+<br>
+
+---
+
+# Data Structures {.tabset .tabset-fade .tabset-pills}
+## Vectors 
+- Linear/sequential collection of data of the _same_ type
 - Coercion occurs if different types are mixed
 - Asking and coercion can be done manually to change the vector (data) type
 - Note that the `c()` function combines (concatenates) its arguments to form a vector
@@ -62,7 +126,12 @@ is.character(char_vec)
 x <- as.character(num_vec) #coercion from numeric to character
 x
 ```
-### Lists
+
+<br>
+
+---
+
+## Lists
 - Consist of different elements (i.e. variables/vectors) that can be of _different types_
 - Elements in a list are indexed with [[]], individual items are in []
 - Functions only be applied to vectors, not lists!
@@ -72,12 +141,15 @@ mylist
 is.list(mylist) #asking
 ```
 
-### Factors
+<br>
+
+---
+
+## Factors
 
 - Used to represent data with limited, discrete categories (i.e. categorical, ordinal, or even binary)
 - Can be coded as character or numeric
 - Some examples:
-  - Tom, Dick, Harry
   - Blue, Black, Brown (eye color)
   - High, Medium, Low (3, 2, 1)
   - Strongly disagree, disagree, neutral, agree, strongly agree (-2:2)
@@ -94,8 +166,12 @@ x
 unclass(x) #show as numbers, with "levels" attribute showing actual text
 ```
 
-### Matrices
-- Data in rectangular format (2D array with rows & columns)
+<br>
+
+---
+
+## Matrices
+- Tabular data in rectangular format (2D array with rows & columns)
 - Data must be of the _same_ type!
 - More memory efficient than dataframes
 ```{r eval = FALSE}
@@ -112,15 +188,20 @@ d <- as.data.frame(m) #convert to dataframe
 object.size(d) # 1032 bytes
 ```
 
-### Dataframes
-- Data in rectangular format (2D array with rows & columns)
-- Columns can contain _different_ types of data variables (i.e. numeric, character, etc.)
-- Each column are vectors/lists of similar length
-- Import tabular data as dataframes using `read.table()` family of functions (i.e. `read.csv()`, `read.delim()`)
-```{r eval = FALSE}
-#use data.frame() to manually create df
+<br>
 
-ozone <- read.csv("../data/ozone_data.csv") #default: headers in first row (header = T)
+---
+
+## Dataframes
+- Tabular data in rectangular format (2D array with rows & columns)
+- Columns are vectors/lists of similar length, representing different variables
+- Each row represents a data entry
+- Import tabular data as dataframes using `read.table()` family of functions  
+(i.e. `read.csv()`, `read.delim()`)
+```{r eval = FALSE}
+#data.frame() manually create df
+
+ozone <- read.csv("../data/ozone_data.csv") # headers in first row (default setting)
 is.data.frame(ozone) #check attribute
 head(ozone) #view first few rows only
 
@@ -134,14 +215,20 @@ ozone$rad
 ozone$temp
 ```
 
-## Functions
-- Many in-built functions available in packages
+<br>
+
+---
+
+# Functions {.tabset .tabset-fade .tabset-pills}
+- Many functions available in packages
 - Functions break our code into simpler parts/modules, which helps improve readability
 - You can create your own (user-defined) functions, and edit existing ones
-- Inputs to a function include R objects and arguments
+- Inputs to a function include variables and arguments
   - Look up details with `?functionname` (e.g. `?read.csv`)
+  
+<br>
 
-### Useful functions in base R
+## Common functions
 __Basic calculation__  
 
 - `log(x)` Log base e of x (natural)  
@@ -203,38 +290,47 @@ y <- x*10
 plot(x,y)
 ```
 
-### User-defined functions
-- Writing functions are incredibly powerful
+<br>
+
+---
+
+## User-defined functions
 - You define your own inputs and outputs
-- General structure: `functionname <- function(argumentlist){calculations}`
+- General structure: `functionname <- function(inputs){calculations, output}`
 - E.g. Calculate GPA from `grades.csv` using the following formula:
 
 $$
-\frac{ sum(Module\ grade\ point * Module\ credits)}{ sum(All\ module\ credits)}
+\frac{ \sum_{i=1}^{n}gradepoint_i \times credits_i}{ \sum_{i=1}^{n}credits_i}
 $$
 
 ```{r}
 grades <- read.csv("../data/grades.csv")
 grades
+```
 
-#calculate GPA manually
-sum(grades$grade_point * grades$credits) / sum(grades$credits) #element-wise multiplication of vectors
+```{r eval = FALSE}
+sum(grades$grade_point * grades$credits) / sum(grades$credits) #vectorised multiplication
+```
 
-#create function instead
-scorer <- function(gradepts, creds){ #inputs are vector objects
-  sum(gradepts*creds) / sum(creds)
+Create a function named `scorer` that:  
+
+- Takes a dataframe as input  
+
+- Outputs a calculation based on the specific colnames `grade_point` and `credits`  
+```{r eval = FALSE}
+scorer <- function(x=grades){
+  sum(x$grade_point*x$credits) / sum(x$credits)
   }
 
 #use function
-scorer(grades$grade_point, grades$credits)
+scorer(grades)
 ```
 
 <br>
 
-__Loop functions__  
+## User-defined loops  
 
-- 'Loop' functions iterate over data to produce output
-- Repeats a task/calculation (repeats usually denoted as "i")  
+- Loop functions repeat a code `i` number of times
 - Various types of loops:
   - `for` Execute a fixed number of times 
   - `if` or `ifelse` Execute on specific conditions
@@ -250,33 +346,35 @@ __Loop functions__
 
 <br>
 
-_Example of FOR loop:_  
-```{r}
-grades <- read.csv("../data/grades.csv")
-grades$weightage <- 0 #add new col for weightage of each module
+__Example of a FOR loop__  
 
-for(i in 1:nrow(grades)){ #iterate across each row (7 times)
-  grades$weightage[i] <- grades$credits[i] / sum(grades$credits) #write
+- Find the range of values for each numeric column in `grades`  
+```{r}
+colrange <- list() # create empty list
+
+for(i in 3:ncol(grades)){ #iterate across numeric cols 3-4 (2 times)
+  colrange[[i]] <- range(grades[,i])
 }
 
-#note that you an also calculate directly without a loop (element-wise calculation of vectors)
-#grades$weightage_manual <- grades$credits / sum(grades$credits)
+names(colrange) <- names(grades) # convert to named list
 
-grades
+colrange
 ```
 
 <br>
 
-_Example of IF loop:_
+__Example of FOR and IF loop:__  
+
+- The passing grade is >=2. Add a new column that indicates if subject pass/fail (LOGICAL data type)
 ```{r}
-grades$pass <- 0 
+grades$pass <- NULL # new col
 
 for(i in 1:nrow(grades)){ #iterate across each row (7 times)
   
-  if(grades$grade_point[i] >= 2){ #loop within loop
-    grades$pass[i] <- "yes"
+  if(grades$grade_point[i] >= 2){
+    grades$pass[i] <- TRUE
     } else {
-      grades$pass[i] <- "no"
+      grades$pass[i] <- FALSE
     }
 }
 
@@ -285,106 +383,62 @@ grades
 
 <br>
 
-_Example of a loop function:_
-```{r}
-passchecker <- function(gradepts){ #vector input, not dataframe!
-  
-  results <- rep(0,length(gradepts)) #create empty results vector
-  
-  for(i in 1:length(gradepts)){ #iterate across length of 'gradepts'
-    
-    if(gradepts[i] >= 2){ 
-      results[i] <- "yes"
-      } else {
-        results[i] <- "no"
-      }
-  } 
-  results #remember to specify output
-} 
+---
 
-grades$pass <- passchecker(grades$grade_point) #append as new column
-```
-
-<br>
-
-### Loop functions in base R
+## Loop functions in base R
 - `lapply(x, FUN)`: Apply a function on each element of `x`
   - Returns a _list_ (always)
 - `sapply(x, FUN)` Similar to `lapply` but tries to simplify results
   - Returns a _vector_ if result is a list where every element is length = 1
   - Returns a _matrix_ if result is a list where every element is of the same length (>1)
   - In all other scenarios, a _list_ is returned
-- `apply(x, MARGIN, FUN)` Apply a function to a tabular data by rows or columns (2D dataset)
-  - MARGIN argument: 1 indicates rows, 2 indicates columns, c(1,2) indicates rows & columns
-  - E.g. Add a "mean" column: `cbind(matrixname, apply(matrixname, 2, mean))`
+- `apply(x, MARGIN, FUN)` Apply a function to tabular data by rows (`1`), cols (`2`), or both `c(1,2)`  
 - `tapply(x, index, FUN)` Apply a function over subsets of a vector
 - `mapply()` Multivariate version of `lapply`
 
 <br>
 
-_Example of loop function `lapply`:_
-```{r}
-#create a list of different types of R objects
-a1 <- c("A","B") #char vector
-a2 <- c(1,1,2,3,4,4) #numeric vector
-a3 <- matrix(1, ncol=3, nrow=3) #matrix
-mylist <- list(a1, a2, a3)
+__E.g. `lapply()`__  
 
-lapply(mylist, length) #apply length() function to list
+- Find the range of values for each numeric column in `grades`  (similar to user-defined FOR loop example above!)
+```{r}
+lapply(grades[,3:4], range)
 ```
 
 <br>
 
 ---
 
-# Operators in R {.tabset .tabset-fade .tabset-pills}
-## Arithmetic  
+# Useful Resources  
 
-- `+` `-` `*` `/`  
-- `^` or `**` Exponentiate  
-- `%%` Modulus (e.g. `5%%2` = 1)  
-- `%/%` Integer division (e.g. `23%/%5` = 4)  
+__Online tutorials:__  
+
+- [R for Data Science](https://r4ds.had.co.nz)  
+- [Quick R](https://www.statmethods.net)  
+- [R for cats](https://www.rforcats.net) (blog post)  
+- [swirl](https://swirlstats.com) (good for practice)  
+
   
-## Logical
+__Online courses:__  
 
-- `<` `<=` `>` `>=`
-- `==` Exactly equal (e.g. `1e3 == 1*10^3`; `1e-3 == 1*10^-3`)
-- `!=` Not equal
-- `!x` Not x
-- `x|y` x OR y  
-- `x&y` x AND y  
-
-## Other  
-
-- `1:10` creates a sequence:
-```{r echo = FALSE}
-1:10
-```
-- `$` Extract elements by name from a named list (colnames for tabular data)
-```{r}
-x <- list(a=1, b=2, c=3)
-x$b
-```
+- [Introuction to R](https://www.datacamp.com/courses/free-introduction-to-r) by Datacamp  
+- [R Programming](https://www.coursera.org/learn/r-programming) by Coursera  
 
 
+__Online Q&A:__  
 
+- [Stack Overflow](https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example?rq=1)
+- Remember to check your `sessionInfo()` when troubleshooting!  
 
+__R Markdown:__
 
-## Subsetting {#subset}
+- [Basic formatting](https://rmarkdown.rstudio.com/authoring_basics.html)  
+- [Cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)  
 
-- Use square brackets `[ ]`
-- Double square brackets `[[]]` are used to extract elements of list/dataframe (similar to using `$` in `dataframe$colname`)
-- If dataset has 2 dimensions (i.e. tabular format), always specify row then column number
-- Examples:
-  - `x[5]` 5th element in vector `x`
-  - `df[3,5]` Element in 3rd row & 5th col of dataframe `df`
-  - `df[c(3,5),]` Row 3 & 5, all cols of dataframe `df`
-  - `df[3:5,]` Row 3,4 & 5, all cols of dataframe `df`
-  - `df[-2,]` Everything except row 2 of dataframe `df`
-  - `df[df$gender=='F' & df$age > 65, ]` Subset in combination with other operators
+__Others:__  
 
+- [How to use R/RStudio from an external drive](https://github.com/ClaudiaBrauer/A-very-short-introduction-to-R/blob/master/documents/Portable_versions_of_R_and_RStudio.pdf) (i.e. if you don't have admin rights to install software)
 
-#  
 
 <br>
 
