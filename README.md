@@ -18,7 +18,7 @@ Please note that this course is not meant to be a lesson in statistics, or to su
 
 Before the workshop, please install [R](https://cran.r-project.org) onto your computer, followed by [R Studio](https://www.rstudio.com/products/rstudio/download/#download). After doing so, [download the materials for this workshop](https://github.com/xp-song/Intro2R/archive/master.zip) from the Github repository [Intro2R](https://github.com/xp-song/Intro2R). 
 
-
+<br>
 
 In the downloaded folder you will see a few important items. 
 
