@@ -1483,16 +1483,16 @@ class: left
 .right-column[
 __Quick test!⚡️__  
   
-**Calculate the mean for each numeric variable in `data(economics, package="ggplot2")`**  
+**Calculate the mean for each numeric variable in `data(mtcars)`**  
 
 ```
-##         date   pce    pop psavert uempmed unemploy
-## 1 1967-07-01 506.7 198712    12.6     4.5     2944
-## 2 1967-08-01 509.8 198911    12.6     4.7     2945
-## 3 1967-09-01 515.6 199113    11.9     4.6     2958
-## 4 1967-10-01 512.2 199311    12.9     4.9     3143
-## 5 1967-11-01 517.4 199498    12.8     4.7     3066
-## 6 1967-12-01 525.1 199657    11.8     4.8     3018
+##                    mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+## Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+## Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+## Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+## Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
 ```
 ]
 ???
@@ -1502,12 +1502,14 @@ __Quick test!⚡️__
 **Answer:**  
 
 ```r
-apply(economics[,-1], 2, mean) # remove date col
+apply(mtcars, 2, mean)
 ```
 
 ```
-##          pce          pop      psavert      uempmed     unemploy 
-## 4.820093e+03 2.571597e+05 8.567247e+00 8.608711e+00 7.771310e+03
+##        mpg        cyl       disp         hp       drat         wt 
+##  20.090625   6.187500 230.721875 146.687500   3.596563   3.217250 
+##       qsec         vs         am       gear       carb 
+##  17.848750   0.437500   0.406250   3.687500   2.812500
 ```
 ]
 

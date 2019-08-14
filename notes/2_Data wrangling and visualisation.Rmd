@@ -6,31 +6,20 @@ date: "updated: `r Sys.Date()`"
 output:
   html_document:
     toc: true
-    toc_depth: 3
+    toc_depth: 2
     toc_float: true
-    number_sections: false
+    number_sections: true
     theme: paper
     code_folding: hide
 ---
 
 ---
 
-In this lesson, we will be analysing the [Kaggle Machine Learning and Data Science Survey 2018](https://www.kaggle.com/kaggle/kaggle-survey-2018) dataset. The industry-wide survey presents the state of data science and machine learning. It was published in as raw a format as possible while ensuring the anonymity of respondents.  
-
-The data comes in three different files:
-
-1. **Multiple choice responses**, which we will later assign to variable `multi`.  
-
-2. **Free-form responses** to open-ended questions, which we will later assign to variable `free`.
-  - To protect the privacy of respondents, the rows have been randomized such that the responses do not necessarily come from the same survey-taker as those in the multiple choice responses.
-
-3. **Survey schema** shows an overview of responses.  
+In this lesson, we will be analysing the [Kaggle Machine Learning and Data Science Survey 2018](https://www.kaggle.com/kaggle/kaggle-survey-2018). The industry-wide survey presents the state of data science and machine learning. It was published in as raw a format as possible while ensuring the anonymity of respondents. We will only be analysing the multiple choice responses, which we will later assign to variable `multi`.  
 
 <br>
 
-**In this lesson, we will only be using the file containing the multiple choice responses.**
-
-_**Credit:** Our survey analysis includes some code snippets adapted from R Notebooks created by the Kaggle users [Heads or Tails](https://www.kaggle.com/headsortails/what-we-do-in-the-kernels-a-kaggle-survey-story) and [Jose Berengueres](https://www.kaggle.com/harriken/storytelling-the-2018-kaggle-survey)._
+_**Credit:** Our analysis includes code adapted from R Notebooks created by the Kaggle users [Heads or Tails](https://www.kaggle.com/headsortails/what-we-do-in-the-kernels-a-kaggle-survey-story) and [Jose Berengueres](https://www.kaggle.com/harriken/storytelling-the-2018-kaggle-survey)._
 
 ---
 
@@ -38,57 +27,40 @@ _**Credit:** Our survey analysis includes some code snippets adapted from R Note
 
 ## R Packages
 
-Install necessary packages on your computer (you only need to do this once):
+Install and load necessary packages on your computer:  
 
-- [tidyverse](https://www.tidyverse.org/packages/): Contains multiple packages commonly used for data analyses (i.e. dplyr, ggplot2, etc.)
-
-- Other packages that provide functions for specific analyses and visualisations (e.g. interactive visualisations, geospatial analyses)  
+__[tidyverse](https://www.tidyverse.org/packages/):__ A collection of packages commonly used for data analyses ([readr](https://readr.tidyverse.org), [tidyr](https://tidyr.tidyverse.org), [purr](https://purrr.tidyverse.org), [dplyr](https://dplyr.tidyverse.org), [ggplot2](https://ggplot2.tidyverse.org), [tibble](https://tibble.tidyverse.org))
 
 ```{r install_packages, eval = FALSE, message = FALSE}
-install.packages("tidyverse") #data manipulation/visualisation
-
-#specific data manipulation
-install.packages("data.table") # quick data manipulation
-install.packages("stringr") # string manipulation
-install.packages("forcats") # factor manipulation
-
-#specific visualisations
-install.packages("highcharter") # interactive visualisation
-install.packages("countrycode") # map country names to country code
-install.packages("ggrepel") 
-
-#customise outputs from R Notebooks
-install.packages("rmarkdown")
-install.packages("knitr")
-install.packages("kableExtra") 
+install.packages("tidyverse") # only need to do this once
+library(tidyverse)
 ```
 
-```{r load_packages, message = FALSE, warning = FALSE}
+```{r echo=FALSE, message = FALSE, warning = FALSE}
 library(tidyverse)
 
-library(data.table) 
-library(stringr)
-library(forcats)
-
-library(ggrepel) 
-library(highcharter) 
-library(countrycode)
-
+#customise outputs from R Notebooks
 library(knitr) 
 library(kableExtra) 
 ```
-
 ---  
 
 ## Load data
 
-Rather than importing our tabular data as _dataframes_, we will import them as _tibbles_. Tibbles are a modern take on dataframes; they keep the features that have stood the test of time, and drop the features that used to be convenient but are now frustrating. More info about tibbles are available [here](https://cran.r-project.org/web/packages/tibble/vignettes/tibble.html). 
+We will import our tabular data as [tibbles](https://cran.r-project.org/web/packages/tibble/vignettes/tibble.html) using `read_csv()`. Tibbles are a modern take on dataframes in the tidyverse. They impose stricter rules that avoid hassle/errors often associated with dataframes. For example, they...  
 
-```{r}
-multi <- as_tibble(fread('../data/kaggle-survey-2018/multipleChoiceResponses.csv', skip = 1))
+  - Never change the input type (e.g. character strings will not be converted to factors)
+  - Never change variale names (e.g. will not replace white space with `.`)
+  - Never use `row.names()`
+  - Always return another tibble during subsetting operations  
 
-#The function 'fread' in the library(data.table) speeds up reading of data into R
-#We skip the first line of the .csv file. The second line contains the actual question headers that become the temporary column names for our data.
+```{r, message=FALSE, warning=FALSE}
+multi <- read_csv("../data/kaggle-survey-2018_mcq.csv", skip = 1)
+
+#We skip the first line of the .csv file. The next line contains the survey questions that become the colnames
+
+#read_csv() is a function in library(readr)
+#readr::read_csv() can help you remember which package a function is from
 ```
 
 ---  
@@ -109,16 +81,14 @@ multi <- as_tibble(fread('../data/kaggle-survey-2018/multipleChoiceResponses.csv
 
 ## Convert data type
 
-The `as_tibble()` function imports text as _character_ format by default. We want to change the multiple choice answers to _factors_ using `mutate_if()`.
+MCQ data are categorical with discrete levels. Tibbles import text as _character_ format by default. Let's change them to _factors_ using `mutate_if()`.
 
 - Use the pipe operator `%>%` from `library(dplyr)` to manipulate data in stages 
   - It is a key operater often used in the `tidyverse`.
   - Rather than using nested brackets, the 'pipeline' is highly readable and follows a logical sequence.
 ```{r}
 multi <- multi %>%
-  mutate_if(is_character, as_factor)
-
-#functions 'is_character' and 'as_factor' are from the library(purrr) and library(forcats), respectively
+  mutate_if(is.character, as.factor)
 ```
 
 ---  
@@ -147,12 +117,12 @@ Three basic steps (linked with the `+` sign):
 ```{r fig.height=3.5, fig.cap="_Note: The dashed line denotes the median survey duration. The x-axis has been transformed to a logarithmic scale._"}
 multi %>% #provide data
   ggplot(aes(duration)) + #assign variable 'duration' to aes()
+  geom_histogram(bins = 50) + #graphical primitive
+  geom_vline(xintercept = median(multi$duration), linetype = 2) + #graphical primitive
   
-  geom_histogram(bins = 50, fill = "grey") +
-  geom_vline(xintercept = median(multi$duration), linetype = 2) + #add line for median duration
+  scale_x_log10(breaks = c(2, 5, 10, 20, 60, 1440)) + #address extreme x-values
   
   #customisation
-  scale_x_log10(breaks = c(2, 5, 10, 20, 60, 720, 1440)) + #log() x-axis to address extreme values
   labs(x = "Duration (mins)", y = "Number of respondents") + #change axis labels
   ggtitle("Most respondents took 15-20 min to complete survey") #add figure title
 ```
@@ -162,13 +132,15 @@ multi %>% #provide data
 
 ---  
 
-## Geography
+## Geographical distribution
 
-Here, we are interested in the column `` `In which country do you currently reside?` ``. We want a summary table with the count of respondents per country.
+Here, we are interested in the column `` `In which country do you currently reside?` ``. We want a summary table with the number of respondents per country.
 
 ```{r}
 multi <- multi %>%
   rename(country = `In which country do you currently reside?`) #rename col first
+
+library(countrycode) #for countrycode() function
 
 ctry_n <- multi %>%
   count(country) %>%
@@ -178,8 +150,8 @@ ctry_n <- multi %>%
 
 - Abbreviate the colname to `country`
 - `count()` the number of of observations per `country`
-- `filter()` to exclude (`!`) invalid country names (rows) specified `%in%` the vector
-- `mutate()` table to add a new column `iso3`, where factor names in `country` are mapped to the country code using `countrycode()`
+- `filter()` to exclude (`!`) country names specified `%in%` the vector
+- `mutate()` table to add a new column `iso3`, where factor names in `country` are mapped to the country code using function `countrycode()`
 - We create a new variable `ctry_n`
 
 ```{r echo = FALSE}
@@ -194,7 +166,6 @@ Before we proceed, let's run a few checks. Are there any duplicated country code
 
 ```{r eval = FALSE}
 duplicated(ctry_n$iso3) #yes!
-length(unique(ctry_n$iso3)) == length(ctry_n$iso3) #length of unique values is not equal
 
 #look for the duplicated row
 which(duplicated(ctry_n$iso3)) #row 56
@@ -224,7 +195,9 @@ ctry_n <- ctry_n %>%
 
 We can now plot our summary table `ctry_n` as an interactive map using the package [highcharter](http://jkunst.com/highcharter). The map data comes from https://code.highcharts.com/mapdata/custom/world.js. More info [here](https://cran.rstudio.com/web/packages/highcharter/highcharter.pdf). 
 
-```{r fig.height=6}
+```{r fig.height=6, message=FALSE,warning=FALSE}
+library(highcharter) 
+
 highchart() %>%
   hc_add_series_map(worldgeojson, #map data to add
                     ctry_n, #our data
@@ -239,7 +212,7 @@ highchart() %>%
 
 ---
 
-## Countries
+## Combine datasets
 
 ### Load other data
 
@@ -247,8 +220,8 @@ Let's load some other datasets to analyse alongside our survey data.
 
 
 __Total population counts__ from [The World Bank](https://data.worldbank.org/indicator/SP.POP.TOTL), which we assign to variable `pops`:  
-```{r warning = FALSE}
-pops <- as_tibble(fread('../data/POP_TOTAL_DS2_en_v2.csv', skip = 4, header = TRUE))
+```{r warning = FALSE, message=FALSE}
+pops <- read_csv("../data/POP_TOTAL_DS2_en_v2.csv", skip = 4)
 
 pops <- pops %>% 
   rename(country = "Country Name", population = "2018") %>% 
@@ -290,8 +263,8 @@ pops <- pops[!is.na(pops$iso3),]
 <br>
 
 __Global Innovation Index__ from [INSEAD](https://www.kaggle.com/harriken/insead-global-innovation-index/downloads/insead-global-innovation-index.zip/1), which we assign to variable `innov`:
-```{r}
-innov <- as_tibble(fread('../data/INSEADGlobalinnovationIndex2018.csv', skip = 0))
+```{r, message=FALSE}
+innov <- read_csv("../data/INSEADGlobalinnovationIndex2018.csv", skip = 0)
 
 innov <- innov %>% 
   rename(country = "Economy", index = "Score") %>% 
@@ -350,8 +323,11 @@ write_csv(ctry_data, "../output/country_data.csv",
           col_names = TRUE) #writes colnames as headers
 ```
 
+<br>
 
-### Kaggle membership
+---
+
+## Respondents per population
 
 Let's calculate the number of respondents as a proportion of the total population in each country.  
 
@@ -412,15 +388,21 @@ print(ctryplot)
 dev.off() #finish creating the image file
 ```
 
-### Innovation
+<br>
+
+---
+
+## Innovation
 
 ```{r fig.height = 7, fig.width = 8}
+library(ggrepel) 
+
 ggplot(ctry_data, aes(x = respop10k, 
                      y = index, 
                      color = label, 
                      label = country)) + 
   geom_point() + #plot points
-  geom_text_repel(size = 3.5) + #plot text (country label), from library(ggrepel)
+  geom_text_repel() + #plot text label using function from library(ggrepel)
   
   scale_color_manual(values = cols) + #values from 'cols' vector mapped to 'color' aesthetic
   
@@ -449,82 +431,6 @@ cor_results <- cor.test(ctry_data$respop10k, ctry_data$index,
 ```{r}
 #remove objects from r
 rm(cor_results, ctry_data, ctry_n, ctryplot, innov, multi, pops, cols)
-```
-
----
-
-# It's your turn!
-
-Load dataset `diamonds` from the package `ggplot2`:
-```{r}
-data(diamonds, package = "ggplot2")
-```
-
-__Code the following figures:__  
-
-![](../output/diamond_price.jpeg)
-
-<br>
-
-![](../output/diamond_scatter.jpeg)
-
-<br>
-
-__Interactive Graphs using Plotly__  
-
-- Try executing the following code chunk in the _.Rmd_ file:
-```{r warning = FALSE, message = FALSE, eval = FALSE}
-library(shiny)
-library(plotly)
-
-data(diamonds, package = "ggplot2")
-nms <- names(diamonds)
-
-ui <- fluidPage(
-
-    headerPanel("Diamonds Explorer"),
-    sidebarPanel(
-        sliderInput('sampleSize', 'Sample Size', min = 1, max = nrow(diamonds),
-                                value = 1000, step = 500, round = 0),
-        selectInput('x', 'X', choices = nms, selected = "carat"),
-        selectInput('y', 'Y', choices = nms, selected = "price"),
-        selectInput('color', 'Color', choices = nms, selected = "clarity"),
-
-        selectInput('facet_row', 'Facet Row', c(None = '.', nms), selected = "clarity"),
-        selectInput('facet_col', 'Facet Column', c(None = '.', nms)),
-        sliderInput('plotHeight', 'Height of plot (in pixels)', 
-                    min = 100, max = 2000, value = 1000)
-    ),
-    mainPanel(
-      plotlyOutput('trendPlot', height = "900px")
-    )
-)
-
-server <- function(input, output) {
-
-  #add reactive data information. Dataset = built in diamonds data
-  dataset <- reactive({
-    diamonds[sample(nrow(diamonds), input$sampleSize),]
-  })
-
-  output$trendPlot <- renderPlotly({
-
-    # build graph with ggplot syntax
-    p <- ggplot(dataset(), aes_string(x = input$x, y = input$y, color = input$color)) + 
-      geom_point()
-
-    # if at least one facet column/row is specified, add it
-    facets <- paste(input$facet_row, '~', input$facet_col)
-    if (facets != '. ~ .') p <- p + facet_grid(facets)
-
-    ggplotly(p) %>% 
-      layout(height = input$plotHeight, autosize=TRUE)
-
-  })
-
-}
-
-shinyApp(ui, server)
 ```
 
 <br>
