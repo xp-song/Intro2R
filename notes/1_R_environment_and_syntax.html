@@ -1569,7 +1569,7 @@ div.tocify {
 <h1 class="title toc-ignore">R Environment and Syntax</h1>
 <h3 class="subtitle"><a href="https://github.com/xp-song/Intro2R">Intro2R</a> crash course: Session 1 of 2</h3>
 <h4 class="author">author: xpsong</h4>
-<h4 class="date">updated: 2019-08-14</h4>
+<h4 class="date">updated: 2019-08-21</h4>
 
 </div>
 
@@ -1929,19 +1929,13 @@ scorer(grades)</code></pre>
 <pre class="r"><code>colrange &lt;- list() # create empty list
 
 for(i in 3:ncol(grades)){ #iterate across numeric cols 3-4 (2 times)
-  colrange[[i]] &lt;- range(grades[,i])
+  colrange[[i-2]] &lt;- range(grades[,i])
 }
 
-names(colrange) &lt;- names(grades) # convert to named list
+names(colrange) &lt;- names(grades)[3:4] # convert to named list
 
 colrange</code></pre>
-<pre><code>## $subject
-## NULL
-## 
-## $grade
-## NULL
-## 
-## $grade_point
+<pre><code>## $grade_point
 ## [1] 1 5
 ## 
 ## $credits

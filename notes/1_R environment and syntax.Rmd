@@ -353,10 +353,10 @@ __Example of a FOR loop__
 colrange <- list() # create empty list
 
 for(i in 3:ncol(grades)){ #iterate across numeric cols 3-4 (2 times)
-  colrange[[i]] <- range(grades[,i])
+  colrange[[i-2]] <- range(grades[,i])
 }
 
-names(colrange) <- names(grades) # convert to named list
+names(colrange) <- names(grades)[3:4] # convert to named list
 
 colrange
 ```

@@ -17,7 +17,7 @@ class: center, middle, inverse, title-slide, title-slide
 ## R Environment and Syntax
 ### xpsong
 ### <a href="https://github.com/xp-song/Intro2R" class="uri">https://github.com/xp-song/Intro2R</a>
-### updated 2019-08-14
+### updated 2019-08-21
 
 ---
 
@@ -75,9 +75,9 @@ class: left
 
 - Cmd line interface is text-based
   
-  - Different from Excel/SPSS, where users interact with the software using a GUI
+  - Excel: interact with the software using a GUI
 
-- Rstudio: E.g. Microsoft Word provides &gt; basic text editor (Notepad)
+- Rstudio: E.g. Microsoft Word vs. text editor
 
   - In this course, we will work entirely within RStudio  
 
@@ -91,12 +91,10 @@ class: left
 
 - Open source:
 
-  - Anyone can contribute to its development
-
-  - Easy to look for help online (Q&amp;A sites, forums)
+  - Anyone can contribute, easy to look for help online
   
-- Packages: Like apps/toolboxes, each has diff functions
-  - E.g. run statistical analysis, build websites, make slides &amp; reports (these course materials)
+- *Packages*: Like apps/toolboxes
+  - E.g. these course materials
 
 ---
 class: left
@@ -109,7 +107,7 @@ class: left
 
 ???
 - ... hopefully give you some ideas on how you can use R for your own projects
-  - Slide deck 1: Look at the structure/syntax of the language (English - nouns, verbs.. R - different objects) 
+  - Slide deck 1: Look at the basics (language, structure/syntax) 
   - Slide deck 2: Dive right into analysing data
 
 --
@@ -163,9 +161,9 @@ _/Intro2R.Rproj_
 
 ???
 
-- During the workshop, you'll probably need to refer to the notes...can leave them open
-- Output: when we generate figures/graphs, we will specify in our code to export them here.
-- Let's open the RStudio Project file. This boots up RStudio (demo)
+- Notes: Can refer
+- Output: when we generate figures/graphs
+- Open the RStudio Project file. This boots up RStudio (demo)
 
 ---
 
@@ -182,15 +180,15 @@ class: left
 
 ???
 
-- Console: shows real-time interaction (inputs AND OUTPUTS)
+- Console: real-time interaction (inputs AND OUTPUTS)
   - All you would see if you ran R without RStudio!
-  - E.g. Try doing some calculations
+  - TRY doing some calculations
 
 - Create new .R script (File &gt; New File &gt; R script) &gt; Script editor
   - Write some calculations &gt; Cmd+Enter
   - Code sent to the console!
-  - Comment on your code (R skips over anything after '#')
-  - Scripts let us edit/save/share our code with others!  
+  - Comments # are skipped 
+  - Scripts: edit/save/share our code with others!  
 
 ---
 
@@ -230,14 +228,12 @@ class: left
 - __Code chunk:__ write code and specify code [parameters](https://bookdown.org/yihui/rmarkdown/r-code.html)   
 
 ???
-- YAML Ain't Markup Language (readable language commonly used for config files)  
 - Follow instructions  
 
 - Code chunk: Results appear beneath the chunk
-  - Plot(): our very first function (tool in toolbox)
+  - plot(): our very first function (tool in toolbox)
   - Name of function always followed by brackets
   - Look up a function with `?`
-  - Can name the chunk
 
 --
 
@@ -245,7 +241,7 @@ class: left
 
 ???
 
-- We will use this R Notebook for the rest of the lecture
+- *myanalysis.Rmd*: use for the rest of the lecture
 
 ---
 
@@ -280,9 +276,9 @@ class: left
   
 ???
 
-- Try typing `getwd()` in the Intro2R project
+- Try typing `getwd()` in the *Intro2R* project
 
-- Delete test project
+- *Delete test project*
 
 ---
 
@@ -302,7 +298,7 @@ class: left
   
 ???
 
-- Relative paths allow scripts to work across different computers
+- Relative paths: scripts work across different computers
 
 - RStudo Project -&gt; 'homing beacon'... don't need to write out initial path
 
@@ -408,7 +404,7 @@ Variables are named object used to store data
 
 ???
 - Arrow shortcut `Option/Alt`+`-`
-- `=` produces a similar result, but we reserve it for other uses (in functions)
+- `=` produces a similar result.. but reserve it for other uses
 - New variable in environment
 
 - Case sensitive!
@@ -454,9 +450,6 @@ __Data types and examples:__
 **Check the data type for each variable using the function `is.numeric()`, `is.integer()`, `is.character()`**
 ]
 
-???
-
-- try `is.integer()` for age (compare when add `L`)
 ---
 
 class: inverse, center, middle
@@ -500,7 +493,7 @@ name &lt;- c("Me", "Tom", "Dick", "Harry", "Susan") # character vector
 ]
 
 ???
-- What if we add a number? Treated as "character" (see environment)! COERCION
+- *COERCION*: What if we add a number? Treated as "character" (see environment)!
 
 --
 .right-column[
@@ -652,8 +645,6 @@ sex
 ## Levels: F M
 ```
 ]
-???
-- Levels are shown (binary)
 
 ---
 
@@ -717,7 +708,7 @@ perform
 ```
 ]
 ???
-- Order of levels are alphabetical unless specified
+- Order: Alphabetical unless specified
 ---
 
 class: left
@@ -785,7 +776,7 @@ class: left
 
 
 ```r
-ozone &lt;- read.csv("/data/ozone_data.csv") # column headers in first row
+ozone &lt;- read.csv("data/ozone_data.csv") # column headers in first row
 ```
 ]
 
@@ -1117,9 +1108,8 @@ Functions have inputs and outputs (look up details with `?`)
 
 ???
 
-- Tools in toolbox (functions in packages)
-- Inputs/outputs: Orange squeezer, juicer, blender
-  - input (data/arguments) = orange
+- Tools in toolbox (packages): Orange squeezer, juicer, blender
+  - input = orange
   - output = orange juice, smoothie
   
 --
@@ -1161,7 +1151,7 @@ mean(team_details$age)
 
 ???
 - Statistical functions
-- Some basic functions are in your notes (u can refer to them)
+- Basic functions: refer to notes
 --
 .right-column[
 **E.g. Find the number of people (rows) in `team_details`**
@@ -1210,7 +1200,7 @@ functionname &lt;- function(inputs){
 
 ???
 
-- The function will be an object in your environment
+- Function becomes an object in your environment
 
 ---
 
@@ -1349,7 +1339,7 @@ colrange &lt;- list() # create empty list
 
 ```r
 for(i in 3:ncol(grades)){ # iterate across numeric cols 3-4 (2 times)
-  colrange[[i]] &lt;- range(grades[,i])
+  colrange[[i-2]] &lt;- range(grades[,i])
 }
 ```
 ]
@@ -1373,17 +1363,11 @@ class: left
 .right-column[
 
 ```r
-names(colrange) &lt;- names(grades) # convert to named list
+names(colrange) &lt;- names(grades)[3:4] # convert to named list
 colrange
 ```
 
 ```
-## $subject
-## NULL
-## 
-## $grade
-## NULL
-## 
 ## $grade_point
 ## [1] 1 5
 ## 
@@ -1512,10 +1496,6 @@ apply(mtcars, 2, mean)
 ##  17.848750   0.437500   0.406250   3.687500   2.812500
 ```
 ]
-
-???
-
-Remember to subset away the date variable!
 
 ---
 
