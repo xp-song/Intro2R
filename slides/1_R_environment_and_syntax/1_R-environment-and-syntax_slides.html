@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
   <head>
     <title>Intro2R</title>
     <meta charset="utf-8" />
@@ -17,7 +17,7 @@ class: center, middle, inverse, title-slide, title-slide
 ## R Environment and Syntax
 ### xpsong
 ### <a href="https://github.com/xp-song/Intro2R" class="uri">https://github.com/xp-song/Intro2R</a>
-### updated 2019-08-22
+### updated 2020-02-03
 
 ---
 
@@ -276,11 +276,9 @@ class: left
   
 ???
 
-- Try typing `getwd()` in the *Intro2R* project
+- Also type `getwd()` in the *Intro2R* project
 
 - *Delete test project*
-
-- **IMPT: If your .Rmd is in subfolders, that subfolder is the wd**... `../`
 
 ---
 
@@ -290,19 +288,24 @@ class: left
 
 ## 🌟 Best Practice
 
-- Keep all project items in the working directory 
-
 - Use _relative_ paths in your script
 
   - **Try reading in data in your R Notebook**  
   `read.csv("&lt;path to Intro2R folder&gt;/Intro2R/data/ozone_data.csv")`
   `read.csv("data/ozone_data.csv")`
   
+- Keep all project items in the working directory 
+
 ???
 
-- Relative paths: scripts work across different computers
+- RStudio Project -&gt; 'homing beacon'... don't need to write out initial path
 
-- RStudo Project -&gt; 'homing beacon'... don't need to write out initial path
+  - Relative path: Scripts work across different computers
+
+- **IMPT: getwd() in console may be diff from in code chunk in notebook** 
+
+  - If .Rmd is in subfolders! `../`
+
 
 ---
 
@@ -387,6 +390,10 @@ __Logical__
 ```
 ]
 
+???
+- `1e3` = Scientific/exponential notation
+- 1000 can be written as 1e3
+
 ---
 
 class: left
@@ -398,7 +405,7 @@ class: left
 ### Variables
 ]
 .right-column[ 
-Variables are named object used to store data
+Variables are named objects used to store data
 - `&lt;-` is used to assign variable names in R (e.g. `x &lt;- 4`)
 - Print variables by name (`x` vs. `"x"`)
 - Assigning data to an existing variable overwrites it (`x &lt;- 10`)
@@ -407,10 +414,11 @@ Variables are named object used to store data
 ???
 - Arrow shortcut `Option/Alt`+`-`
 - `=` produces a similar result.. but reserve it for other uses
+- Let's assign a number to `hello`
 - New variable in environment
+- "hello" vs. hello (text in quotation)
 
 - Case sensitive!
-- "hello" vs. hello (text in quotation)
 
 --
 .right-column[ 
@@ -444,13 +452,16 @@ __Data types and examples:__
 ]
 
 ???
-- Print out 
+- Your own names..
 
 --
 
 .right-column[ 
 **Check the data type for each variable using the function `is.numeric()`, `is.integer()`, `is.character()`**
 ]
+
+???
+- Age remember to put L (integer) - both numeric and integer
 
 ---
 
@@ -495,7 +506,7 @@ name &lt;- c("Me", "Tom", "Dick", "Harry", "Susan") # character vector
 ]
 
 ???
-- *COERCION*: What if we add a number? Treated as "character" (see environment)!
+- *COERCION*: What if we add a number? Treated as "character" (Environment: "chr")
 
 --
 .right-column[
@@ -506,8 +517,11 @@ age &lt;- c(20, 25, 30, 35, 40) # numeric vector
 ```
 ]
 ???
-- What if we add characters/text? COERCE
-- What if we add LOGICAL data? (1 = TRUE, 0 = FALSE)
+
+- For numeric vectors:  
+
+  - What if we add characters/text? COERCE  
+  - What if we add LOGICAL data? (COERCE: 1 = TRUE, 0 = FALSE)
 
 ---
 
@@ -548,6 +562,12 @@ age+age
 ```
 ]
 
+???
+
+- If 2 vectors not similar in length, will recycle the shorter vector!  
+
+- R will return a warning
+
 ---
 
 class: left
@@ -562,6 +582,11 @@ class: left
 - Linear collection of data 
 - Can contain of different _types_ and _structure_ of data
 ]
+
+???
+
+- Lists are very flexible!
+
 --
 .right-column[
 **Create a list with a mix of data types and variables**
@@ -608,7 +633,6 @@ myteam
 ???
 - Elements in a list are indexed with [[]]
 - Sub-indices are in [] (nested like tree branches)
-- Lists are very flexible!
 
 ---
 
@@ -625,10 +649,11 @@ class: left
 - A special kind of vector that represents categorical data with discrete levels
 ]
 ???
-- Includes ordinal/binary
+- E.g. Eye color, M/F (binary), SA to SD (ordinal)
+
 --
 .right-column[
-**Let's code the sex of each person in `name` variable**  
+**Let's code the sex of each person in the variable `name`**  
 (use the functions `factor()` and `c()`)
 
 ```r
@@ -662,7 +687,7 @@ class: left
 .right-column[
 - A special kind of vector that represents categorical data with discrete levels
 ]
---
+
 .right-column[
 **Let's code the performance of each person in `name`**  
 
@@ -683,6 +708,8 @@ perform
 ```
 What is wrong with this output?
 ]
+???
+- Order: Alphabetical unless specified
 
 ---
 
@@ -710,7 +737,8 @@ perform
 ```
 ]
 ???
-- Order: Alphabetical unless specified
+- Add arguments to the function (`?functionname`)
+
 ---
 
 class: left
@@ -851,23 +879,23 @@ dimnames(ozone)
 
 ```
 ## [[1]]
-##   [1] "1"   "2"   "3"   "4"   "5"   "6"   "7"   "8"   "9"   "10"  "11" 
-##  [12] "12"  "13"  "14"  "15"  "16"  "17"  "18"  "19"  "20"  "21"  "22" 
-##  [23] "23"  "24"  "25"  "26"  "27"  "28"  "29"  "30"  "31"  "32"  "33" 
-##  [34] "34"  "35"  "36"  "37"  "38"  "39"  "40"  "41"  "42"  "43"  "44" 
-##  [45] "45"  "46"  "47"  "48"  "49"  "50"  "51"  "52"  "53"  "54"  "55" 
-##  [56] "56"  "57"  "58"  "59"  "60"  "61"  "62"  "63"  "64"  "65"  "66" 
-##  [67] "67"  "68"  "69"  "70"  "71"  "72"  "73"  "74"  "75"  "76"  "77" 
-##  [78] "78"  "79"  "80"  "81"  "82"  "83"  "84"  "85"  "86"  "87"  "88" 
-##  [89] "89"  "90"  "91"  "92"  "93"  "94"  "95"  "96"  "97"  "98"  "99" 
-## [100] "100" "101" "102" "103" "104" "105" "106" "107" "108" "109" "110"
-## [111] "111"
+##   [1] "1"   "2"   "3"   "4"   "5"   "6"   "7"   "8"   "9"   "10"  "11"  "12" 
+##  [13] "13"  "14"  "15"  "16"  "17"  "18"  "19"  "20"  "21"  "22"  "23"  "24" 
+##  [25] "25"  "26"  "27"  "28"  "29"  "30"  "31"  "32"  "33"  "34"  "35"  "36" 
+##  [37] "37"  "38"  "39"  "40"  "41"  "42"  "43"  "44"  "45"  "46"  "47"  "48" 
+##  [49] "49"  "50"  "51"  "52"  "53"  "54"  "55"  "56"  "57"  "58"  "59"  "60" 
+##  [61] "61"  "62"  "63"  "64"  "65"  "66"  "67"  "68"  "69"  "70"  "71"  "72" 
+##  [73] "73"  "74"  "75"  "76"  "77"  "78"  "79"  "80"  "81"  "82"  "83"  "84" 
+##  [85] "85"  "86"  "87"  "88"  "89"  "90"  "91"  "92"  "93"  "94"  "95"  "96" 
+##  [97] "97"  "98"  "99"  "100" "101" "102" "103" "104" "105" "106" "107" "108"
+## [109] "109" "110" "111"
 ## 
 ## [[2]]
 ## [1] "rad"   "temp"  "wind"  "ozone"
 ```
 ]
 ???
+- Returns a list!
 - Try using `rownames()` and `colnames()`
 
 ---
@@ -892,11 +920,11 @@ ozone$temp
 ```
 
 ```
-##   [1] 67 72 74 62 65 59 61 69 66 68 58 64 66 57 68 62 59 73 61 61 67 81 79
-##  [24] 76 82 90 87 82 77 72 65 73 76 84 85 81 83 83 88 92 92 89 73 81 80 81
-##  [47] 82 84 87 85 74 86 85 82 86 88 86 83 81 81 81 82 89 90 90 86 82 80 77
-##  [70] 79 76 78 78 77 72 79 81 86 97 94 96 94 91 92 93 93 87 84 80 78 75 73
-##  [93] 81 76 77 71 71 78 67 76 68 82 64 71 81 69 63 70 75 76 68
+##   [1] 67 72 74 62 65 59 61 69 66 68 58 64 66 57 68 62 59 73 61 61 67 81 79 76 82
+##  [26] 90 87 82 77 72 65 73 76 84 85 81 83 83 88 92 92 89 73 81 80 81 82 84 87 85
+##  [51] 74 86 85 82 86 88 86 83 81 81 81 82 89 90 90 86 82 80 77 79 76 78 78 77 72
+##  [76] 79 81 86 97 94 96 94 91 92 93 93 87 84 80 78 75 73 81 76 77 71 71 78 67 76
+## [101] 68 82 64 71 81 69 63 70 75 76 68
 ```
 ]
 
@@ -955,16 +983,16 @@ name[5]
 ## [1] "Susan"
 ```
 --
-**What is the 5th element of the column `name` in the dataframe `team_details`?**  
+**What is the 4th element of the column `name` in the dataframe `team_details`?**  
 (hint: use `$` to extract columns as vectors)
 --
 
 ```r
-team_details$name[5]
+team_details$name[4]
 ```
 
 ```
-## [1] Susan
+## [1] Harry
 ## Levels: Dick Harry Me Susan Tom
 ```
 
@@ -1016,6 +1044,8 @@ class: left
 
 ## Subsetting in R  
 **Extract rows 1 to 3 in `team_details`**  
+???
+Hint: u can use the semicolon to indicate a sequence of no.s
 --
 
 ```r
@@ -1049,7 +1079,7 @@ class: left
 # Back to operators...
 
 ## Subsetting in R: Quick test!⚡️  
-Extract R's built-in dataset `data(mtcars)`  
+**Extract R's built-in dataset `data(mtcars)`**  
 
 --
 
@@ -1064,6 +1094,12 @@ Extract R's built-in dataset `data(mtcars)`
 ## Lotus Europa   30.4   4  95.1 113 3.77 1.513 16.90  1  1    5    2
 ## Volvo 142E     21.4   4 121.0 109 4.11 2.780 18.60  1  1    4    2
 ```
+???
+- This is the answer you want to end up with
+
+- Refer to 'Operators' in notes
+- Each row is a type of car
+- We want all the variables (leave col blank)
 
 --
 
@@ -1071,10 +1107,12 @@ Extract R's built-in dataset `data(mtcars)`
 
 --
 
+- **Hint:** `mtcars[mtcars$mpg &gt;= 20 &amp; , ]`
+
+--
+
 - **Answer:** `mtcars[mtcars$mpg &gt;= 20 &amp; mtcars$hp &gt; 108, ]`
 
-???
-- Refer to 'Operators' in notes
 
 ---
 
@@ -1122,10 +1160,10 @@ Functions have inputs and outputs (look up details with `?`)
 plot(team_details$perform)
 ```
 
-![](1_R_environment_and_syntax_slides_files/figure-html/unnamed-chunk-35-1.png)&lt;!-- --&gt;
+![](1_R-environment-and-syntax_slides_files/figure-html/unnamed-chunk-35-1.png)&lt;!-- --&gt;
 ]
 ???
-- plotting functions
+- **Plotting functions**
 
 ---
 
@@ -1152,7 +1190,7 @@ mean(team_details$age)
 ]
 
 ???
-- Statistical functions
+- **Statistical functions**
 - Basic functions: refer to notes
 --
 .right-column[
@@ -1215,7 +1253,7 @@ class: left
 ### User-defined
 ]
 .right-column[
-E.g. Load `data/grades.csv`  
+E.g. Load `data/grades.csv` and assign it the name `grades`  
 
 ```
 ##     subject grade grade_point credits
@@ -1243,7 +1281,7 @@ $$
 \frac{ \sum_{i=1}^{n} gradepoint_i \times credits_i}{ \sum_{i=1}^{n} credits_i}
 $$
 .right-column[
-**Calculate the GPA in R using the formula above**  
+**Manually calculate the GPA in R using the formula**  
 ]
 --
 .right-column[
@@ -1277,11 +1315,13 @@ Create a function named `scorer` that:
 - Outputs a calculation based on the colnames `grade_point` and `credits`
 
 ```r
-scorer &lt;- function(x=grades){
+scorer &lt;- function(x){
   sum(x$grade_point*x$credits) / sum(x$credits)
-  }
+}
 ```
 ]
+???
+- refer to the named input within your function
 --
 .right-column[
 
@@ -1293,6 +1333,8 @@ scorer(grades) #use function
 ## [1] 3.22
 ```
 ]
+???
+- If you have many dfs of grades from diff people, you can just use this function to calc the GPA for all of them
 
 ---
 
@@ -1307,46 +1349,8 @@ class: left
 ]
 .right-column[
 - Loop functions repeat code `i` number of times
-- Perform subsetting to extract/write calculations within loops
-  - E.g. `x[i]` refers to the `i`th element in vector `x`
+- Most common type: `for` loop
 ]
-
-???
-- We will briefly touch on a few common types of loops
----
-
-class: left
-
-# Functions
-
-.left-column[ 
-### &lt;span style="color:grey"&gt;Overview&lt;/span&gt;
-### User-defined
-### Loops
-]
-.right-column[
-**Find the range of values for _each_ numeric column in `grades`**  
-]
-???
-- Range: 2 values per column &gt; let's make a list!
---
-.right-column[
-
-```r
-colrange &lt;- list() # create empty list
-```
-]
---
-.right-column[
-
-```r
-for(i in 3:ncol(grades)){ # iterate across numeric cols 3-4 (2 times)
-  colrange[[i-2]] &lt;- range(grades[,i])
-}
-```
-]
-???
-- E.g. of a FOR loop
 
 ---
 
@@ -1360,26 +1364,74 @@ class: left
 ### Loops
 ]
 .right-column[
-**Find the range of values for _each_ numeric column in `grades`**  
-]
-.right-column[
+
+**Prepare our data inputs to the `for` loop:**  
+
+Get the grades of others team members within `/data` folder  
+
 
 ```r
-names(colrange) &lt;- names(grades)[3:4] # convert to named list
-colrange
+grades_tom &lt;- read.csv("data/grades_tom.csv")
+grades_dick &lt;- read.csv("data/grades_dick.csv")
+grades_harry &lt;- read.csv("data/grades_harry.csv")
+grades_susan &lt;- read.csv("data/grades_susan.csv")
 ```
 
+]
+--
+.right-column[
+Put all these dataframes into a list named `team_grades`  
+
+```r
+team_grades &lt;- list(grades, grades_tom, grades_dick, grades_harry, grades_susan)
 ```
-## $grade_point
-## [1] 1 5
-## 
-## $credits
-## [1] 0 5
+]
+
+---
+
+class: left
+
+# Functions
+
+.left-column[ 
+### &lt;span style="color:grey"&gt;Overview&lt;/span&gt;
+### User-defined
+### Loops
+]
+.right-column[
+**For every item (person) in the list `team_grades`, use the function `scorer()` and append results to new column "GPA" in `team_details`**  
+
+
+```r
+for(i in 1:length(team_grades)){ 
+  team_details$GPA[i] &lt;- scorer(team_grades[[i]]) 
+  }
+#the named object "i" changes in value with iteration of the loop
+```
+]
+???
+- "For" loop - same general structure as a function
+- Value of `i` changes through each iteration
+- In this case, there are 5 iterations (code is looped 5 times)
+--
+.right-column[
+**Who has the best grades in the team?**  
+]
+--
+.right-column[
+
+```
+##    name age sex perform      GPA
+## 1    Me  20   M    High 3.220000
+## 2   Tom  25   M     Low 3.710526
+## 3  Dick  30   M     Med 4.342105
+## 4 Harry  35   M     Med 5.000000
+## 5 Susan  40   F    High 4.342105
 ```
 ]
 
 ???
-- Other egs of loops in notes
+Harry
 
 ---
 
@@ -1395,65 +1447,33 @@ class: left
 
 .right-column[
 **Loop functions in base R**  
-`lapply(x, FUN)`: Apply a function on each element of `x`, returns a _list_
-]
---
-.right-column[
-**Find the range of values for _each_ numeric column in `grades`**  
-]
-???
-- Similar to our previous eg!
---
-.right-column[
 
-```r
-lapply(grades[,3:4], range) #apply range() function
-```
-
-```
-## $grade_point
-## [1] 1 5
-## 
-## $credits
-## [1] 0 5
-```
-]
-
----
-
-class: left
-
-# Functions
-
-.left-column[ 
-### &lt;span style="color:grey"&gt;Overview&lt;/span&gt;
-### &lt;span style="color:grey"&gt;User-defined&lt;/span&gt;
-### Loops
-]
-
-.right-column[
-**Loop functions in base R**  
+`lapply(x, FUN)`: Apply a function on each element of `x`, returns a _list_  
 `apply(x, MARGIN, FUN)`: Apply a function to tabular data by rows (`1`), cols (`2`), or both `c(1,2)`
 ]
 --
 .right-column[
-**Find the range of values for _each_ numeric column in `grades`**  
+**Find the mean value for _each_ numeric column in `team_details`**  
 ]
+
 --
 .right-column[
 
 ```r
-apply(grades, 2, range) # 2 means apply across cols
+apply(team_details[,c(2,5)], 2, mean) #apply mean() function across columns
 ```
 
 ```
-##      subject    grade grade_point credits
-## [1,] "Cantrmbr" "A"   "1.0"       "0"    
-## [2,] "Sleeping" "F"   "5.0"       "5"
+##       age       GPA 
+## 30.000000  4.122947
 ```
 ]
 ???
+- Average age &amp; GPA of people in my team
+- Other examples of loops in the notes
+
 - range() of factors are alphabetical (don't mean anything)
+
 ---
 
 class: left
@@ -1492,10 +1512,10 @@ apply(mtcars, 2, mean)
 ```
 
 ```
-##        mpg        cyl       disp         hp       drat         wt 
-##  20.090625   6.187500 230.721875 146.687500   3.596563   3.217250 
-##       qsec         vs         am       gear       carb 
-##  17.848750   0.437500   0.406250   3.687500   2.812500
+##        mpg        cyl       disp         hp       drat         wt       qsec 
+##  20.090625   6.187500 230.721875 146.687500   3.596563   3.217250  17.848750 
+##         vs         am       gear       carb 
+##   0.437500   0.406250   3.687500   2.812500
 ```
 ]
 
@@ -1589,7 +1609,24 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();</script>
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 
 <script>
 (function() {
