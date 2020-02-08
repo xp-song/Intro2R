@@ -1,7 +1,7 @@
 ---
 title: "R Environment and Syntax"
 subtitle: "[Intro2R](https://github.com/xp-song/Intro2R) crash course: Session 1 of 2"
-author: "author: xpsong"
+author: "author: [Song, Xiao Ping](https://xp-song.github.io)"
 date: "updated: `r Sys.Date()`"
 output:
   html_document:
