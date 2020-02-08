@@ -17,7 +17,7 @@ class: center, middle, inverse, title-slide, title-slide
 ## R Environment and Syntax
 ### xpsong
 ### <a href="https://github.com/xp-song/Intro2R" class="uri">https://github.com/xp-song/Intro2R</a>
-### updated 2020-02-03
+### updated 2020-02-08
 
 ---
 
@@ -156,7 +156,7 @@ _/data_
 _/output_  
 _/Intro2R.Rproj_  
 
-.footnote[[1] View course materials in your web browser by opening the '_.html_' files
+.footnote[[1] View in your web browser by opening the '_.html_' files
 ]
 
 ???
@@ -263,7 +263,11 @@ class: left
 
 - RStudio Projects help organise your work into separate 'R sessions'.
 
-- Each project is it's own workspace (separate configuration, history, etc.)
+- Each project has it's own workspace a.k.a. 'working directory' (separate configuration, history, etc.)
+
+???
+- Workspace = Table in my office 
+- How do I know which is my table?
 
 --
 
@@ -276,7 +280,13 @@ class: left
   
 ???
 
+- E.g. tissue paper
+- Likewise, .RProj file tells R that this is my workspace (see window header)  
+
 - Also type `getwd()` in the *Intro2R* project
+
+- If I just open the Rstudio app, it is NOT tied to a project
+  - Working directory will be different (demo)  
 
 - *Delete test project*
 
@@ -288,7 +298,7 @@ class: left
 
 ## 🌟 Best Practice
 
-- Use _relative_ paths in your script
+- Use _relative_ paths in your script, based on _.RProj_ file location   
 
   - **Try reading in data in your R Notebook**  
   `read.csv("&lt;path to Intro2R folder&gt;/Intro2R/data/ozone_data.csv")`
@@ -298,7 +308,7 @@ class: left
 
 ???
 
-- RStudio Project -&gt; 'homing beacon'... don't need to write out initial path
+- By using RStudio Projects... don't need to write out initial path
 
   - Relative path: Scripts work across different computers
 
