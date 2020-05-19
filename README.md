@@ -22,7 +22,9 @@ Before the workshop, please install [R](https://cran.r-project.org) onto your co
 
 In the downloaded folder you will see a few important items. 
 
-* The _'notes'_ and _'slides'_ folder. View course materials in your web browser by opening the **.html** files   
+* The slide decks in PDF format.
+
+* The _'notes'_ folder. View course notes in your web browser by opening the **.html** files   
 
 * The _'data'_ folder. It contains example datasets we will use in this workshop.
 
