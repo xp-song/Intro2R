@@ -8,10 +8,10 @@ Please note that this course is not meant to be a lesson in statistics, or to su
 
 1. R Environment and Syntax
     - [Notes](https://htmlpreview.github.io/?https://github.com/xp-song/Intro2R/blob/master/notes/1_R_environ_and_syntax.html)
-    - [Slide deck](https://xp-song.github.io/files/slides/Intro2r_1/1_R_environ_and_syntax_slides#1)
+    - [Slide deck](https://xp-song.github.io/posts/intro2r/assets/Intro2r_1/1_R_environ_and_syntax_slides#1)
 2. Data Wrangling and Visualisation
     - [Notes](https://htmlpreview.github.io/?https://github.com/xp-song/Intro2R/blob/master/notes/2_Data_wrangling_and_visualisation.html)
-    - [Slide deck](https://xp-song.github.io/files/slides/Intro2r_2/2_Data_wrangling_and_visualisation_slides#1)
+    - [Slide deck](https://xp-song.github.io/posts/intro2r/assets/Intro2r_2/2_Data_wrangling_and_visualisation_slides#1)
 
 
 ## Instructions:
@@ -22,9 +22,9 @@ Before the workshop, please install [R](https://cran.r-project.org) onto your co
 
 In the downloaded folder you will see a few important items. 
 
-* The slide decks in PDF format.
+* The slide deck in PDF format.
 
-* The _'notes'_ folder. View course notes in your web browser by opening the **.html** files   
+* The _'notes'_ folder. View course notes in your web browser by opening the **.html** files.   
 
 * The _'data'_ folder. It contains example datasets we will use in this workshop.
 
