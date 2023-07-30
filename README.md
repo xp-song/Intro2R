@@ -2,7 +2,7 @@
 
 This repository contains teaching materials for an introductory workshop to R programming. It is designed for those with minimal coding experience, and is meant to be a crash-course where you get a taste of what R can do. An overview of the workshop and slide decks can be viewed in this [blogpost](https://xp-song.github.io/posts/intro2r/).
 
-Please note that this course is not meant to be a lesson in statistics, or to substitute practicing the fundamentals of the language. There are many online resources in R which I highly recommend. Links to these materials are provided in the [notes](https://htmlpreview.github.io/?https://github.com/xp-song/Intro2R/blob/master/notes/1_Intro2R.html) and slides.
+Please note that this course is not meant to be a lesson in statistics, or to substitute practicing the fundamentals of the language. There are many online resources in R which I highly recommend. Links to these materials are provided in the notes and slides.
 
 
 ## Workshop outline:
