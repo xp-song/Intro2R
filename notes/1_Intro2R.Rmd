@@ -1,0 +1,508 @@
+---
+title: "[Intro2R](https://github.com/xp-song/Intro2R)"
+subtitle: "Introduction to R Programming"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
+    theme: paper
+---
+
+---
+
+# General Syntax
+
+## Operators in R {.tabset .tabset-fade .tabset-pills}
+### Arithmetic  
+
+- `+` `-` `*` `/`  
+- `^` or `**` Exponentiate  
+- `%%` Modulus (e.g. `5%%2` = 1)  
+- `%/%` Integer division (e.g. `23%/%5` = 4)  
+  
+
+
+---
+
+### Logical
+
+- `<` `<=` `>` `>=`
+- `==` Exactly equal (e.g. `1e3 == 1*10^3`; `1e-3 == 1*10^-3`)
+- `!=` Not equal
+- `!x` Not x
+- `x|y` x OR y  
+- `x&y` x AND y  
+
+
+
+---
+
+### Other  
+
+- `1:10` creates a sequence:
+```{r echo = FALSE}
+1:10
+```
+
+- `$` Extract elements by name from a named list (colnames for tabular data)
+```{r}
+x <- list(a=1, b=2, c=3)
+x$b
+```
+
+
+
+---
+
+### Subsetting {#subset}
+
+- Use square brackets `[ ]`
+- Double square brackets `[[]]` are used to extract elements of list/dataframe (similar to using `$` in `dataframe$colname`)
+- If dataset has 2 dimensions (i.e. tabular format), always specify row then column number
+- Examples:
+  - `x[5]` 5th element in vector `x`
+  - `df[3,5]` Element in 3rd row & 5th col of dataframe `df`
+  - `df[c(3,5),]` Row 3 & 5, all cols of dataframe `df`
+  - `df[3:5,]` Row 3,4 & 5, all cols of dataframe `df`
+  - `df[-2,]` Everything except row 2 of dataframe `df`
+  - `df[df$gender=='F' & df$age > 65, ]` Subset in combination with other operators
+
+
+---
+
+## Variables
+- Named objects used to store data
+- Naming should be consistent/clear
+  - Case sensitive, no numbers/symbols/whitespace
+  - E.g. treeHeight_m, species_count
+- Data types: Numeric, integer, character, logical (T/F) or complex
+```{r variables, eval = FALSE}
+# numeric data
+x <- 4
+x <- (4+5)/2
+
+# character data
+x <- "hello"
+```
+
+---
+
+# Data Structures {.tabset .tabset-fade .tabset-pills}
+## Vectors 
+- Linear/sequential collection of data of the _same_ type
+- Coercion occurs if different types are mixed
+- Asking and coercion can be done manually to change the vector (data) type
+- Note that the `c()` function combines (concatenates) its arguments to form a vector
+```{r eval = FALSE}
+# numeric vectors
+x <- c(1,3,5,6)
+x <- 1:5
+x <- seq(1,5,1)
+x <- vector("numeric", length=10)
+num_vec <- c(TRUE, 2) # in R, TRUE=1, FALSE=0
+is.numeric(num_vec) 
+
+# character vectors
+x <- c("hello", "a", "b", "c")
+x <- c(1.7, "a")
+char_vec <- c("a", TRUE) # 'TRUE' turned from logical to character
+is.character(char_vec) 
+
+x <- as.character(num_vec) # coercion from numeric to character
+x
+```
+
+
+
+---
+
+## Lists
+- Consist of different elements (i.e. variables/vectors) that can be of _different types_
+- Elements in a list are indexed with [[]], individual items are in []
+- Functions only be applied to vectors, not lists!
+```{r eval= FALSE}
+mylist <- list(num_vec, char_vec, 1.783, 5L, "hello") # add L suffix if you explicitly want integers
+mylist
+is.list(mylist) # asking
+```
+
+
+
+---
+
+## Factors
+
+- Used to represent data with limited, discrete categories (i.e. categorical, ordinal, or even binary)
+- Can be coded as character or numeric
+- Some examples:
+  - Blue, Black, Brown (eye color)
+  - High, Medium, Low (3, 2, 1)
+  - Strongly disagree, disagree, neutral, agree, strongly agree (-2:2)
+  - Male, Female (1, 2)
+
+```{r, eval = FALSE}
+x <- factor(c("SA", "D", "A", "A", "SA", "Neutral", "SD"))
+x
+
+#define order (default is alphabetical)
+x <- factor(c("SA", "D", "A", "A", "SA", "Neutral", "SD"), levels = c("SD", "D", "Neutral", "A", "SA"))
+x
+
+unclass(x) # show as numbers, with "levels" attribute showing actual text
+```
+
+
+
+---
+
+## Matrices
+- Tabular data in rectangular format (2D array with rows & columns)
+- Data must be of the _same_ type!
+- More memory efficient than dataframes
+```{r eval = FALSE}
+m <- matrix(1:12, nrow = 4)
+m # data goes in by columns in default mode
+
+dim(m) # dimensions: no. of rows & cols 
+dimnames(m)
+dimnames(m) <- list(c("Tom", "Dick", "Harry", "Me"), c("Blue", "White", "Red")) # add names to row/cols
+
+# size comparisons
+object.size(m) # 264 bytes
+d <- as.data.frame(m) # convert to dataframe
+object.size(d) # 1032 bytes
+```
+
+
+
+---
+
+## Dataframes
+- Tabular data in rectangular format (2D array with rows & columns)
+- Columns are vectors/lists of similar length, representing different variables
+- Each row represents a data entry
+- Import tabular data as dataframes using `read.table()` family of functions  
+(i.e. `read.csv()`, `read.delim()`)
+```{r eval = FALSE}
+# data.frame() manually create df
+
+ozone <- read.csv("../data/ozone_data.csv") # headers in first row (default setting)
+is.data.frame(ozone) # check attribute
+head(ozone) # view first few rows only
+
+dim(ozone) # dimensions: no. of rows & cols 
+dimnames(ozone) # row & col names
+names(ozone) # col names, also can use 'colnames(ozone)'
+rownames(ozone)
+
+# extract columns with '$'
+ozone$rad
+ozone$temp
+```
+
+---
+
+# Functions {.tabset .tabset-fade .tabset-pills}
+- Many functions available in packages
+- Functions break our code into simpler parts/modules, which helps improve readability
+- You can create your own (user-defined) functions, and edit existing ones
+- Inputs to a function include variables and arguments (look up details with `?<functionname>`; e.g., `?read.csv`)
+
+
+## Common functions
+__Basic calculation__  
+
+- `log(x)` Log base e of x (natural)  
+- `log10(x)` Log base 10 of x
+- `log(x,n)` Log base n of x  
+- `exp()` Exponential  
+- `sqrt()` Square root  
+- `sin()`; `cos()`; `tan()`  
+- `factorial()`
+
+__Create vectors__  
+
+- `seq(a,b,c)` A vector with elements a:b, with step magnitudes of c (e.g. Days in a year is  `seq(1,365,1)`)  
+- `rep(a,b)` A vector with a repeated b times  
+  
+__Rounding of numeric vectors__  
+
+- `round(x, digits=0)` 0 decimal places for x  
+- `signif(x, digits=2)` x rounded to 2 sig. fig.  
+- `floor(x)` Largest _integer_ greater than corresponding elements of x (round down)  
+- `ceiling(x)` Smallest _integer_ greater than corresponding elements of x (round up)  
+- `abs(x)` absolute value
+  
+__Summary statistics of vectors/tabular data__  
+
+- `mean(x)`
+- `median(x)`
+- `var(x)` Variance
+- `max(x)` Max element
+- `min(x)` Min element
+- `range(x)` Min & max elements
+- `quantile(x)` Returns vector with the quantiles of x
+- `nrow()` Number of rows in tabular data
+- `ncol()` Number of columns in tabular data
+- `length(x)` Number of elements in x (same result as `ncol()` of dataframe)
+
+__Calculation for vectors/matrices__
+
+- `sum(x)` sums elements
+- `prod(x)` product of the elements
+- `colMeans(x)` 
+- `rowMeans(x)`
+- `colSums(x)`
+- `rowSums(x)`
+
+__Manipulation of vectors/matrices__
+
+- `rank(x)` Vector of the ranks of the values in x (increasing order)
+- `sort(x)` Produce another vector with elements in increasing order
+- `sample(x, n, replace=T)` Sample a vector n times with replacement
+Adding rows/Creating matrices by joining vectors (e.g. adding the vectorA <- c(1,1,1))
+- `cbind(x, y)` Bind x & y as columns to form new matrix
+- `rbind(x, y)` Bind x & y as rows to form new matrix
+
+__Plotting functions__
+```{r}
+x <- seq(1,10)
+y <- x*10
+plot(x,y)
+```
+
+---
+
+## User-defined functions
+- You define your own inputs and outputs
+- General structure: `functionname <- function(inputs){calculations, output}`
+- E.g. Calculate GPA from `grades.csv` using the following formula:
+
+$$
+\frac{ \sum_{i=1}^{n}gradepoint_i \times credits_i}{ \sum_{i=1}^{n}credits_i}
+$$
+
+```{r}
+grades <- read.csv("../data/grades.csv")
+grades
+```
+
+```{r eval = FALSE}
+sum(grades$grade_point * grades$credits) / sum(grades$credits) # vectorised multiplication
+```
+
+Create a function named `scorer` that:  
+
+- Takes a dataframe as input  
+
+- Outputs a calculation based on the specific colnames `grade_point` and `credits`  
+```{r eval = FALSE}
+scorer <- function(x=grades){
+  sum(x$grade_point*x$credits) / sum(x$credits)
+  }
+
+# use function
+scorer(grades)
+```
+
+---
+
+## User-defined loops  
+
+- Loop functions repeat a code `i` number of times
+- Various types of loops:
+  - `for` Execute a fixed number of times 
+  - `if` or `ifelse` Execute on specific conditions
+  - `while` Execute while a condition is true (be careful of infinite loops)
+  - `repeat` Execute an infinite loop
+- Actions within a loop:
+  - `break` Break execution
+  - `next` Skip an iteration 
+  - `return` Exit a function
+- Loops can be nested! (i.e. loop within a loop)  
+- Perform [subsetting](#subset) to extract/write calculations within loops
+  - E.g. `x[i]` refers to the `i`th element in vector `x`
+
+
+
+__Example of a FOR loop__  
+
+- Find the range of values for each numeric column in `grades`  
+```{r}
+colrange <- list() # create empty list
+
+for(i in 3:ncol(grades)){ # iterate across numeric cols 3-4 (2 times)
+  colrange[[i-2]] <- range(grades[,i])
+}
+
+names(colrange) <- names(grades)[3:4] # convert to named list
+
+colrange
+```
+
+
+
+__Example of FOR and IF loop:__  
+
+- The passing grade is >=2. Add a new column that indicates if subject pass/fail (LOGICAL data type)
+```{r}
+grades$pass <- NULL # new col
+
+for(i in 1:nrow(grades)){ # iterate across each row (7 times)
+  
+  if(grades$grade_point[i] >= 2){
+    grades$pass[i] <- TRUE
+    } else {
+      grades$pass[i] <- FALSE
+    }
+}
+
+grades
+```
+
+
+---
+
+## Loop functions in base R
+- `lapply(x, FUN)`: Apply a function on each element of `x`
+  - Returns a _list_ (always)
+- `sapply(x, FUN)` Similar to `lapply` but tries to simplify results
+  - Returns a _vector_ if result is a list where every element is length = 1
+  - Returns a _matrix_ if result is a list where every element is of the same length (>1)
+  - In all other scenarios, a _list_ is returned
+- `apply(x, MARGIN, FUN)` Apply a function to tabular data by rows (`1`), cols (`2`), or both `c(1,2)`  
+- `tapply(x, index, FUN)` Apply a function over subsets of a vector
+- `mapply()` Multivariate version of `lapply`
+
+
+
+__E.g. `lapply()`__  
+
+- Find the range of values for each numeric column in `grades`  (similar to user-defined FOR loop example above!)
+```{r}
+lapply(grades[,3:4], range)
+```
+
+---
+
+# The _tidyverse_ {.tabset .tabset-fade .tabset-pills}
+
+This section shows the code that accompanies the workshop slide deck. For more comprehensive information on the tidyverse, visit https://www.tidyverse.org and the resources at the end of this document.
+
+```{r load_packages, message = FALSE, warning = FALSE}
+library(tidyverse)
+```
+
+## Load data 
+
+```{r warning = FALSE, message = FALSE}
+survey <- read_csv("../data/kaggle-survey-2018_mcq.csv", skip = 1)
+head(survey)
+head(colnames(survey))
+```
+
+---
+
+## Tidy data
+
+```{r}
+survey <- survey %>%
+  rename(duration = `Duration (in seconds)`) %>% 
+  mutate(duration = duration/60) # overwrite the colname
+head(survey$duration)
+```
+
+---
+
+## Wrangle data
+
+```{r}
+survey %>% 
+  filter(duration < 30)
+```
+
+```{r}
+ctry_breakdown <- survey %>%
+  rename(country = `In which country do you currently reside?`) %>% # simplify colname
+  group_by(country) %>%
+  summarise(count = n()) %>% # create new col that counts each group size using n()
+  arrange(-count) # arrange by the colname 'count' in descending order 
+ctry_breakdown
+```
+
+---
+
+## Plot data
+
+```{r warning = FALSE, message = FALSE, out.width="70%", fig.height = 3.5, fig.align = 'center'}
+survey %>% 
+  ggplot(aes(duration)) + 
+  geom_histogram(bins = 50) +
+  geom_vline(xintercept = median(survey$duration), linetype = 2) + 
+  
+  scale_x_log10(breaks = c(2, 5, 10, 20, 60, 1440)) + 
+  
+  labs(x = "Duration (mins)", y = "Number of respondents") + #change axis labels
+  ggtitle("Most respondents took 15-20 min to complete survey") #add figure title
+```
+
+## Quick exercise
+
+```{r}
+data("diamonds")
+```
+
+__Filter diamonds that are less than $3000 with a Premium cut__
+
+```{r echo = FALSE}
+diamonds[diamonds$price < 3000 & diamonds$cut == "Premium", ]
+```
+
+__Histogram showing the price for all diamonds__
+
+```{r message=FALSE, out.width="70%", fig.height = 4.5, fig.align='center'}
+diamonds %>%
+  ggplot(aes(x = price)) + 
+  geom_histogram()
+```
+
+
+__Scatter diagram of the price, carat and cut for all diamonds__
+
+```{r echo=FALSE, fig.height = 4.5, fig.align = 'center'}
+diamonds %>%
+  ggplot(aes(x = price, 
+             y = carat,
+             color = cut)) + 
+  geom_point(alpha = 0.5) + 
+  scale_color_brewer(type = "seq") 
+```
+
+---
+
+# Useful Resources  
+
+__Online tutorials:__  
+
+- [R for Data Science](https://r4ds.had.co.nz)  
+- [Quick R](https://www.statmethods.net)  
+- [Learn the tidyverse](https://www.tidyverse.org/learn/)
+- [R markdown cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/)
+
+__Online Q&A:__  
+
+- [Stack Overflow](https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example)
+- [How to ask a good question online](https://stackoverflow.com/help/how-to-ask)
+- Remember to check your `sessionInfo()` when troubleshooting!  
+
+__Others:__  
+
+- [How to use R/RStudio from an external drive](https://github.com/ClaudiaBrauer/A-very-short-introduction-to-R/blob/master/documents/Portable_versions_of_R_and_RStudio.pdf) (i.e. if you don't have admin rights to install software)
+
+---
+
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
+
+© XP Song
