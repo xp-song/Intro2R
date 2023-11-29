@@ -451,7 +451,7 @@ survey %>%
 ## Quick exercise
 
 ```{r}
-data("diamonds")
+data(diamonds)
 ```
 
 __Filter diamonds that are less than $3000 with a Premium cut__
